@@ -52,6 +52,20 @@
 \AtBeginDocument{%
   \providecommand\BibTeX{{%
     Bib\TeX}}}
+    
+    
+    
+\newcommand{\Enote}[1]{\color{purple}Enote: #1\color{black}}
+
+\newcommand{\Gen}{{\sf Gen}}
+\newcommand{\Eval}{{\sf Eval}}
+\newcommand{\FullEval}{{\sf FullEval}}
+
+\newcommand{\Adv}{{\sf Adv}}
+    
+\newcommand{\GG}{\mathbb{G}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
 
 %% Rights management information.  This information is sent to you
 %% when you complete the rights form.  These commands have SAMPLE
@@ -204,8 +218,60 @@ tbd
 \section{Preliminary}
 \subsection{Basic Notations}
 
-\subsection{Distributed Point Function}
-Definition of distributed (multi-)point function, naive construction
+
+
+ \paragraph{Point and multi-point functions.} Given a domain size $N$ and Abelian group $\GG$, a \emph{point function} $f_{\alpha,\beta}:[N]\rightarrow\GG$ for $\alpha\in[N]$ and $\beta\in\GG$ evaluates to $\beta$ on input $\alpha$ and to $0\in\GG$ on all other inputs. We denote by $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ the representation of such a point function.
+ 
+\Enote{MPF. Also representation of groups.}
+ 
+\subsection{Distributed Point Functions}
+
+\Enote{should directly adapt to multi-point function case}
+
+We begin by defining a slightly generalized notion of distributed point functions (DPFs), which accounts for the extra parameter $\GG'$.
+
+%\yuval{Made some small stylistic changes below (similar changes may apply elsewhere). Should citations to GI14,BGI16. }
+\begin{definition}[DPF \cite{EC:GilIsh14,CCS:BoyGilIsh16}]\label{def:dpf}
+A 
+%$t$-private $m$-server 
+(2-party)
+\emph{distributed point function (DPF)}
+%, or $(m,t)$-DPF for short, 
+is a triple of algorithms %$\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$ 
+$\Pi=(\Gen,\Eval_0,\Eval_1)$
+with the following syntax: 
+\begin{itemize}
+    \item $\Gen(1^\lambda,\hat{f}_{\alpha,\beta})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. We assume that $N$ and $\GG$ are determined by each key.
+    \item $\Eval_i(k_i,x)\rightarrow y_i$: On input key $k_i\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $i$, $\Eval_i$ returns 
+    %a group element 
+    $y_i\in\GG$.
+\end{itemize}
+%The algorithms $\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$ should 
+We require $\Pi$ to satisfy the following requirements:
+\begin{itemize}
+    \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$, if $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f})$, then $\Pr\left[\sum_{i=0}^{1}\Eval_i(k_i,x)=f_{\alpha,\beta}(x)\right]=1$.
+    \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $i\in\{0,1\}$:
+    \begin{enumerate}
+        \item The adversary produces two point function descriptions $(\hat{f}^0=(N,\hat\GG,\alpha_0,\beta_0),\hat{f}^1=(N,\hat\GG,\alpha_1,\beta_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_i\in[N]$ and $\beta_i\in\GG$.
+        \item The challenger samples $b\gets\{0,1\}$ and $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}^b)$.
+        \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_i)$.
+    \end{enumerate}
+    Denote by $\Adv(1^\lambda,\mathcal{A},i)=\Pr[b=b']-1/2$ the advantage of $\mathcal{A}$ in guessing $b$ in the above experiment. For every non-uniform polynomial time adversary $\mathcal{A}$ there exists a negligible function $\nu$ such that $\Adv(1^\lambda,\mathcal{A},i) \le \nu(\lambda)$ for all $\lambda \in \NN$.
+%    For circuit size bound $S=S(\lambda)$ and advantage bound $\epsilon(\lambda)$, we say that $\Pi$ is $(S,\epsilon)$-secure if for all $i\in\{0,1\}$ and all non-uniform adversaries $\mathcal{A}$ of size $S(\lambda)$ and sufficiently large $\lambda$, we have $\Adv(1^\lambda,\mathcal{A},i)\leq\epsilon(\lambda)$. We say that $\Pi$ is:
+%    \begin{itemize}
+%        \item \emph{Computationally $\epsilon$-secure} if it is $(S,\epsilon)$-secure for all polynomials $S$.
+%        \item \emph{Computationally secure} if it is $(S,1/S)$-secure for all polynomials $S$.
+%        %\item \emph{Statistically $\epsilon$-secure} if it is $(S,\epsilon)$-secure for all $S$.
+%        %\item \emph{Perfectly secure} if it is statistically $0$-secure.
+%    \end{itemize}
+\end{itemize}
+%If the security threshold $t$ is unspecified, we assume it is $t=1$.
+\end{definition}
+ 
+ We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_i$ an algorithm which computes $\Eval_i$ on every input $x$. Hence, $\FullEval_i$ receives only a key $k_i$ as input.
+
+
+
 \subsection{Batch Codes}
 combinatorial/probabilistic batch codes, with cuckoo hashing a concrete instantiation
 \subsection{Oblivious Key-Value Stores}
