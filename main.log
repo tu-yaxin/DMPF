@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.22)  4 JAN 2023 16:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.22)  4 JAN 2023 17:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -902,11 +902,9 @@ Overfull \hbox (11.15363pt too wide) in paragraph at lines 189--190
  []
 
 
-Overfull \hbox (1.69202pt too wide) in paragraph at lines 198--199
-[]\T1/LinuxLibertineT-TLF/m/n/9 (-20) concrete in-stan-ti-a-tions(polynomial, sparse ma-trix). men-tion some
- []
+Underfull \vbox (badness 1565) has occurred while \output is active []
 
-[1.1{c:/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+ [1.1{c:/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 ] (./main.bbl
 LaTeX Info: Redefining \tempurl on input line 66.
@@ -916,7 +914,7 @@ File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
 ) (c:/texlive/2022/texmf-dist/tex/generic/stringenc/se-utf8.def
 File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
 )
-Overfull \vbox (1.17401pt too high) has occurred while \output is active []
+Overfull \vbox (1.95898pt too high) has occurred while \output is active []
 
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
 (Font)              scaled to size 7.0pt on input line 309.
@@ -925,15 +923,15 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 5495C7FEA7A1B7DA3208FF3A00AD274B;2982.
  ) 
 Here is how much of TeX's memory you used:
- 23109 strings out of 475075
- 386347 string characters out of 5783001
- 811342 words of memory out of 5000000
+ 23112 strings out of 475075
+ 386419 string characters out of 5783001
+ 809342 words of memory out of 5000000
  43590 multiletter control sequences out of 15000+600000
- 629385 words of font info for 295 fonts, out of 8000000 for 9000
+ 629658 words of font info for 297 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 84i,12n,131p,1044b,517s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,12n,131p,1044b,687s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_ki75ao.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_naooyc.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}<c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathMI.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathMI5.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathMI7.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathRM.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineTBI.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/txexs.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/txmiaX.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/txfonts/txsyb.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/txsys.pfb>
-Output written on main.pdf (2 pages, 460791 bytes).
+Output written on main.pdf (2 pages, 463093 bytes).
 PDF statistics:
  229 PDF objects out of 1000 (max. 8388607)
  188 compressed objects within 2 object streams
