@@ -30,6 +30,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{cleveref}
+\usepackage{fancybox}
     
 %% New commands goes here
 \newcommand{\Enote}[1]{\color{purple}Enote: #1\color{black}}
@@ -41,6 +42,8 @@
 \newcommand{\Encode}{{\sf Encode}}
 \newcommand{\Decode}{{\sf Decode}}
 \newcommand{\row}{{\sf row}}
+\newcommand{\seed}{{\sf seed}}
+\newcommand{\sign}{{\sf sign}}
 
 \newcommand{\Adv}{{\sf Adv}}
     
@@ -212,89 +215,67 @@ We evaluate an OKVS scheme by its encoding size (output length $m$), encoding ti
     \item $\Decode(P,k)\rightarrow g_P(k)$. 
   \end{itemize}
 \end{construction}
-The polynomial OKVS possesses optimal encoding size, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in super linear time. 
-\begin{construction}[3H-GCT\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]
-  Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}$ outputs a uniformly random vector in $\{0,1\}^{m_1}$ of hamming weight 3, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
+The polynomial OKVS possesses an optimal encoding size $m=n$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(n\log^2n)$. The time for a single decoding is $O(n)$ and that for batched decodings is (amortized) $O(\log^2 n)$. 
+
+An alternative construction that has near optimal encoding size but much better running time is as follows. 
+\begin{construction}[3-Hash Garbled Cuckoo Table (3H-GCT)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]
+  Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}$ outputs a uniformly random weight-$w$ vector in $\{0,1\}^{m_1}$, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
   \begin{itemize}
     \item $\Encode(\{(k_i,v_i)\}_{1\le i\le n}) \rightarrow P$ where $P$ is solved from the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le n}$ using the triangulation algorithm in \cite{cryptoeprint:2022/320}. 
     \item $\Decode(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
   \end{itemize}
 \end{construction}
+This OKVS construction features a linear encoding time, constant decoding time while having a linear encoding size. 
+
+TBD: Carefully(!) recompute the comparison table for OKVS and insert
+
+We take $w=3$, the most common option that outruns other choices of $w$ in terms of running time. Restating the conclusion in  \cite{cryptoeprint:2022/320}: given $n$ and $\lambda_{\sf stat}$, the choices of $e$ and $\hat{g}$ are $e = 1.223+\frac{\lambda_{\sf stat}+9.2}{4.144 n^{0.55}}$ and $\hat{g}=\frac{\lambda_{\sf stat}}{\log_2(en)}$. 
 
 TBD: mention some connections to cuckoo hashing
-
-
-
-
-
 
 \section{New DMPF constructions}
 
 \subsection{Big-State DMPF}
-display the big-state DMPF (plus distributed gen)
-%We display the big-state DMPF scheme in figure \ref{fig:big-state}. 
-\iffalse
-\begin{figure}\label{fig:DMPF_paradigm}
+display the big-state DMPF (plus distributed gen) 
+\begin{figure*}
   \fbox{\parbox{\linewidth}{
   \begin{algorithmic}
-  \Procedure{Gen}{$1^\lambda, A$}
-  \State $t\leftarrow |A|, n\gets |A[1]|$.
-  \State For $0\le i\le n-1$, let $A^{(i)}$ be the sorted and deduplicated list of $i$-bit prefixes of strings in $A$. Specifically, $A^{(0)} = [\epsilon]$. 
-  \State Let $G:\{0,1\}^\lambda\rightarrow \{0,1\}^{2\lambda+2t}$ be a public PRG. 
-  \State Set $S_b^{(0)} = [r_b]$ and $T_b^{(0)} = [b||0^{m-1}]$ for $b = 0,1$ where $r_0,r_1$ are sampled independently and randomly from $\{0,1\}^\lambda$.
-  \For{$i=1$ to $n$}
-  \State Let $CW^{(i)}, S_0^{(i)}, T_0^{(i)}, S_1^{(i)}, T_1^{(i)}$ be empty lists. 
-  \For{$l = 1$ to $A^{(i-1)}$}
-  \State Parse $G(S_b^{(i-1)}[l]) = s_b^L||t_b^L||s_b^R||t_b^R$ for $b = 0,1$ where $s_b^L,s_b^R\in\{0,1\}^\lambda$ and $t_b^L,t_b^R\in\{0,1\}^t$.
-  \If{$A^{(i-1)}[l]||0\in A^{(i)}$ and $A^{(i-1)}[l]||1\not\in A^{(i)}$}
-  \State $d\gets$ the index of $A^{(i-1)}[l]||0$ in $A^{(i)}$. 
-  \State Append $s_0^R\oplus s_1^R||t_0^L\oplus t_1^L\oplus e_d||t_0^R\oplus t_1^R$ to $CW^{(i)}$ where $e_d = 0^{d-1}10^{t-d}$.
-  \ElsIf{$A^{(i-1)}[l]||1\in A^{(i)}$ and $A^{(i-1)}[l]||0\not\in A^{(i)}$}
-  \State $d\gets$ the index of $A^{(i-1)}[l]||1$ in $A^{(i)}$. 
-  \State Append $s_0^L\oplus s_1^L||t_0^L\oplus t_1^L||t_0^R\oplus t_1^R\oplus e_d$ to $CW^{(i)}$.
-  \Else\Comment{both $A^{(i-1)}[l]||0$ and $A^{(i-1)}[l]||1$ are in $A^{(i)}$.}
-  \State $d\gets$ the index of $A^{(i-1)}[l]||0$ in $A^{(i)}$. 
-  \State Randomly sample $r$ from $\{0,1\}^\lambda$.
-  \State Append $r||t_0^L\oplus t_1^L\oplus e_d||t_0^R\oplus t_1^R\oplus e_{d+1}$ to $CW^{(i)}$.
-  \EndIf
-  \EndFor
-  \State Randomly and independently sample $t-|CW^{(i)}|$ strings from $\{0,1\}^{\lambda+2t}$ .
-  \State If $i=n$ then skip the following for-loop. 
-  \For{$l = 1$ to $|A^{(i-1)}|$}
-  \State Parse $G(S_b^{(i-1)}[l]) = s_b^L||t_b^L||s_b^R||t_b^R$ for $b = 0,1$.
-  \State Parse $T_b^{(i-1)}[l]\cdot CW^{(i)} = \Delta s_b||\Delta t_b^L||\Delta t_b^R$ for $b = 0,1$.
-  \If{$A^{(i-1)}[l]||0\in A^{(i)}$ and $A^{(i-1)}[l]||1\not\in A^{(i)}$}
-  \State Append $s_b^L\oplus \Delta s_b$ to $S_b^{(i)}$ and $t_b^L\oplus \Delta t_b^L$ to $T_b^{(i)}$, for $b = 0,1$.
-  \ElsIf{$A^{(i-1)}[l]||1\in A^{(i)}$ and $A^{(i-1)}[l]||0\not\in A^{(i)}$}
-  \State Append $s_b^R\oplus \Delta s_b$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t_b^R$ to $T_b^{(i)}$, for $b = 0,1$.
-  \Else
-  \State Append $s_b^L\oplus \Delta s_b$ to $S_b^{(i)}$ and $t_b^L\oplus \Delta t_b^L$ to $T_b^{(i)}$, for $b = 0,1$.
-  \State Append $s_b^R\oplus \Delta s_b$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t_b^R$ to $T_b^{(i)}$, for $b = 0,1$.
-  \EndIf
-  \EndFor
-  \EndFor
-  \For{$l=1$ to $t$}\Comment{convert layer}
-  \State Append $(-1)^{T_0^{(n)}[l][l]}\cdot\big(G_{convert}(S_0^{(n)}[l])-G_{convert}(S_1^{(n)}[l])-B[l]\big)$ to $CW^{(n+1)}$. 
-  \EndFor
-  \State Set $k_b \gets (S_b^{(0)}, CW^{(1)},CW^{(2)},\cdots,CW^{(n)})$.
-  \State \textbf{return} $(k_0,k_1)$.
-  \EndProcedure
-  \Procedure{Eval}{$1^\lambda, b,k_b,x$}
-  \State Parse $k_b = ([s],CW^{(1)},CW^{(2)},\cdots,CW^{(n)})$. 
-  \State $t\leftarrow$ number of rows of any $CW^{(i)}$.
-  \State $c\gets b||0^{t-1}$.
-  \For{$i = 1$ to $n$}
-  \State Parse $c\cdot CW^{(i)} = \Delta s||\Delta t^0||\Delta t^1$ where $\Delta s\in\{0,1\}^\lambda$ and $\Delta t^0,\Delta t^1\in \{0,1\}^t$. 
-  \State Parse $G(s) = s^0||t^0||s^1||t^1$. 
-  \State $s||c\gets (s^{x[i]}||t^{x[i]})\oplus (\Delta s||\Delta t^{x[i]})$
-  \EndFor
-  \State \textbf{return} $s||\bigoplus_{j = 1}^t c[j]$
-  \EndProcedure
-  \end{algorithmic}
-  }}
-  \caption{The big-state DMPF scheme}
-\end{figure}
-\fi
+    \State \textbf{Public parameters: }
+    \State The multi-point function family $\{f_{A,B}\}$, an upperbound $t$ of the number of nonzero points ($|A|\le t$), input domain $[N]=\{0,1\}^n$ and the output group $\GG$. 
+    \State Suppose there is a public PRG $G:\{0,1\}^\lambda\rightarrow \{0,1\}^{2\lambda+2l}$. Parse $G = G_0||G_1$ to the left half and right half. 
+    \State Suppose there is a public PRG $G_{\sf convert}:\{0,1\}^\lambda\rightarrow \GG$. 
+    \item[]
+    \Procedure{Gen}{$1^\lambda, \hat{f}_{A,B}$}
+    \State Denote $A = (\alpha_1,\cdots,\alpha_t)$ in lexicographical order, $B = (\beta_1,\cdots,\beta_t)$. 
+    \State For $0\le i\le n-1$, let $A^{(i)}$ denote the sorted and deduplicated list of $i$-bit prefixes of strings in $A$. Specifically, $A^{(0)} = [\epsilon]$. 
+    \State For $0\le i\le n-1$ and $b=0,1$, initialize empty lists $\seed_b^{(i)}$ and $\sign_b^{(i)}$. 
+    \State ${\sf Initialize}(\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1})$. 
+    \For{$i=1$ to $n$}
+    \State $CW^{(i)}\gets {\sf GenCW}(A,B,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1})$. 
+      \For{$k = 1$ to $|A^{(i-1)}|$ and $z=0,1$}
+        \If{$A^{(i-1)}[k]||z\in A^{(i)}$}
+        \State For $b=0,1$, compute ${\sf temp}_b\gets {\sf Correct}(A^{(i-1)}[k]||z, \seed_b^{(i-1)}[k],\sign_b^{(i-1)}[k], CW^{(i)})$.
+        \State Append the first $\lambda$ bit of ${\sf temp}_b$ to $\seed_b^{(i)}$ and the rest to $\sign_b^{(i)}$. 
+        \EndIf
+      \EndFor
+    \EndFor
+    \State $CW^{(n+1)}\gets{\sf GenConvCW}(A,B,\{\seed_b^{(n)},\sign_b^{(n)}\}_{b=0,1})$. 
+    \State Set $k_b \gets (\seed_b^{(0)},\sign_b^{(0)}, CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$.
+    \State \textbf{return} $(k_0,k_1)$.
+    \EndProcedure
+    \item[]
+    \Procedure{Eval\(_b\)}{$1^\lambda, k_b,x$}
+    \State Parse $k_b = ([\seed^{(0)}],[\sign^{(0)}],CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
+    \State Denote $x=x_1x_2\cdots x_n$. 
+    \For{$i = 1$ to $n$}
+      \State $\seed^{(i)}||\sign^{(i)}\gets {\sf Correct}(x_1\cdots x_i, \seed^{(i-1)},\sign^{(i-1)},CW^{(i)})$ where $\seed^{(i)}$ is $\lambda$-bit. 
+    \EndFor
+    \State \textbf{return} ${\sf ConvCorrect}(x,\seed^{(n)},\sign^{(n)},CW^{(n+1)})$. 
+    \EndProcedure
+    \end{algorithmic}}}
+  \caption{The paradigm of our DMPF schemes. We leave the PRG expand length $l$, methods $\sf Initialize, GenCW,$ $\sf GenConvCW, Correct, ConvCorrect$ to be determined by specific constructions. }
+  \label{fig:DMPF_paradigm}
+\end{figure*}
 
 \subsection{Batch-Code DMPF}
 display the batch-code DMPF 
