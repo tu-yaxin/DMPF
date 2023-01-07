@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.22)  5 JAN 2023 23:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.22)  7 JAN 2023 16:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -926,19 +926,188 @@ Overfull \hbox (9.75049pt too wide) in paragraph at lines 222--223
  []
 
 
-Overfull \hbox (6.79999pt too wide) in paragraph at lines 275--276
+Overfull \hbox (6.79999pt too wide) in paragraph at lines 274--275
  [][] 
  []
 
 
-Underfull \hbox (badness 3907) in paragraph at lines 276--276
+Underfull \hbox (badness 3907) in paragraph at lines 275--275
 []\T1/LinuxLibertineT-TLF/b/n/9 (+20) Figure 1: |The par-a-digm of our DMPF schemes. We leave the PRG ex-pand length $\OML/nxlmi/m/it/9 l$\T1/LinuxLibertineT-TLF/b/n/9 (+20) , meth-ods $\T1/LinuxBiolinumT-TLF/m/n/9 (+20) Initialize\OML/nxlmi/m/it/9 ; \T1/LinuxBiolinumT-TLF/m/n/9 (+20) GenCW\OML/nxlmi/m/it/9 ;$
  []
 
 
-Class acmart Warning: A possible image without description on input line 278.
+Class acmart Warning: A possible image without description on input line 277.
 
-(./main.bbl
+
+Overfull \hbox (6.79999pt too wide) in paragraph at lines 333--334
+ [][] 
+ []
+
+
+Class acmart Warning: A possible image without description on input line 336.
+
+
+Overfull \vbox (5.99246pt too high) has occurred while \output is active []
+
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 337.
+ [2.2]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ (./main.bbl
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [3.3
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.2}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.4}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.6}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.7}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.8}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.9}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.10}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.11}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.12}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.13}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.14}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.15}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.16}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.17}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.18}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.19}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.20}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.21}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.22}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.23}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.24}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.25}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.26}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.27}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.28}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.29}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              
+pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.30}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.5 \begin{thebibliography}{4}
+                              ]
 LaTeX Info: Redefining \tempurl on input line 66.
 LaTeX Info: Redefining \tempurl on input line 96.
 ) (c:/texlive/2022/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
@@ -949,29 +1118,23 @@ File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
 
 Class acmart Warning: Some images may lack descriptions.
 
-
-Package balance Warning: You have called \balance in second column
-(balance)                Columns might not be balanced.
-
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 316.
-[2.2] [3.3] (./main.aux)
+[4.4] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 2433A340D2457CC4598C9301E95F3C67;2982.
+(rerunfilecheck)             Checksum: 2845979B56C0224D16E0D0F3AA961CAE;2982.
  ) 
 Here is how much of TeX's memory you used:
- 23407 strings out of 475075
- 390647 string characters out of 5783001
- 809342 words of memory out of 5000000
- 43830 multiletter control sequences out of 15000+600000
- 631231 words of font info for 309 fonts, out of 8000000 for 9000
+ 23436 strings out of 475075
+ 391087 string characters out of 5783001
+ 822342 words of memory out of 5000000
+ 43837 multiletter control sequences out of 15000+600000
+ 632457 words of font info for 316 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 84i,12n,131p,1044b,687s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,18n,131p,1044b,687s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_ki75ao.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_ncsllp.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_naooyc.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc}<c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathMI.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathMI5.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathMI7.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/LibertineMathRM.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineTBI.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/txexs.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/txmiaX.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/txfonts/txsyb.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/newtx/txsys.pfb>
-Output written on main.pdf (3 pages, 483230 bytes).
+Output written on main.pdf (4 pages, 490162 bytes).
 PDF statistics:
- 276 PDF objects out of 1000 (max. 8388607)
- 233 compressed objects within 3 object streams
- 71 named destinations out of 1000 (max. 500000)
+ 298 PDF objects out of 1000 (max. 8388607)
+ 253 compressed objects within 3 object streams
+ 84 named destinations out of 1000 (max. 500000)
  100529 words of extra memory for PDF output out of 106986 (max. 10000000)
 

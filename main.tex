@@ -235,8 +235,7 @@ TBD: mention some connections to cuckoo hashing
 
 \section{New DMPF constructions}
 
-\subsection{Big-State DMPF}
-display the big-state DMPF (plus distributed gen) 
+
 \begin{figure*}
   \fbox{\parbox{\linewidth}{
   \begin{algorithmic}
@@ -270,12 +269,71 @@ display the big-state DMPF (plus distributed gen)
     \For{$i = 1$ to $n$}
       \State $\seed^{(i)}||\sign^{(i)}\gets {\sf Correct}(x_1\cdots x_i, \seed^{(i-1)},\sign^{(i-1)},CW^{(i)})$ where $\seed^{(i)}$ is $\lambda$-bit. 
     \EndFor
-    \State \textbf{return} ${\sf ConvCorrect}(x,\seed^{(n)},\sign^{(n)},CW^{(n+1)})$. 
+    \State \Return $(-1)^b\cdot {\sf ConvCorrect}(x,\seed^{(n)},\sign^{(n)},CW^{(n+1)})$. 
     \EndProcedure
     \end{algorithmic}}}
   \caption{The paradigm of our DMPF schemes. We leave the PRG expand length $l$, methods $\sf Initialize, GenCW,$ $\sf GenConvCW, Correct, ConvCorrect$ to be determined by specific constructions. }
   \label{fig:DMPF_paradigm}
 \end{figure*}
+
+\subsection{Big-State DMPF}
+display the big-state DMPF (plus distributed gen) 
+\begin{figure}[H]
+  \fbox{\parbox{\linewidth}{
+  \begin{algorithmic}
+    \State Set $l\leftarrow t$, the upperbound of $|A|$. 
+    \Procedure{Initialize}{$\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1}$}
+    \State For $b=0,1$, let $\seed_b^{(0)} = [r_b]$ where $r_b\xleftarrow{\$}\{0,1\}^\lambda$. 
+    \State For $b=0,1$, set $\sign_b^{(0)} = [b||0^{t-1}]$. 
+    \EndProcedure
+    \item[]
+    \Procedure{GenCW}{$A,B,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1}$}
+    \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_paradigm}. 
+    \State Let $CW$ be an empty list. 
+    \For{$k = 1$ to $|A^{(i-1)}|$}
+      \State Parse $G(\seed_b^{(i-1)}[k]) = \seed_b^0||\sign_b^0||\seed_b^1||\sign_b^1$, for $b=0,1$, $\seed_b^0,\seed_b^1\in\{0,1\}^\lambda$ and $\sign_b^0,\sign_b^1\in\{0,1\}^t$. 
+      \State Compute $\Delta\seed^c = \seed_0^c\oplus\seed_1^c$ and $\Delta \sign^c = \sign_0^c\oplus\sign_1^c$ for $c=0,1$. 
+      \State Denote ${\sf path}\leftarrow A^{(i-1)}[k]$. 
+      \If{both ${\sf path}||z$ for $z=0,1$ are in $A^{(i)}$}
+        \State $d\gets$ the index of ${\sf path}||0$ in $A^{(i)}$.
+        \State $CW[d]\gets r||\Delta\sign^0\oplus e_d ||\Delta\sign^1\oplus e_{d+1}$ where $r\xleftarrow{\$}\{0,1\}^\lambda$, $e_d = 0^{d-1}10^{t-d}$. 
+      \Else
+        \State Let $z$ be such that ${\sf path}||z\in A^{(i)}$. 
+        \State $d\gets$ the index of ${\sf path}||z$ in $A^{(i)}$. 
+        \State $CW[d]\gets 
+          \begin{cases}
+            \Delta \seed^1||\Delta\sign^0\oplus e_d||\Delta\sign^1 & z=0\\
+            \Delta \seed^0||\Delta\sign^0||\Delta\sign^1\oplus e_d & z=1
+          \end{cases}$.        
+      \EndIf
+      \State Extend $CW$ to $t$ entries by appending random strings.  
+    \EndFor
+    \State\Return $CW$. 
+    \EndProcedure
+    \item[]
+    \Procedure{GenConvCW}{$A,B,\{\seed_b^{(n)},\sign_b^{(n)}\}$}
+      \State Let $CW$ be an empty list. 
+      \For{$k = 1$ to $|A|$}
+        \State $\Delta g\gets G_{\sf convert}(\seed_0^{(n)}[k]) - G_{\sf convert}(\seed_1^{(n)}[k])$. 
+        \State$CW[k]\gets (-1)^{\sign_0^{(n)}[k][k]}(\Delta g-B[k])$.
+      \EndFor
+      \State Extend $CW$ to $t$ entries by appending random strings.  
+      \State \Return $CW$. 
+    \EndProcedure
+    \item[]
+    \Procedure{Correct}{$\bar{x}, \seed,\sign,CW$}
+      \State Let $z$ be the last bit of $\bar{x}$. 
+      \State Parse $C_{\seed}||C_{\sign^0}||C_{\sign^1} = \sum_{i=1}^t \sign[i]\cdot CW[i]$, where $C_{\sign^0}$ and $C_{\sign^1}$ are $t$-bit. 
+      \State \Return $G_z(\seed)\oplus (C_\seed||C_{\sign^z})$. 
+    \EndProcedure
+    \item[]
+    \Procedure{ConvCorrect}{$x,\seed,\sign,CW$}
+      \State \Return $G_{\sf convert}(\seed)\oplus \sum_{i=1}^t \sign[i]\cdot CW[i]$. 
+    \EndProcedure
+  \end{algorithmic}}}
+  \caption{The parameter $l$ and methods' setting that turns the paradigm of DMPF in~\cref{fig:DMPF_paradigm} into the big-state DMPF. }
+  \label{fig:DMPF_big-state}
+\end{figure}
 
 \subsection{Batch-Code DMPF}
 display the batch-code DMPF 
