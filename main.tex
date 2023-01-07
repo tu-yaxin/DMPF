@@ -134,12 +134,12 @@ TBD: explain
   \fbox{\parbox{\linewidth}{
   \begin{algorithmic}
     \State \textbf{Public parameters: }
-    \State The multi-point function family $\{f_{A,B}\}$, an upperbound $t$ of the number of nonzero points ($|A|\le t$), input domain $[N]=\{0,1\}^n$ and the output group $\GG$. 
+    \State The $t$-point function family $\{f_{A,B}\}$ with $t$ an upperbound of the number of nonzero points, input domain $[N]=\{0,1\}^n$ and the output group $\GG$. 
     \State Suppose there is a public PRG $G:\{0,1\}^\lambda\rightarrow \{0,1\}^{2\lambda+2l}$. Parse $G = G_0||G_1$ to the left half and right half. 
     \State Suppose there is a public PRG $G_{\sf convert}:\{0,1\}^\lambda\rightarrow \GG$. 
     \item[]
     \Procedure{Gen}{$1^\lambda, \hat{f}_{A,B}$}
-    \State Denote $A = (\alpha_1,\cdots,\alpha_t)$ in lexicographical order, $B = (\beta_1,\cdots,\beta_t)$. 
+    \State Denote $A = (\alpha_1,\cdots,\alpha_t)$ in lexicographical order, $B = (\beta_1,\cdots,\beta_t)$. If $|A|<t$, extend $A$ to size-$t$ with arbitrary $\{0,1\}^n$ strings and $B$ with 0's. 
     \State For $0\le i\le n-1$, let $A^{(i)}$ denote the sorted and deduplicated list of $i$-bit prefixes of strings in $A$. Specifically, $A^{(0)} = [\epsilon]$. 
     \State For $0\le i\le n-1$ and $b=0,1$, initialize empty lists $\seed_b^{(i)}$ and $\sign_b^{(i)}$. 
     \State ${\sf Initialize}(\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1})$. 

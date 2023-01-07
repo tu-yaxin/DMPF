@@ -2,7 +2,7 @@
 
 
 
- \paragraph{Point and multi-point functions.} Given a domain size $N$ and Abelian group $\GG$, a \emph{point function} $f_{\alpha,\beta}:[N]\rightarrow\GG$ for $\alpha\in[N]$ and $\beta\in\GG$ evaluates to $\beta$ on input $\alpha$ and to $0\in\GG$ on all other inputs. We denote by $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ the representation of such a point function. A \emph{multi-point function} $f_{A,B}:[N]\rightarrow \GG$ for $A=(\alpha_1,\cdots\alpha_t)\in[N]^t$ and $B=(\beta_1,\cdots,\beta_t)\in \GG^t$ evaluates to $\beta_i$ on input $\alpha_i$ for $1\le i\le t$ and to $0$ on all other inputs. Denote $\hat{f}_{A,B}(N,\hat{\GG},A,B)$ the representation of such a point function. 
+ \paragraph{Point and multi-point functions.} Given a domain size $N$ and Abelian group $\GG$, a \emph{point function} $f_{\alpha,\beta}:[N]\rightarrow\GG$ for $\alpha\in[N]$ and $\beta\in\GG$ evaluates to $\beta$ on input $\alpha$ and to $0\in\GG$ on all other inputs. We denote by $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ the representation of such a point function. A \emph{$t$-point function} $f_{A,B}:[N]\rightarrow \GG$ for $A=(\alpha_1,\cdots\alpha_t)\in[N]^t$ and $B=(\beta_1,\cdots,\beta_t)\in \GG^t$ evaluates to $\beta_i$ on input $\alpha_i$ for $1\le i\le t$ and to $0$ on all other inputs. Denote $\hat{f}_{A,B}(N,\hat{\GG},t,A,B)$ the representation of such a $t$-point function. Call the collection of all $t$-point functions for all $t$ \emph{multi-point functions}. 
  
 \Enote{MPF. Also representation of groups.}
  
@@ -10,7 +10,7 @@
 
 \Enote{should directly adapt to multi-point function case}
 
-We begin by defining a slightly generalized notion of distributed point functions (DPFs), which accounts for the extra parameter $\GG'$.
+We begin by defining a slightly generalized notion of distributed point functions (DPFs), which accounts for the extra parameter $\GG'$. \Yaxin{What is $\GG'$?}
 
 %\yuval{Made some small stylistic changes below (similar changes may apply elsewhere). Should citations to GI14,BGI16. }
 \begin{definition}[DPF \cite{EC:GilIsh14,CCS:BoyGilIsh16}]\label{def:dpf}
@@ -49,8 +49,34 @@ We require $\Pi$ to satisfy the following requirements:
 \end{itemize}
 %If the security threshold $t$ is unspecified, we assume it is $t=1$.
 \end{definition}
+
+\begin{definition}[DMPF]\label{def:dmpf}
+  A 
+  %$t$-private $m$-server 
+  (2-party)
+  \emph{distributed multi-point function (DMPF)}
+  %, or $(m,t)$-DPF for short, 
+  is a triple of algorithms %$\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$ 
+  $\Pi=(\Gen,\Eval_0,\Eval_1)$
+  with the following syntax: 
+  \begin{itemize}
+      \item $\Gen(1^\lambda,\hat{f}_{A,B})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{A,B}=(N,\hat{\GG},t,A,B)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. 
+      \item $\Eval_i(k_i,x)\rightarrow y_i$: On input key $k_i\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $i$, $\Eval_i$ returns $y_i\in\GG$.
+  \end{itemize}
+  We require $\Pi$ to satisfy the following requirements:
+  \begin{itemize}
+      \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$, if $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f})$, then $$\Pr\left[\sum_{i=0}^{1}\Eval_i(k_i,x)=f_{\alpha,\beta}(x)\right]=1$$
+      \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $i\in\{0,1\}$:
+      \begin{enumerate}
+          \item The adversary produces two $t$-point function descriptions $(\hat{f}^0=(N,\hat\GG,t,A_0,B_0),\hat{f}^1=(N,\hat\GG,t,A_1,B_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_i\in[N]$ and $\beta_i\in\GG$.
+          \item The challenger samples $b\gets\{0,1\}$ and $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}^b)$.
+          \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_i)$.
+      \end{enumerate}
+      Denote by $\Adv(1^\lambda,\mathcal{A},i)=\Pr[b=b']-1/2$ the advantage of $\mathcal{A}$ in guessing $b$ in the above experiment. For every non-uniform polynomial time adversary $\mathcal{A}$ there exists a negligible function $\nu$ such that $\Adv(1^\lambda,\mathcal{A},i) \le \nu(\lambda)$ for all $\lambda \in \NN$.
+  \end{itemize}
+  \end{definition}
  
- We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_i$ an algorithm which computes $\Eval_i$ on every input $x$. Hence, $\FullEval_i$ receives only a key $k_i$ as input.
+ We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DMPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_i$ an algorithm which computes $\Eval_i$ on every input $x$. Hence, $\FullEval_i$ receives only a key $k_i$ as input.
 
 
 
