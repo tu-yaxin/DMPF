@@ -158,12 +158,26 @@ TBD: explain
     \EndProcedure
     \item[]
     \Procedure{Eval\(_b\)}{$1^\lambda, k_b,x$}
-    \State Parse $k_b = ([\seed^{(0)}],[\sign^{(0)}],CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
+    \State Parse $k_b = ([\seed],[\sign],CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
     \State Denote $x=x_1x_2\cdots x_n$. 
     \For{$i = 1$ to $n$}
-      \State $\seed^{(i)}||\sign^{(i)}\gets {\sf Correct}(x_1\cdots x_i, \seed^{(i-1)},\sign^{(i-1)},CW^{(i)})$ where $\seed^{(i)}$ is $\lambda$-bit. 
+      \State $\seed||\sign\gets {\sf Correct}(x_1\cdots x_i, \seed,\sign,CW^{(i)})$.
     \EndFor
-    \State \Return $(-1)^b\cdot {\sf ConvCorrect}(x,\seed^{(n)},\sign^{(n)},CW^{(n+1)})$. 
+    \State \Return $(-1)^b\cdot {\sf ConvCorrect}(x,\seed,\sign,CW^{(n+1)})$. 
+    \EndProcedure
+    \item[]
+    \Procedure{FullEval\(_b\)}{$1^\lambda,k_b$}
+    \State Parse $k_b=(\seed^{(0)},\sign^{(0)},CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
+    \State For $1\le i\le n$, ${\sf Path}^{(i)}\gets$ the lexicographical ordered list of $\{0,1\}^i$. ${\sf Path}^{(0)}\gets[\epsilon]$. 
+    \For{$i=1$ to $n$}
+      \For{$k = 1$ to $2^{i-1}$ and $z = 0,1$}
+        \State $\seed^{(i)}[2k+z]||\sign^{(i)}[2k+z]\gets {\sf Correct}({\sf Path}[k]||z, \seed^{(i-1)}[k], \sign^{(i-1)}[k], CW^{(i)})$. 
+      \EndFor
+    \EndFor
+    \For{$k = 1$ to $2^n$}
+      \State ${\sf Output}[k]\gets {\sf ConvCorrect}({\sf Path}[k],\seed^{(n)}[k],\sign^{(n)}[k],CW^{(n+1)})$.
+    \EndFor
+    \State\Return $\sf Output$. 
     \EndProcedure
     \end{algorithmic}}}
   \caption{The paradigm of our DMPF schemes. We leave the PRG expand length $l$, methods $\sf Initialize, GenCW,$ $\sf GenConvCW, Correct, ConvCorrect$ to be determined by specific constructions. }
