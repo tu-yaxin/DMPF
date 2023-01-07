@@ -44,7 +44,9 @@
 \newcommand{\row}{{\sf row}}
 \newcommand{\seed}{{\sf seed}}
 \newcommand{\sign}{{\sf sign}}
+\newcommand{\map}{{\sf map}}
 
+\newcommand{\OKVS}{{\sf OKVS}}
 \newcommand{\Adv}{{\sf Adv}}
     
 \newcommand{\GG}{\mathbb{G}}
@@ -125,117 +127,9 @@
 tbd
 
 \section{Preliminary}
-\subsection{Basic Notations}
-
-
-
- \paragraph{Point and multi-point functions.} Given a domain size $N$ and Abelian group $\GG$, a \emph{point function} $f_{\alpha,\beta}:[N]\rightarrow\GG$ for $\alpha\in[N]$ and $\beta\in\GG$ evaluates to $\beta$ on input $\alpha$ and to $0\in\GG$ on all other inputs. We denote by $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ the representation of such a point function. A \emph{multi-point function} $f_{A,B}:[N]\rightarrow \GG$ for $A=(\alpha_1,\cdots\alpha_t)\in[N]^t$ and $B=(\beta_1,\cdots,\beta_t)\in \GG^t$ evaluates to $\beta_i$ on input $\alpha_i$ for $1\le i\le t$ and to $0$ on all other inputs. Denote $\hat{f}_{A,B}(N,\hat{\GG},A,B)$ the representation of such a point function. 
- 
-\Enote{MPF. Also representation of groups.}
- 
-\subsection{Distributed Multi-Point Functions}
-
-\Enote{should directly adapt to multi-point function case}
-
-We begin by defining a slightly generalized notion of distributed point functions (DPFs), which accounts for the extra parameter $\GG'$.
-
-%\yuval{Made some small stylistic changes below (similar changes may apply elsewhere). Should citations to GI14,BGI16. }
-\begin{definition}[DPF \cite{EC:GilIsh14,CCS:BoyGilIsh16}]\label{def:dpf}
-A 
-%$t$-private $m$-server 
-(2-party)
-\emph{distributed point function (DPF)}
-%, or $(m,t)$-DPF for short, 
-is a triple of algorithms %$\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$ 
-$\Pi=(\Gen,\Eval_0,\Eval_1)$
-with the following syntax: 
-\begin{itemize}
-    \item $\Gen(1^\lambda,\hat{f}_{\alpha,\beta})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. We assume that $N$ and $\GG$ are determined by each key.
-    \item $\Eval_i(k_i,x)\rightarrow y_i$: On input key $k_i\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $i$, $\Eval_i$ returns 
-    %a group element 
-    $y_i\in\GG$.
-\end{itemize}
-%The algorithms $\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$ should 
-We require $\Pi$ to satisfy the following requirements:
-\begin{itemize}
-    \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$, if $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f})$, then $$\Pr\left[\sum_{i=0}^{1}\Eval_i(k_i,x)=f_{\alpha,\beta}(x)\right]=1$$
-    \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $i\in\{0,1\}$:
-    \begin{enumerate}
-        \item The adversary produces two point function descriptions $(\hat{f}^0=(N,\hat\GG,\alpha_0,\beta_0),\hat{f}^1=(N,\hat\GG,\alpha_1,\beta_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_i\in[N]$ and $\beta_i\in\GG$.
-        \item The challenger samples $b\gets\{0,1\}$ and $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}^b)$.
-        \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_i)$.
-    \end{enumerate}
-    Denote by $\Adv(1^\lambda,\mathcal{A},i)=\Pr[b=b']-1/2$ the advantage of $\mathcal{A}$ in guessing $b$ in the above experiment. For every non-uniform polynomial time adversary $\mathcal{A}$ there exists a negligible function $\nu$ such that $\Adv(1^\lambda,\mathcal{A},i) \le \nu(\lambda)$ for all $\lambda \in \NN$.
-%    For circuit size bound $S=S(\lambda)$ and advantage bound $\epsilon(\lambda)$, we say that $\Pi$ is $(S,\epsilon)$-secure if for all $i\in\{0,1\}$ and all non-uniform adversaries $\mathcal{A}$ of size $S(\lambda)$ and sufficiently large $\lambda$, we have $\Adv(1^\lambda,\mathcal{A},i)\leq\epsilon(\lambda)$. We say that $\Pi$ is:
-%    \begin{itemize}
-%        \item \emph{Computationally $\epsilon$-secure} if it is $(S,\epsilon)$-secure for all polynomials $S$.
-%        \item \emph{Computationally secure} if it is $(S,1/S)$-secure for all polynomials $S$.
-%        %\item \emph{Statistically $\epsilon$-secure} if it is $(S,\epsilon)$-secure for all $S$.
-%        %\item \emph{Perfectly secure} if it is statistically $0$-secure.
-%    \end{itemize}
-\end{itemize}
-%If the security threshold $t$ is unspecified, we assume it is $t=1$.
-\end{definition}
- 
- We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_i$ an algorithm which computes $\Eval_i$ on every input $x$. Hence, $\FullEval_i$ receives only a key $k_i$ as input.
-
-
-
-\subsection{Batch Codes}
-combinatorial/probabilistic batch codes, with cuckoo hashing a concrete instantiation
-
-\subsection{Oblivious Key-Value Stores}
-\begin{definition}[OKVS\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]
-  An Oblivious Key-Value Stores (OKVS) scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $n$ and output length $m$. The algorithms are of the following syntax: 
-  \begin{itemize}
-    \item $\Encode_r(\{(k_1,v_1),(k_2,v_2),\cdots,(k_n,v_n)\})\rightarrow P$: On input $n$ key-value pairs with distinct keys, the encode algorithm with randomness $r$ in the randomness space outputs an encoding $P\in\mathcal{V}^m\cup\bot$.
-    \item $\Decode_r(P,k)\rightarrow v$: On input a (nonempty) encoding from $\mathcal{V}^m$ and a key $k\in\mathcal{K}$, output a value $v$. 
-  \end{itemize}
-  We require the scheme to satisfy
-  \begin{itemize}
-    \item \textbf{Correctness: }For every $S\in(\mathcal{K}\times\mathcal{V})^n$, $\Pr_{r\leftarrow\{0,1\}^\kappa}[\Encode_r(S)=\bot]\le 2^{-\lambda_{\sf stat}}$. 
-    \item \textbf{Obliviousness: }For any distinct key sets $\{k_1^0,k_2^0,\cdots,k_n^0\}$ and $\{k_1^1,k_2^1,\cdots,k_n^1\}$ that are different, if they are paired with random values then their encodings are computationally indistinguishable, i.e., 
-  \begin{align*}
-    &\{r, \Encode_r(\{(k_1^0,v_1),\cdots,(k_n^0,v_n)\})\}_{v_1,\cdots,v_n\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}\\
-    \approx_c &\{r, \Encode_r(\{(k_1^1,v_1),\cdots,(k_n^1,v_n)\})\}_{v_1,\cdots,v_n\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}
-  \end{align*}
-  \end{itemize}
-One can obtain a \emph{linear OKVS} if in addition require:
-\begin{itemize}
-  \item \textbf{Linearity: }There exists a function family $\{\row_r:\mathcal{K}\rightarrow\mathcal{V}^m\}_{r\in\{0,1\}^\kappa}$ such that $\Decode_r(P,k) = \ipd{\row_r(k)}{P}$. 
-\end{itemize}
-\end{definition}
-The $\Encode$ process for a linear OKVS is the process of sampling a random $P$ from the set of solutions of the linear system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le n}$. 
-
-We evaluate an OKVS scheme by its encoding size (output length $m$), encoding time and decoding time. We stress the following two (linear) OKVS constructions:
-\begin{construction}[Polynomial]
-  Suppose $\mathcal{K} = \mathcal{V}=\FF$ is a field. Set 
-  \begin{itemize}
-    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le n}) \rightarrow P$ where $P$ is the coeffients of a $(n-1)$-degree $\FF$-polynomial $g_P$ that $g_P(k_i) = v_i$ for $1\le i\le n$. 
-    \item $\Decode(P,k)\rightarrow g_P(k)$. 
-  \end{itemize}
-\end{construction}
-The polynomial OKVS possesses an optimal encoding size $m=n$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(n\log^2n)$. The time for a single decoding is $O(n)$ and that for batched decodings is (amortized) $O(\log^2 n)$. 
-
-An alternative construction that has near optimal encoding size but much better running time is as follows. 
-\begin{construction}[3-Hash Garbled Cuckoo Table (3H-GCT)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]
-  Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}$ outputs a uniformly random weight-$w$ vector in $\{0,1\}^{m_1}$, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
-  \begin{itemize}
-    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le n}) \rightarrow P$ where $P$ is solved from the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le n}$ using the triangulation algorithm in \cite{cryptoeprint:2022/320}. 
-    \item $\Decode(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
-  \end{itemize}
-\end{construction}
-This OKVS construction features a linear encoding time, constant decoding time while having a linear encoding size. 
-
-TBD: Carefully(!) recompute the comparison table for OKVS and insert
-
-We take $w=3$, the most common option that outruns other choices of $w$ in terms of running time. Restating the conclusion in  \cite{cryptoeprint:2022/320}: given $n$ and $\lambda_{\sf stat}$, the choices of $e$ and $\hat{g}$ are $e = 1.223+\frac{\lambda_{\sf stat}+9.2}{4.144 n^{0.55}}$ and $\hat{g}=\frac{\lambda_{\sf stat}}{\log_2(en)}$. 
-
-TBD: mention some connections to cuckoo hashing
-
+  \input{prelim.tex}
 \section{New DMPF constructions}
-
-
+TBD: explain
 \begin{figure*}
   \fbox{\parbox{\linewidth}{
   \begin{algorithmic}
@@ -250,7 +144,7 @@ TBD: mention some connections to cuckoo hashing
     \State For $0\le i\le n-1$ and $b=0,1$, initialize empty lists $\seed_b^{(i)}$ and $\sign_b^{(i)}$. 
     \State ${\sf Initialize}(\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1})$. 
     \For{$i=1$ to $n$}
-    \State $CW^{(i)}\gets {\sf GenCW}(A,B,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1})$. 
+    \State $CW^{(i)}\gets {\sf GenCW}(i,A,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1})$. 
       \For{$k = 1$ to $|A^{(i-1)}|$ and $z=0,1$}
         \If{$A^{(i-1)}[k]||z\in A^{(i)}$}
         \State For $b=0,1$, compute ${\sf temp}_b\gets {\sf Correct}(A^{(i-1)}[k]||z, \seed_b^{(i-1)}[k],\sign_b^{(i-1)}[k], CW^{(i)})$.
@@ -277,7 +171,7 @@ TBD: mention some connections to cuckoo hashing
 \end{figure*}
 
 \subsection{Big-State DMPF}
-display the big-state DMPF (plus distributed gen) 
+TBD: explain
 \begin{figure}[H]
   \fbox{\parbox{\linewidth}{
   \begin{algorithmic}
@@ -287,9 +181,9 @@ display the big-state DMPF (plus distributed gen)
     \State For $b=0,1$, set $\sign_b^{(0)} = [b||0^{t-1}]$. 
     \EndProcedure
     \item[]
-    \Procedure{GenCW}{$A,B,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1}$}
+    \Procedure{GenCW}{$i,A,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1}$}
     \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_paradigm}. 
-    \State Let $CW$ be an empty list. 
+    \State Sample a list $CW$ of $t$ random strings from $\{0,1\}^{\lambda+2t}$.  
     \For{$k = 1$ to $|A^{(i-1)}|$}
       \State Parse $G(\seed_b^{(i-1)}[k]) = \seed_b^0||\sign_b^0||\seed_b^1||\sign_b^1$, for $b=0,1$, $\seed_b^0,\seed_b^1\in\{0,1\}^\lambda$ and $\sign_b^0,\sign_b^1\in\{0,1\}^t$. 
       \State Compute $\Delta\seed^c = \seed_0^c\oplus\seed_1^c$ and $\Delta \sign^c = \sign_0^c\oplus\sign_1^c$ for $c=0,1$. 
@@ -305,25 +199,23 @@ display the big-state DMPF (plus distributed gen)
             \Delta \seed^1||\Delta\sign^0\oplus e_d||\Delta\sign^1 & z=0\\
             \Delta \seed^0||\Delta\sign^0||\Delta\sign^1\oplus e_d & z=1
           \end{cases}$.        
-      \EndIf
-      \State Extend $CW$ to $t$ entries by appending random strings.  
+      \EndIf 
     \EndFor
     \State\Return $CW$. 
     \EndProcedure
     \item[]
     \Procedure{GenConvCW}{$A,B,\{\seed_b^{(n)},\sign_b^{(n)}\}$}
-      \State Let $CW$ be an empty list. 
+      \State Sample a list $CW$ of $t$ random $\GG$-elements.  
       \For{$k = 1$ to $|A|$}
         \State $\Delta g\gets G_{\sf convert}(\seed_0^{(n)}[k]) - G_{\sf convert}(\seed_1^{(n)}[k])$. 
         \State$CW[k]\gets (-1)^{\sign_0^{(n)}[k][k]}(\Delta g-B[k])$.
       \EndFor
-      \State Extend $CW$ to $t$ entries by appending random strings.  
       \State \Return $CW$. 
     \EndProcedure
     \item[]
     \Procedure{Correct}{$\bar{x}, \seed,\sign,CW$}
       \State Let $z$ be the last bit of $\bar{x}$. 
-      \State Parse $C_{\seed}||C_{\sign^0}||C_{\sign^1} = \sum_{i=1}^t \sign[i]\cdot CW[i]$, where $C_{\sign^0}$ and $C_{\sign^1}$ are $t$-bit. 
+      \State $C_{\seed}||C_{\sign^0}||C_{\sign^1}\gets\sum_{i=1}^t \sign[i]\cdot CW[i]$, where $C_{\sign^0}$ and $C_{\sign^1}$ are $t$-bit. 
       \State \Return $G_z(\seed)\oplus (C_\seed||C_{\sign^z})$. 
     \EndProcedure
     \item[]
@@ -339,13 +231,64 @@ display the big-state DMPF (plus distributed gen)
 display the batch-code DMPF 
 
 \subsection{OKVS-based DMPF}
-display the OKVS-based DMPF (plus distributed gen)
+TBD: explain
+\begin{figure}
+  \fbox{\parbox{\linewidth}{
+  \begin{algorithmic}
+    \State Set $l\leftarrow 1$. 
+    \State For $1\le i\le n$, let $\OKVS_i$ be an OKVS scheme (\cref{def:OKVS}) with key space $\mathcal{K} = \{0,1\}^{i-1}$, value space $\mathcal{V} = \{0,1\}^{\lambda+2}$ and input length $t$. 
+    \State let $\OKVS_{\sf convert}$ be an OKVS scheme with key space $\mathcal{K} = \{0,1\}^n$, value space $\mathcal{V} = \GG$ and input length $t$. 
+    \item[]
+    \Procedure{Initialize}{$\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1}$}
+    \State For $b=0,1$, let $\seed_b^{(0)} = [r_b\xleftarrow{\$}\{0,1\}^\lambda]$ and $\sign_b^{(0)} = [b]$. 
+    \EndProcedure
+    \item[]
+    \Procedure{GenCW}{$i,A,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1}$}
+    \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_paradigm}. 
+    \State Sample a list $V$ of $t$ random strings from $\{0,1\}^{\lambda+2}$.  
+    \For{$k = 1$ to $|A^{(i-1)}|$}
+      \State Parse $G(\seed_b^{(i-1)}[k]) = \seed_b^0||\sign_b^0||\seed_b^1||\sign_b^1$, for $b=0,1$, $\seed_b^0,\seed_b^1\in\{0,1\}^\lambda$ and $\sign_b^0,\sign_b^1\in\{0,1\}$. 
+      \State Compute $\Delta\seed^c = \seed_0^c\oplus\seed_1^c$ and $\Delta \sign^c = \sign_0^c\oplus\sign_1^c$ for $c=0,1$. 
+      \State Denote ${\sf path}\leftarrow A^{(i-1)}[k]$. 
+      \If{both ${\sf path}||z$ for $z=0,1$ are in $A^{(i)}$}
+        \State $V[k]\gets r||\Delta\sign^0\oplus 1||\Delta\sign^1\oplus 1$, where $r\xleftarrow{\$}\{0,1\}^\lambda$. 
+      \Else
+        \State Let $z$ be such that ${\sf path}||z\in A^{(i)}$. 
+        \State $V[k]\gets \Delta \seed^1||\Delta\sign^0\oplus (1-z)||\Delta\sign^1\oplus z$.        
+      \EndIf
+    \EndFor
+    \State \Return $\OKVS_i.\Encode(\{A^{(i-1)}[k], V[k]\}_{1\le k\le |A^{(i-1)}|})$. 
+    \EndProcedure
+    \item[]
+    \Procedure{GenConvCW}{$A,B,\{\seed_b^{(n)},\sign_b^{(n)}\}$}
+      \State Sample a list $V$ of $t$ random $\GG$-elements. 
+      \For{$k = 1$ to $|A|$}
+        \State $\Delta g\gets G_{\sf convert}(\seed_0^{(n)}[k]) - G_{\sf convert}(\seed_1^{(n)}[k])$. 
+        \State$V[k]\gets (-1)^{\sign_0^{(n)}[k][k]}(\Delta g-B[k])$.
+      \EndFor 
+      \State \Return $\OKVS_{\sf convert}(\{A[k], V[k]\}_{1\le k\le t})$. 
+    \EndProcedure
+    \item[]
+    \Procedure{Correct}{$\bar{x}, \seed,\sign,CW$}
+      \State Suppose $\bar{x} = x_1x_2\cdots x_i$ and let $\bar{x}^- = x_1\cdots x_{i-1}$. 
+      \State $C_{\seed}||C_{\sign^0}||C_{\sign^1}\gets\OKVS_i.\Decode(CW, \bar{x}^-)$, where $C_{\sign^0}$ and $C_{\sign^1}$ are bits. 
+      \State \Return $G_z(\seed)\oplus (C_\seed||C_{\sign^z})$. 
+    \EndProcedure
+    \item[]
+    \Procedure{ConvCorrect}{$x,\seed,\sign,CW$}
+      \State \Return $G_{\sf convert}(\seed)\oplus \OKVS_{\sf convert}.\Decode(CW,x)$. 
+    \EndProcedure
+  \end{algorithmic}}}
+  \caption{The parameter $l$ and methods' setting that turns the paradigm of DMPF in~\cref{fig:DMPF_paradigm} into the OKVS-based DMPF. }
+  \label{fig:DMPF_OKVS}
+\end{figure}
+
 
 \subsection{Comparison}
 Comparison table dependent to PRG \& F-MUL(list the formulas?)\\
 analyze tradeoff\\
 distributed gen advantage
-
+\subsection{Distributed Key Generation}
 \section{Applications}
 \subsection{PCG for OLE from Ring-LPN}
 Characterize parameters\\

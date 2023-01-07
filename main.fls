@@ -1216,6 +1216,10 @@ INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/newtx/ntxsyc.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/newtx/ntxsyc.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/newtx/ntxexa.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/newtx/ntxexa.tfm
+INPUT ./prelim.tex
+INPUT prelim.tex
+INPUT ./prelim.tex
+INPUT prelim.tex
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-sc-t1.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/libertine/LinBiolinumT-tlf-t1.tfm
