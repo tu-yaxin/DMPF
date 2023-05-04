@@ -80,12 +80,48 @@ We require $\Pi$ to satisfy the following requirements:
 
 
 
-\subsection{Batch Codes}
-combinatorial/probabilistic batch codes, with cuckoo hashing a concrete instantiation
+\subsection{Batch Code}
+\begin{definition}[Batch Code\cite{10.1145/1007352.1007396}]
+  An $(N,M,t,m)$-batch code over alphabet $\Sigma$ is given by a pair of efficient algorithms $(\Encode,\Decode)$ such that:
+  \begin{itemize}
+    \item $\Encode(x\in\Sigma^N)\rightarrow (C_1,C_2,\cdots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$-tuple of strings $C_1,C_2,\cdots C_m\in\Sigma^*$ (called buckets) of total length $M$.
+    \item $\Decode(I,C_1,C_2,\cdots,C_m)\rightarrow \{x[i]\}_{i\in I}$: On input a set $I$ of $t$ distinct indices in $[N]$ and $m$ buckets, recover $t$ coordinates of $x$ indexed by $I$ by reading at most one coordinate from each of the $m$ buckets. 
+  \end{itemize}
+\end{definition}
 
+An $(N,M,t,m)$-batch code can be viewed as an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the bucket $C_j$, while it is guaranteed that any subset $S\subseteq U$ such that $|S|=t$ has a perfect matching to $V$. \Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient. }
+
+\begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142}]
+An\\ $(N,M,t,m,\epsilon)$-probabilistic batch code over alphabet $\Sigma$ is a randomized $(N,M,t,m)$-batch code that for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
+\[
+  \Pr[\Decode_r(I,\Encode_r(x))\rightarrow \{x[i]\}_{i\in I}] = 1-\epsilon
+\]
+where the probability is taken over the public randomness $r$ and private randomness of $\Encode$ and $\Decode$ algorithms. 
+\end{definition}
+
+We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PBC\cite{cryptoeprint:2017/1142}.
+
+\paragraph{$w$-way cuckoo hashing}Given $t$ balls, $m$ buckets, and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ mapping each ball to a random bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
+\begin{itemize}
+  \item[1.] Choose an arbitrary unallocated ball $b$. 
+  \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket set $b'$ the current unallocated ball, and repeat step 2.
+\end{itemize}
+The algorithm should be given a fixed amount of time to run, or equipped with a loop detection process to guarantee termination. \Yaxin{Add asymptotic and empirical parameters. }
+
+The balls, buckets and hash functions can be viewed as a $w$-regular $(t,m)$-bipartite graph $G=(U,V,E)$ where each left node has $w$ neighbors, and each edge $(u_i,v_j)\in E$ corresponds to $h_l(i)=j$ for some $1\le l\le w$. In this graph representation the $w$-way cuckoo hashing essentially computes a perfect matching from $U$ to $V$. Therefore one can construct a PBC from cuckoo hashing. 
+
+\begin{construction}[PBC from cuckoo hashing]
+  Given $w$-way cuckoo hashing as a sub-procedure allocating $t$ balls to $m$ buckets with failure probability $\epsilon$, an $(N,wN,t,m,\epsilon)$-PBC is as follows: 
+  \begin{itemize}
+    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,\cdots,C_m)$: Use $r$ to determine $w$ independent random hash functions $h_1,h_2,\cdots h_w$ that maps from $[N]$ to $[m]$. Initialize $C_1,\cdots,C_m$ to be empty. For each $i\in[N]$, append $x[i]$ to $C_{h_j(i)}$ for $1\le j\le w$. 
+    \item $\Decode_r(I, C_1,\cdots, C_m)\rightarrow \{x[i]\}_{i\in I}$: Determine $h_1,\cdots, h_w$ as in $\Encode$. For $I$ of size $t$, allocate $I$ to $[m]$ using $w$-way cuckoo hashing. For each $i\in I$, fetch $x[i]$ from $C_j$ where $i$ is allocated to $j$. 
+  \end{itemize}
+\end{construction}
+
+\subsection{Black-box construction of DMPF from DPF basing on PBC}
 \subsection{Oblivious Key-Value Stores}
-\begin{definition}[OKVS\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{def:OKVS}
-  An Oblivious Key-Value Stores (OKVS) scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $n$ and output length $m(n)$. The algorithms are of the following syntax: 
+\begin{definition}[Oblivious Key-Value Stores (OKVS)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{def:OKVS}
+  An Oblivious Key-Value Stores scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $n$ and output length $m(n)$. The algorithms are of the following syntax: 
   \begin{itemize}
     \item $\Encode_r(\{(k_1,v_1),(k_2,v_2),\cdots,(k_n,v_n)\})\rightarrow P$: On input $n$ key-value pairs with distinct keys, the encode algorithm with randomness $r$ in the randomness space outputs an encoding $P\in\mathcal{V}^m\cup\bot$.
     \item $\Decode_r(P,k)\rightarrow v$: On input an encoding from $\mathcal{V}^m$ and a key $k\in\mathcal{K}$, output a value $v$. 

@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{4}
+\begin{thebibliography}{7}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -36,6 +36,23 @@
 \providecommand\bibinfo[2]{#2}
 \providecommand\natexlab[1]{#1}
 \providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Angel et~al\mbox{.}(2017)]%
+        {cryptoeprint:2017/1142}
+\bibfield{author}{\bibinfo{person}{Sebastian Angel}, \bibinfo{person}{Hao
+  Chen}, \bibinfo{person}{Kim Laine}, {and} \bibinfo{person}{Srinath Setty}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{PIR with compressed queries and amortized query
+  processing}.
+\newblock \bibinfo{howpublished}{Cryptology ePrint Archive, Paper 2017/1142}.
+\newblock
+\urldef\tempurl%
+\url{https://eprint.iacr.org/2017/1142}
+\showURL{%
+\tempurl}
+\newblock
+\shownote{\url{https://eprint.iacr.org/2017/1142}}.
+
 
 \bibitem[Boyle et~al\mbox{.}(2018)]%
         {CCS:BoyGilIsh16}
@@ -82,6 +99,37 @@
   \bibinfo{pages}{640--658}.
 \newblock
 \showISBNx{978-3-642-55220-5}
+
+
+\bibitem[Ishai et~al\mbox{.}(2004)]%
+        {10.1145/1007352.1007396}
+\bibfield{author}{\bibinfo{person}{Yuval Ishai}, \bibinfo{person}{Eyal
+  Kushilevitz}, \bibinfo{person}{Rafail Ostrovsky}, {and} \bibinfo{person}{Amit
+  Sahai}.} \bibinfo{year}{2004}\natexlab{}.
+\newblock \showarticletitle{Batch Codes and Their Applications}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the Thirty-Sixth Annual ACM
+  Symposium on Theory of Computing}} (Chicago, IL, USA)
+  \emph{(\bibinfo{series}{STOC '04})}. \bibinfo{publisher}{Association for
+  Computing Machinery}, \bibinfo{address}{New York, NY, USA},
+  \bibinfo{pages}{262–271}.
+\newblock
+\showISBNx{1581138520}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/1007352.1007396}
+\showDOI{\tempurl}
+
+
+\bibitem[Pagh and Rodler(2001)]%
+        {10.1007/3-540-44676-1_10}
+\bibfield{author}{\bibinfo{person}{Rasmus Pagh} {and}
+  \bibinfo{person}{Flemming~Friche Rodler}.} \bibinfo{year}{2001}\natexlab{}.
+\newblock \showarticletitle{Cuckoo Hashing}. In
+  \bibinfo{booktitle}{\emph{Algorithms --- ESA 2001}},
+  \bibfield{editor}{\bibinfo{person}{Friedhelm~Meyer auf~der Heide}} (Ed.).
+  \bibinfo{publisher}{Springer Berlin Heidelberg}, \bibinfo{address}{Berlin,
+  Heidelberg}, \bibinfo{pages}{121--133}.
+\newblock
+\showISBNx{978-3-540-44676-7}
 
 
 \bibitem[Raghuraman and Rindal(2022)]%
