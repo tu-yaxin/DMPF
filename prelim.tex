@@ -122,17 +122,19 @@ The balls, buckets and hash functions can be viewed as a $w$-regular $(t,m)$-bip
 \subsection{Construction of DMPF from DPF basing on PBC}
 We display the construction of DMPF from black-box usage of DPF basing on PBC with appropriate parameters, which has been discussed in previous literature\cite{cryptoeprint:2019/273,cryptoeprint:2021/580}. 
 \begin{construction}[DMPF from DPF]
-  Given DPF for ... and an $(N,M,t,m,\epsilon)$-PBC with alphabet $\Sigma=\GG$, 
+  Given DPF for any domain of size no larger than $N$ and output group $\GG$, and an $(N,M,t,m,\epsilon)$-PBC with alphabet $\Sigma=\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
   \begin{itemize}
-    \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Let $TT\in \GG^N$ be the truth table of $\hat{f}_{A,B}$. Compute $\Encode(TT)\rightarrow (C_1,\cdots,C_m)$. Then run $\Decode(A, C_1,\cdots, C_m)$ to determine a perfect matching from $A$ to $\{C_1,\cdots,C_m\}$. For $1\le i\le m$, let $f_i:[|C_i|]\rightarrow \GG$ be the following: 
+    \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Let $TT\in \GG^N$ be the truth table of $\hat{f}_{A,B}$. Compute $\Encode(TT)\rightarrow (C_1,\cdots,C_m)$ according to the PBC. Then run $\Decode(A, C_1,\cdots, C_m)$ to determine a perfect matching from $A$ to $\{C_1,\cdots,C_m\}$. For $1\le i\le m$, let $f_i:[|C_i|]\rightarrow \GG$ be the following: 
     \begin{itemize}
       \item If $C_i$ is assigned none of $A$ by the perfect matching, then set $f_i$ to be the all-zero function. 
       \item If exactly one $\alpha_j$ of $A$ is assigned to the $l$th position of $C_i$, then set $f_i$ to be the point function that outputs $\beta_j$ on $l$ and 0 elsewhere. 
     \end{itemize}
-    For $1\le i\le m$, invoke DPF$.\Gen(1^\lambda, f_i)\rightarrow (k_0^i,k_1^i)$. Set $(k_0,k_1)=(\{k_0^i\}_{i\in [m]}, \{k_1^i\}_{i\in [m]})$. 
+    For $1\le i\le m$, invoke DPF$.\Gen(1^\lambda, f_i)\rightarrow (k_0^i,k_1^i)$. Set $(k_0,k_1)=(\{k_0^i\}_{i\in [m]}, \{k_1^i\}_{i\in [m]})$. If $\Decode$ fails then run $\Encode$ and $\Decode$ again with fresh randomness. 
     \item $\Eval_b(k_b,x)\rightarrow y_b$: Follow $\Encode(TT)$ to determine the positions $l_{j_1},l_{j_2},\cdots, l_{j_s}$ such that the $x$th entry of $TT$ is sent to the $l_{j_i}$-th position of $C_{j_i}$. Compute $y_b=\sum_{i=1}^s$DPF$.\Eval_b(k_b^{j_i},l_i)$. 
   \end{itemize}
+The scheme is correct with overwhelming probability and has distinguish advantage $<2\epsilon$. 
 \end{construction}
+Note that if one use batch code instead of PBC then the DMPF scheme perfectly correct and secure. 
 \subsection{Oblivious Key-Value Stores}
 \begin{definition}[Oblivious Key-Value Stores (OKVS)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{def:OKVS}
   An Oblivious Key-Value Stores scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $n$ and output length $m(n)$. The algorithms are of the following syntax: 
