@@ -90,7 +90,7 @@ We introduce batch code and probabilistic batch code, which can be used to const
   \end{itemize}
 \end{definition}
 
-An $(N,M,t,m)$-batch code can be viewed as an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the bucket $C_j$, while it is guaranteed that any subset $S\subseteq U$ such that $|S|=t$ has a perfect matching to $V$. \Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient. }
+An $(N,M,t,m)$-batch code can be represented by an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the bucket $C_j$, while it is guaranteed that any subset $S\subseteq U$ such that $|S|=t$ has a perfect matching to $V$. \Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient. }
 
 \begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142}]
 An\\ $(N,M,t,m,\epsilon)$-probabilistic batch code over alphabet $\Sigma$ is a randomized $(N,M,t,m)$-batch code that for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
@@ -102,14 +102,16 @@ where the probability is taken over the public randomness $r$ and private random
 
 We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PBC\cite{cryptoeprint:2017/1142}.
 
-\paragraph{$w$-way cuckoo hashing}Given $t$ balls, $m$ buckets, and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ mapping each ball to a random bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
+\paragraph{$w$-way cuckoo hashing}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ mapping each ball to a random bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
 \begin{itemize}
   \item[1.] Choose an arbitrary unallocated ball $b$. 
   \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket set $b'$ the current unallocated ball, and repeat step 2.
 \end{itemize}
-The algorithm should be given a fixed amount of time to run, or equipped with a loop detection process to guarantee termination. \Yaxin{Add asymptotic and empirical parameters. }
+The algorithm should be given a fixed amount of time to run, or equipped with a loop detection process to guarantee termination. \Yaxin{Add asymptotic parameters?}
 
-The balls, buckets and hash functions can be viewed as a $w$-regular $(t,m)$-bipartite graph $G=(U,V,E)$ where each left node has $w$ neighbors, and each edge $(u_i,v_j)\in E$ corresponds to $h_l(i)=j$ for some $1\le l\le w$. In this graph representation the $w$-way cuckoo hashing essentially computes a perfect matching from $U$ to $V$. Therefore one can construct a PBC from cuckoo hashing. 
+\paragraph{The failure probability of cuckoo hashing}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e$ is the expansion parameter that $m=et$. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how...}
+
+The balls, buckets and hash functions can be represented by a $w$-regular $(t,m)$-bipartite graph $G=(U,V,E)$ where each left node has $w$ neighbors, and each edge $(u_i,v_j)\in E$ corresponds to $h_l(i)=j$ for some $1\le l\le w$. In this graph representation the $w$-way cuckoo hashing essentially computes a perfect matching from $U$ to $V$. Therefore one can construct a PBC from cuckoo hashing. 
 
 \begin{construction}[PBC from cuckoo hashing]
   Given $w$-way cuckoo hashing as a sub-procedure allocating $t$ balls to $m$ buckets with failure probability $\epsilon$, an $(N,wN,t,m,\epsilon)$-PBC is as follows: 
@@ -118,23 +120,6 @@ The balls, buckets and hash functions can be viewed as a $w$-regular $(t,m)$-bip
     \item $\Decode_r(I, C_1,\cdots, C_m)\rightarrow \{x[i]\}_{i\in I}$: Determine $h_1,\cdots, h_w$ as in $\Encode$. For $I$ of size $t$, allocate $I$ to $[m]$ using $w$-way cuckoo hashing. For each $i\in I$, fetch $x[i]$ from $C_j$ where $i$ is allocated to $j$. 
   \end{itemize}
 \end{construction}
-
-\subsection{Construction of DMPF from DPF basing on PBC}
-We display the construction of DMPF from black-box usage of DPF basing on PBC with appropriate parameters, which has been discussed in previous literature\cite{cryptoeprint:2019/273,cryptoeprint:2021/580}. 
-\begin{construction}[DMPF from DPF]
-  Given DPF for any domain of size no larger than $N$ and output group $\GG$, and an $(N,M,t,m,\epsilon)$-PBC with alphabet $\Sigma=\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
-  \begin{itemize}
-    \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Let $TT\in \GG^N$ be the truth table of $\hat{f}_{A,B}$. Compute $\Encode(TT)\rightarrow (C_1,\cdots,C_m)$ according to the PBC. Then run $\Decode(A, C_1,\cdots, C_m)$ to determine a perfect matching from $A$ to $\{C_1,\cdots,C_m\}$. For $1\le i\le m$, let $f_i:[|C_i|]\rightarrow \GG$ be the following: 
-    \begin{itemize}
-      \item If $C_i$ is assigned none of $A$ by the perfect matching, then set $f_i$ to be the all-zero function. 
-      \item If exactly one $\alpha_j$ of $A$ is assigned to the $l$th position of $C_i$, then set $f_i$ to be the point function that outputs $\beta_j$ on $l$ and 0 elsewhere. 
-    \end{itemize}
-    For $1\le i\le m$, invoke DPF$.\Gen(1^\lambda, f_i)\rightarrow (k_0^i,k_1^i)$. Set $(k_0,k_1)=(\{k_0^i\}_{i\in [m]}, \{k_1^i\}_{i\in [m]})$. If $\Decode$ fails then run $\Encode$ and $\Decode$ again with fresh randomness. 
-    \item $\Eval_b(k_b,x)\rightarrow y_b$: Follow $\Encode(TT)$ to determine the positions $l_{j_1},l_{j_2},\cdots, l_{j_s}$ such that the $x$th entry of $TT$ is sent to the $l_{j_i}$-th position of $C_{j_i}$. Compute $y_b=\sum_{i=1}^s$DPF$.\Eval_b(k_b^{j_i},l_i)$. 
-  \end{itemize}
-The scheme is correct with overwhelming probability and has distinguish advantage $<2\epsilon$. 
-\end{construction}
-Note that if one use batch code instead of PBC then the DMPF scheme perfectly correct and secure. 
 \subsection{Oblivious Key-Value Stores}
 \begin{definition}[Oblivious Key-Value Stores (OKVS)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{def:OKVS}
   An Oblivious Key-Value Stores scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $n$ and output length $m(n)$. The algorithms are of the following syntax: 
@@ -178,8 +163,8 @@ An alternative construction that has near optimal encoding size but much better 
 \end{construction}
 This OKVS construction features a linear encoding time, constant decoding time while having a linear encoding size. 
 
-TBD: Carefully(!) recompute the comparison table for OKVS and insert
+\Yaxin{TBD: Carefully(!) recompute the comparison table for OKVS. }
 
-We take $w=3$, the most common option that outruns other choices of $w$ in terms of running time. Restating the conclusion in  \cite{cryptoeprint:2022/320}: given $n$ and $\lambda_{\sf stat}$, the choices of $e$ and $\hat{g}$ are $e = 1.223+\frac{\lambda_{\sf stat}+9.2}{4.144 n^{0.55}}$ and $\hat{g}=\frac{\lambda_{\sf stat}}{\log_2(en)}$. 
+We take $w=3$, the most common option that outruns other choices of $w$ in terms of running time. Restating the conclusion in  \cite{cryptoeprint:2022/320}: given $n$ and $\lambda_\stat$, the choices of $e$ and $\hat{g}$ are $e = 1.223+\frac{\lambda_\stat+9.2}{4.144 n^{0.55}}$ and $\hat{g}=\frac{\lambda_\stat}{\log_2(en)}$. 
 
-TBD: mention some connections to cuckoo hashing
+\Yaxin{TBD: mention some connections to cuckoo hashing?}
