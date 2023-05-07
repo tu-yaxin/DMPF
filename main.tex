@@ -333,37 +333,59 @@ TBD: explain
 
 
 \subsection{Comparison}
-Comparison table dependent to PRG \& $\FF$-MUL(list the formulas?)\\
-analyze tradeoff\\
-distributed gen advantage
+%Comparison table dependent to PRG \& $\FF$-MUL(list the formulas?)\\
+%analyze tradeoff\\
+%distributed gen advantage
+\Cref{tab:formulas_DMPF_comparison} displays the keysize, running time of $\Gen$,$\Eval$ and $\FullEval$ for different DMPF schemes, computed in terms of costs of abstract tools such as PRG, batch code and OKVS. \Yaxin{We can plug in the actual costs of these tools after carrying out a complete experiment. }
 	\begin{table*}
-    \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points and computational security parameter $\lambda$. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $d$ stands for the number of buckets that an input is mapped to (we only consider regular degree because this is the case in most instantiations). }
+    \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points and computational security parameter $\lambda$. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $w$ stands for the number of buckets that each input coordinate is mapped to (we only consider regular degree because this is the case in most instantiations). }
     \label{tab:formulas_DMPF_comparison}
-		\scalebox{0.725}{
+		\scalebox{0.86}{
 			\begin{tabular}{ccccc}
 				\toprule 
         %Header
-				$t\times$ DPF & MPFSS from (probabilistic) batch code\cite{cryptoeprint:2019/273}\cite{cryptoeprint:2019/1084}\cite{cryptoeprint:2021/580}\cite{cryptoeprint:2017/1142} & Big-state DMPF & OKVS-DMPF\\
+				 &Sum of $t$ DPFs & Batch code DMPF\cite{cryptoeprint:2019/273,cryptoeprint:2019/1084,cryptoeprint:2021/580,cryptoeprint:2017/1142} & Big-state DMPF & OKVS-based DMPF\\
 
         \midrule
 
 				keysize & $t(\lambda+2)\log N$ & $m\lambda\log(N/m)$ & $t(\lambda+2t)\log N$ &\makecell{ $\log N\times$OKVS code size}\\
+
 				\begin{tabular}{cc}
 					$Gen()$ & \makecell{Dominating operations \\\hdashline Cheap operations}
-				\end{tabular} &\makecell{$2t\log N\times $ PRG\\\hdashline$O(t\lambda\log N$)} &\makecell{$2m\log(dN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets\\\hdashline$O(m\lambda\log(dN/m))$} &\makecell{$2t\log N\times$PRG \\\hdashline$O(t(\lambda+t)\log N)$} &\makecell{$2t\log N\times$PRG, \\$\log N\times $OKVS  Encoding\\\hdashline$O(t\lambda\log N)$} \\
+				\end{tabular} &\makecell{$2t\log N\times $ PRG\\\hdashline$O(t\lambda\log N$)} &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets\\\hdashline$O(m\lambda\log(wN/m))$} &\makecell{$2t\log N\times$PRG \\\hdashline$O(t(\lambda+t)\log N)$} &\makecell{$2t\log N\times$PRG, \\$\log N\times $OKVS  Encoding\\\hdashline$O(t\lambda\log N)$} \\
+
 				\begin{tabular}{cc}
 					$Eval()$ & \makecell{Dominating operations \\\hdashline Cheap  operations}
-				\end{tabular} &\makecell{$t\log N\times $PRG\\\hdashline$O(t\lambda\log N)$} &\makecell{$d\log(dN/m)\times $PRG\\Finding all buckets an input is mapped to\\\hdashline$O(d\lambda\log(dN/m))$} & \makecell{$\log N\times$PRG\\\hdashline$O((\lambda+t)\log N)$} &\makecell{$\log N\times$PRG, \\$\log N\times$OKVS Decoding\\\hdashline$O(\lambda\log N)$} \\
+				\end{tabular} &\makecell{$t\log N\times $PRG\\\hdashline$O(t\lambda\log N)$} &\makecell{$w\log(wN/m)\times $PRG\\Finding all buckets an input is mapped to\\\hdashline$O(w\lambda\log(wN/m))$} & \makecell{$\log N\times$PRG\\\hdashline$O((\lambda+t)\log N)$} &\makecell{$\log N\times$PRG, \\$\log N\times$OKVS Decoding\\\hdashline$O(\lambda\log N)$} \\
+
 				\begin{tabular}{cc}
 					$FullEval()$ & \makecell{Dominating operations \\\hdashline Cheap  operations}
-				\end{tabular} &\makecell{$tN\times$PRG\\\hdashline$O(t\lambda N)$} &\makecell{$dN\times$PRG\\Finding the input sequence in every bucket\\\hdashline $O(d\lambda N)$} & \makecell{$N\times$PRG\\\hdashline$O((\lambda+t)N)$}&\makecell{$N\times$PRG, \\ $N\times$ OKVS Decoding\\\hdashline$O(\lambda N)$} \\
+				\end{tabular} &\makecell{$tN\times$PRG\\\hdashline$O(t\lambda N)$} &\makecell{$wN\times$PRG\\Finding the input sequence in every bucket\\\hdashline $O(w\lambda N)$} & \makecell{$N\times$PRG\\\hdashline$O((\lambda+t)N)$}&\makecell{$N\times$PRG, \\ $N\times$ OKVS Decoding\\\hdashline$O(\lambda N)$} \\
 
         \bottomrule
 			\end{tabular}	
 		}
 	\end{table*}
+
+  \Yaxin{Take PCG as a potential application. We care about $\FullEval$ time which is related to PCG seed expanding time. In this aspect, the batch code DMPF consumes $d\times$PRGs than big-state DMPF and OKVS-based DMPF, while big-state DMPF's $\FullEval$ time scales with $t$ and OKVS-based DMPF in addition consumes large field multiplications (in OKVS decoding, and maybe more than this). Therefore we expect different DMPF schemes to be the top choice in different choices of $t$ and depending on the computing time of PRG and large field multiplication. }
 \subsection{Distributed Key Generation}
 \section{Applications}
+\Yaxin{This section is highly incomplete... Each subsection contains some to do list and I'll do more research. } 
+
+
+\begin{table*}
+  \caption{Concrete applications of DMPF. }
+  \label{tab:app_parameters}
+	\begin{tabular}{ccc}
+    \toprule
+		Concrete application &\makecell{Cost in terms of DMPF\\per correlation/execution}& Typical DMPF parameters \\
+    \midrule
+		PCG for OLE from Ring-LPN &\makecell{seedsize $\propto$ DMPF.$keysize$\\expand time $\propto$ DMPF.$FullEval()$} & \makecell{$t = 5^2, 16^2, 76^2$\\$N = 2^{20}$}  \\
+		PSI-WCA & \makecell{communication $\propto$ DMPF.$keysize$\\client computation $\propto$ DMPF.$Gen()$\\server computation $\propto$ DMPF.$Eval()$} & \makecell{$t = $any\\$N = 2^{128}$}\\
+    \bottomrule
+		
+	\end{tabular}
+\end{table*}
 \subsection{PCG for OLE from Ring-LPN}
 Characterize parameters\\
 show nonregular optimization\\
