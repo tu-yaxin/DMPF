@@ -81,7 +81,7 @@ We require $\Pi$ to satisfy the following requirements:
 
 
 \subsection{Batch Code}
-We introduce batch code and probabilistic batch code, which can be used to construct DMPF. 
+We introduce batch code and probabilistic batch code, which can be used to construct DMPF (see \cref{constr:DMPF_batch_code}). 
 \begin{definition}[Batch Code\cite{10.1145/1007352.1007396}]
   An $(N,M,t,m)$-batch code over alphabet $\Sigma$ is given by a pair of efficient algorithms $(\Encode,\Decode)$ such that:
   \begin{itemize}
@@ -180,7 +180,9 @@ We'll mostly use the expansion parameter $e$ and the number of dense columns $m_
 \end{itemize}
 
 
-\Yaxin{Fix $t$ and $\lambda_\stat$, we want to find the best choice of $w$. The adavantageous choices of $w$ in \cite{cryptoeprint:2022/320} are $w=3$ and $w=5$. From the first sight when $w$ is smaller $e$ can be smaller but $\hat{g}$ will be larger. Since $e$ stands for number of $\FF$-ADD's and $\hat{g}$ stands for number of $\FF$-MULT's in decoding, previously I thought $\hat{g}$ is the dominating factor of $\Decode$ running time. However table 1 in \cite{cryptoeprint:2022/320} suggests that $w=3$ outruns nearly all of other choices of $w$ while $w=5$ is almost 3 times slower in decoding time. This may suggest there are some other heavy computations other than $\FF$-MULT that need to be considered when evaluating running time. }
+\Yaxin{Fix $t$ and $\lambda_\stat$, we want to find the best choice of $w$. The adavantageous choices of $w$ in \cite{cryptoeprint:2022/320} are $w=3$ and $w=5$. From the first sight when $w$ is smaller $e$ can be smaller but $\hat{g}$ will be larger. Since $e$ stands for number of $\FF$-ADD's and $\hat{g}$ stands for number of $\FF$-MULT's in decoding, previously I thought $\hat{g}$ is the dominating factor of $\Decode$ running time. However table 1 in \cite{cryptoeprint:2022/320} suggests that $w=3$ outruns nearly all of other choices of $w$ while $w=5$ is almost 3 times slower in decoding time. This may suggest there are some other heavy computations other than $\FF$-MULT that need to be considered when evaluating running time. 
+
+The range of $t$ previous literature \cite{cryptoeprint:2021/883,cryptoeprint:2022/320} have considered in their empirical results are also limited, which will be one of our problems. We want to cover small $t$, say $t<100$, while previous literature aiming for constructing PSI protocols usually consider very large $t$. }
 
 One may also let $row_r^{\sf dense}$ output a short dense vector in $\{0,1\}^{m_2}$, which avoids multiplication of large field elements in the encoding and decoding processes. To achieve same level of security one could simply set $m_2=\hat{g}+\lambda_\stat$, as proposed in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}. 
 \Yaxin{TBD: mention some connections to cuckoo hashing?}
