@@ -122,18 +122,19 @@ The balls, buckets and hash functions can be represented by a $w$-regular $(t,m)
 \end{construction}
 \subsection{Oblivious Key-Value Stores}
 \begin{definition}[Oblivious Key-Value Stores (OKVS)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{def:OKVS}
-  An Oblivious Key-Value Stores scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $n$ and output length $m(n)$. The algorithms are of the following syntax: 
+  An Oblivious Key-Value Stores scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $t$ and output length $m$. The algorithms are of the following syntax: 
   \begin{itemize}
-    \item $\Encode_r(\{(k_1,v_1),(k_2,v_2),\cdots,(k_n,v_n)\})\rightarrow P$: On input $n$ key-value pairs with distinct keys, the encode algorithm with randomness $r$ in the randomness space outputs an encoding $P\in\mathcal{V}^m\cup\bot$.
+    \item $\Encode_r(\{(k_1,v_1),(k_2,v_2),\cdots,(k_t,v_t)\})\rightarrow P$: On input $t$ key-value pairs with distinct keys, the encode algorithm with randomness $r$ in the randomness space outputs an encoding $P\in\mathcal{V}^m\cup\bot$.
     \item $\Decode_r(P,k)\rightarrow v$: On input an encoding from $\mathcal{V}^m$ and a key $k\in\mathcal{K}$, output a value $v$. 
   \end{itemize}
   We require the scheme to satisfy
   \begin{itemize}
-    \item \textbf{Correctness: }For every $S\in(\mathcal{K}\times\mathcal{V})^n$, $\Pr_{r\leftarrow\{0,1\}^\kappa}[\Encode_r(S)=\bot]\le 2^{-\lambda_{\sf stat}}$. 
-    \item \textbf{Obliviousness: }Given any distinct key sets $\{k_1^0,k_2^0,\cdots,k_n^0\}$ and $\{k_1^1,k_2^1,\cdots,k_n^1\}$ that are different, if they are paired with random values then their encodings are computationally indistinguishable, i.e., 
+    \item For all $S\in(\mathcal{K}\times\mathcal{V})^t$, $\Pr_{r\leftarrow\{0,1\}^\kappa}[\Encode_r(S)=\bot]\le 2^{-\lambda_{\sf stat}}$. 
+    \item For all $S\in(\mathcal{K}\times \mathcal{V})^t$ and $r\in \{0,1\}^\kappa$ such that $\Encode_r(S)\rightarrow P\not=\bot$, it is the case that $\Decode_r(P,k)\rightarrow v$ whenever $(k,v)\in S$. 
+    \item \textbf{Obliviousness: }Given any distinct key sets $\{k_1^0,k_2^0,\cdots,k_t^0\}$ and $\{k_1^1,k_2^1,\cdots,k_t^1\}$ that are different, if they are paired with random values then their encodings are computationally indistinguishable, i.e., 
   \begin{align*}
-    &\{r, \Encode_r(\{(k_1^0,v_1),\cdots,(k_n^0,v_n)\})\}_{v_1,\cdots,v_n\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}\\
-    \approx_c &\{r, \Encode_r(\{(k_1^1,v_1),\cdots,(k_n^1,v_n)\})\}_{v_1,\cdots,v_n\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}
+    &\{r, \Encode_r(\{(k_1^0,v_1),\cdots,(k_t^0,v_t)\})\}_{v_1,\cdots,v_t\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}\\
+    \approx_c &\{r, \Encode_r(\{(k_1^1,v_1),\cdots,(k_t^1,v_t)\})\}_{v_1,\cdots,v_t\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}
   \end{align*}
   \end{itemize}
 One can obtain a \emph{linear OKVS} if in addition require:
@@ -141,30 +142,45 @@ One can obtain a \emph{linear OKVS} if in addition require:
   \item \textbf{Linearity: }There exists a function family $\{\row_r:\mathcal{K}\rightarrow\mathcal{V}^m\}_{r\in\{0,1\}^\kappa}$ such that $\Decode_r(P,k) = \ipd{\row_r(k)}{P}$. 
 \end{itemize}
 \end{definition}
-The $\Encode$ process for a linear OKVS is the process of sampling a random $P$ from the set of solutions of the linear system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le n}$. 
+The $\Encode$ process for a linear OKVS is the process of sampling a random $P$ from the set of solutions of the linear system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$. 
 
 We evaluate an OKVS scheme by its encoding size (output length $m$), encoding time and decoding time. We stress the following two (linear) OKVS constructions:
 \begin{construction}[Polynomial]
   Suppose $\mathcal{K} = \mathcal{V}=\FF$ is a field. Set 
   \begin{itemize}
-    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le n}) \rightarrow P$ where $P$ is the coeffients of a $(n-1)$-degree $\FF$-polynomial $g_P$ that $g_P(k_i) = v_i$ for $1\le i\le n$. 
+    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is the coeffients of a $(t-1)$-degree $\FF$-polynomial $g_P$ that $g_P(k_i) = v_i$ for $1\le i\le t$. 
     \item $\Decode(P,k)\rightarrow g_P(k)$. 
   \end{itemize}
 \end{construction}
-The polynomial OKVS possesses an optimal encoding size $m=n$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(n\log^2n)$. The time for a single decoding is $O(n)$ and that for batched decodings is (amortized) $O(\log^2 n)$. 
+The polynomial OKVS possesses an optimal encoding size $m=n$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(t\log^2t)$. The time for a single decoding is $O(t)$ and that for batched decodings is (amortized) $O(\log^2 t)$. 
 
 An alternative construction that has near optimal encoding size but much better running time is as follows. 
 \begin{construction}[3-Hash Garbled Cuckoo Table (3H-GCT)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]
   Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}$ outputs a uniformly random weight-$w$ vector in $\{0,1\}^{m_1}$, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
   \begin{itemize}
-    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le n}) \rightarrow P$ where $P$ is solved from the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le n}$ using the triangulation algorithm in \cite{cryptoeprint:2022/320}. 
+    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is solved from the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$ using the triangulation algorithm in \cite{cryptoeprint:2022/320}. 
     \item $\Decode(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
   \end{itemize}
+  We denote $m_1=et$, where $e$ is an expandion parameter indicating the rough blowup to store $t$ pairs. In practice the number of dense columns $m_2$ is usually set to a small constant. 
 \end{construction}
-This OKVS construction features a linear encoding time, constant decoding time while having a linear encoding size. 
+This OKVS construction features a linear encoding time, constant decoding time (the constant relates to $w$ and $m_2$) while having a linear encoding size. 
 
 \Yaxin{TBD: Carefully(!) recompute the comparison table for OKVS. }
 
-We take $w=3$, the most common option that outruns other choices of $w$ in terms of running time. Restating the conclusion in  \cite{cryptoeprint:2022/320}: given $n$ and $\lambda_\stat$, the choices of $e$ and $\hat{g}$ are $e = 1.223+\frac{\lambda_\stat+9.2}{4.144 n^{0.55}}$ and $\hat{g}=\frac{\lambda_\stat}{\log_2(en)}$. 
+We'll mostly use the expansion parameter $e$ and the number of dense columns $m_2:=\hat{g}$ (where $\hat{g}$ is a parameter relating to the equation system solving process) according to the analysis in \cite{cryptoeprint:2022/320}: Given $w$, $t$ and $\lambda_\stat$, the choices of the $e$ and $\hat{g}$ are fixed through the following steps: 
+\begin{itemize}
+  \item Set $e^* = \begin{cases}
+    1.223 & w=3\\
+    1.293 & w=4\\
+    0.1485w+0.6845 & w\ge 5
+  \end{cases}$.
+  \item Compute $\alpha:=0.55 \log_2 t + 0.093w^3-1.01w^2 + 2.92w-0.13$.
+  \item $e:=e^*+ 2^{-\alpha}(\lambda_\stat+9.2)$. 
+  \item $\hat{g}:=\frac{\lambda_\stat}{(w-2)\log_2(et)}$. 
+\end{itemize}
 
+
+\Yaxin{Fix $t$ and $\lambda_\stat$, we want to find the best choice of $w$. The adavantageous choices of $w$ in \cite{cryptoeprint:2022/320} are $w=3$ and $w=5$. From the first sight when $w$ is smaller $e$ can be smaller but $\hat{g}$ will be larger. Since $e$ stands for number of $\FF$-ADD's and $\hat{g}$ stands for number of $\FF$-MULT's in decoding, previously I thought $\hat{g}$ is the dominating factor of $\Decode$ running time. However table 1 in \cite{cryptoeprint:2022/320} suggests that $w=3$ outruns nearly all of other choices of $w$ while $w=5$ is almost 3 times slower in decoding time. This may suggest there are some other heavy computations other than $\FF$-MULT that need to be considered when evaluating running time. }
+
+One may also let $row_r^{\sf dense}$ output a short dense vector in $\{0,1\}^{m_2}$, which avoids multiplication of large field elements in the encoding and decoding processes. To achieve same level of security one could simply set $m_2=\hat{g}+\lambda_\stat$, as proposed in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}. 
 \Yaxin{TBD: mention some connections to cuckoo hashing?}
