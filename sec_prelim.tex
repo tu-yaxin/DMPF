@@ -23,20 +23,22 @@ is a triple of algorithms %$\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$
 $\Pi=(\Gen,\Eval_0,\Eval_1)$
 with the following syntax: 
 \begin{itemize}
-    \item $\Gen(1^\lambda,\hat{f}_{\alpha,\beta})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. We assume that $N$ and $\GG$ are determined by each key.
-    \item $\Eval_i(k_i,x)\rightarrow y_i$: On input key $k_i\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $i$, $\Eval_i$ returns 
+    \item $\Gen(1^\lambda,\hat{f}_{\alpha,\beta})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. \Yaxin{Matan points out: we want efficient procedures, i.e., $|k_b|\in\poly(\lambda)$. Stress it here or add efficiency requirement?} 
+    We assume that $N$ and $\GG$ are determined by each key.
+    \item $\Eval_b(k_b,x)\rightarrow y_b$: On input key $k_b\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $b$, $\Eval_b$ returns 
     %a group element 
-    $y_i\in\GG$.
+    $y_b\in\GG$.
 \end{itemize}
 %The algorithms $\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$ should 
 We require $\Pi$ to satisfy the following requirements:
 \begin{itemize}
-    \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$, if $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f})$, then $$\Pr\left[\sum_{i=0}^{1}\Eval_i(k_i,x)=f_{\alpha,\beta}(x)\right]=1$$
-    \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $i\in\{0,1\}$:
+    \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$, for $b=0,1$,  
+    $$\Pr\left[(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}), \sum_{i=0}^{1}\Eval_b(k_b,x)=f_{\alpha,\beta}(x)\right]=1$$
+    \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $b\in\{0,1\}$:
     \begin{enumerate}
-        \item The adversary produces two point function descriptions $(\hat{f}^0=(N,\hat\GG,\alpha_0,\beta_0),\hat{f}^1=(N,\hat\GG,\alpha_1,\beta_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_i\in[N]$ and $\beta_i\in\GG$.
+        \item The adversary produces two point function descriptions $(\hat{f}^0=(N,\hat\GG,\alpha_0,\beta_0),\hat{f}^1=(N,\hat\GG,\alpha_1,\beta_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_b\in[N]$ and $\beta_b\in\GG$.
         \item The challenger samples $b\gets\{0,1\}$ and $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}^b)$.
-        \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_i)$.
+        \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_b)$.
     \end{enumerate}
     Denote by $\Adv(1^\lambda,\mathcal{A},i)=\Pr[b=b']-1/2$ the advantage of $\mathcal{A}$ in guessing $b$ in the above experiment. For every non-uniform polynomial time adversary $\mathcal{A}$ there exists a negligible function $\nu$ such that $\Adv(1^\lambda,\mathcal{A},i) \le \nu(\lambda)$ for all $\lambda \in \NN$.
 %    For circuit size bound $S=S(\lambda)$ and advantage bound $\epsilon(\lambda)$, we say that $\Pi$ is $(S,\epsilon)$-secure if for all $i\in\{0,1\}$ and all non-uniform adversaries $\mathcal{A}$ of size $S(\lambda)$ and sufficiently large $\lambda$, we have $\Adv(1^\lambda,\mathcal{A},i)\leq\epsilon(\lambda)$. We say that $\Pi$ is:
@@ -60,23 +62,24 @@ We require $\Pi$ to satisfy the following requirements:
   $\Pi=(\Gen,\Eval_0,\Eval_1)$
   with the following syntax: 
   \begin{itemize}
-      \item $\Gen(1^\lambda,\hat{f}_{A,B})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{A,B}=(N,\hat{\GG},t,A,B)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. 
-      \item $\Eval_i(k_i,x)\rightarrow y_i$: On input key $k_i\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $i$, $\Eval_i$ returns $y_i\in\GG$.
+      \item $\Gen(1^\lambda,\hat{f}_{A,B})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{A,B}=(N,\hat{\GG},t,A,B)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. \Yaxin{On Matan's behalf: same comment as well. Maybe $|k_i|=\poly(\lambda,t)$. }
+      \item $\Eval_b(k_b,x)\rightarrow y_b$: On input key $k_b\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $b$, $\Eval_b$ returns $y_b\in\GG$.
   \end{itemize}
   We require $\Pi$ to satisfy the following requirements:
   \begin{itemize}
-      \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$, if $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f})$, then $$\Pr\left[\sum_{i=0}^{1}\Eval_i(k_i,x)=f_{\alpha,\beta}(x)\right]=1$$
-      \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $i\in\{0,1\}$:
+      \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{A,B}=(N,\hat{\GG},t,A,B)$ such that $B\in\GG^t$, and $x\in[N]$, for $b=0,1$,
+      $$\Pr\left[(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}), \sum_{i=0}^{1}\Eval_b(k_b,x)=f_{A,B}(x)\right]=1$$
+      \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $b\in\{0,1\}$:
       \begin{enumerate}
-          \item The adversary produces two $t$-point function descriptions $(\hat{f}^0=(N,\hat\GG,t,A_0,B_0),\hat{f}^1=(N,\hat\GG,t,A_1,B_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_i\in[N]$ and $\beta_i\in\GG$.
+          \item The adversary produces two $t$-point function descriptions $(\hat{f}^0=(N,\hat\GG,t,A_0,B_0),\hat{f}^1=(N,\hat\GG,t,A_1,B_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_b\in[N]$ and $\beta_b\in\GG$.
           \item The challenger samples $b\gets\{0,1\}$ and $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}^b)$.
-          \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_i)$.
+          \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_b)$.
       \end{enumerate}
       Denote by $\Adv(1^\lambda,\mathcal{A},i)=\Pr[b=b']-1/2$ the advantage of $\mathcal{A}$ in guessing $b$ in the above experiment. For every non-uniform polynomial time adversary $\mathcal{A}$ there exists a negligible function $\nu$ such that $\Adv(1^\lambda,\mathcal{A},i) \le \nu(\lambda)$ for all $\lambda \in \NN$.
   \end{itemize}
   \end{definition}
  
- We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DMPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_i$ an algorithm which computes $\Eval_i$ on every input $x$. Hence, $\FullEval_i$ receives only a key $k_i$ as input.
+ We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DMPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_b$ an algorithm which computes $\Eval_b$ on every input $x$. Hence, $\FullEval_b$ receives only a key $k_b$ as input.
 
 
 
@@ -93,7 +96,7 @@ We introduce batch code and probabilistic batch code, which can be used to const
 An $(N,M,t,m)$-batch code can be represented by an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the bucket $C_j$, while it is guaranteed that any subset $S\subseteq U$ such that $|S|=t$ has a perfect matching to $V$. \Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient. }
 
 \begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142}]
-An\\ $(N,M,t,m,\epsilon)$-probabilistic batch code over alphabet $\Sigma$ is a randomized $(N,M,t,m)$-batch code that for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
+An\\ $(N,M,t,m,\epsilon)$-probabilistic batch code over alphabet $\Sigma$ is a randomized $(N,M,t,m)$-batch code with public randomness $r$ (and possibly private randomness for each sub-procedure) such that for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
 \[
   \Pr[\Decode_r(I,\Encode_r(x))\rightarrow \{x[i]\}_{i\in I}] = 1-\epsilon
 \]
@@ -102,12 +105,14 @@ where the probability is taken over the public randomness $r$ and private random
 
 We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PBC\cite{cryptoeprint:2017/1142}.
 
-\paragraph{$w$-way cuckoo hashing}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ mapping each ball to a random bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
+\paragraph{$w$-way cuckoo hashing}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
 \begin{itemize}
-  \item[1.] Choose an arbitrary unallocated ball $b$. 
-  \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket set $b'$ the current unallocated ball, and repeat step 2.
+  \item[1.] Choose an arbitrary unallocated ball $b$. If there is no unallocated ball, output the allocation. 
+  \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket set $b'$ the current unallocated ball, and repeat step 2. 
 \end{itemize}
-The algorithm should be given a fixed amount of time to run, or equipped with a loop detection process to guarantee termination. \Yaxin{Add asymptotic parameters?}
+If the algorithm terminates then its output is an allocation of balls to buckets such that each bucket contains at most one ball. However there is no guarantee that the algorithm will terminate - it may end up in a loop and keeps running forever. To fixed this problem, the algorithm should be given a fixed amount of time to run, or equipped with a loop detection process to guarantee termination. We call it a failure whenver the algorithm fails to output a proper allocation where each bucket contains at most one ball. 
+
+\Yaxin{Add asymptotic parameters? Also find evident theorem saying cuckoo hashing is efficient. }
 
 \paragraph{The failure probability of cuckoo hashing}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e$ is the expansion parameter that $m=et$. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how...}
 
