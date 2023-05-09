@@ -33,6 +33,7 @@
 \usepackage{fancybox}
 \usepackage{makecell}
 \usepackage{arydshln}
+\usepackage{subfigure}
     
 %% New commands goes here
 \newcommand{\Enote}[1]{\color{purple}Enote: #1\color{black}}
@@ -147,7 +148,7 @@ Call any path from the root a leaf corresponding to an input string in $A$ an ac
 
 The paradigm contains four methods ($\sf GenCW$, $\sf GenConvCW$, $\sf Correct$, $\sf ConvCorrect$) and the sign length $l$ to be determined by different constructions. We make the following restrictions on the methods in order to guarantee the invariance on the evaluation trees: 
 
-${\sf M}(\bar{x},\sign, CW) =\sum_{i=1}^l\sign[i]\cdot{\sf M}(\bar{x},0^{i-1}0^{l-i},CW)$ for all $\sf M\in\{Correct, ConvCorrect\}$, input $\bar{x}$ and $CW$.
+${\sf M}(\bar{x},\sign, CW) =\sum_{i=1}^l\sign[i]\cdot{\sf M}(\bar{x},0^{i-1}10^{l-i},CW)$ for all $\sf M\in\{Correct, ConvCorrect\}$, input $\bar{x}$ and $CW$.
 
 \begin{figure*}
   \caption{The paradigm of our DMPF schemes. We leave the PRG expand length $l$, methods $\sf Initialize, GenCW,$ $\sf GenConvCW, Correct, ConvCorrect$ to be determined by specific constructions. }
@@ -156,11 +157,11 @@ ${\sf M}(\bar{x},\sign, CW) =\sum_{i=1}^l\sign[i]\cdot{\sf M}(\bar{x},0^{i-1}0^{
   \begin{algorithmic}
     \State \textbf{Public parameters: }
     \State The $t$-point function family $\{f_{A,B}\}$ with $t$ an upperbound of the number of nonzero points, input domain $[N]=\{0,1\}^n$ and the output group $\GG$. 
-    \State Suppose there is a public PRG $G:\{0,1\}^\lambda\rightarrow \{0,1\}^{2\lambda+2l}$. Parse $G = G_0\|G_1$ to the left half and right half. 
+    \State Suppose there is a public PRG $G:\{0,1\}^\lambda\rightarrow \{0,1\}^{2\lambda+2l}$. Parse $G(x) = G_0(x)\|G_1(x)$ to the left half and right half. 
     \State Suppose there is a public PRG $G_{\sf convert}:\{0,1\}^\lambda\rightarrow \GG$. 
     \item[]
     \Procedure{Gen}{$1^\lambda, \hat{f}_{A,B}$}
-    \State Denote $A = (\alpha_1,\cdots,\alpha_t)$ in lexicographical order, $B = (\beta_1,\cdots,\beta_t)$. If $|A|<t$, extend $A$ to size-$t$ with arbitrary $\{0,1\}^n$ strings and $B$ with 0's. 
+    \State Denote $A = (\alpha_1,\cdots,\alpha_t)$ in lexicographically order, $B = (\beta_1,\cdots,\beta_t)$. If $|A|<t$, extend $A$ to size-$t$ with arbitrary $\{0,1\}^n$ strings and $B$ with 0's. 
     \State For $0\le i\le n-1$, let $A^{(i)}$ denote the sorted and deduplicated list of $i$-bit prefixes of strings in $A$. Specifically, $A^{(0)} = [\epsilon]$. 
     \State For $0\le i\le n-1$ and $b=0,1$, initialize empty lists $\seed_b^{(i)}$ and $\sign_b^{(i)}$. 
     \State ${\sf Initialize}(\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1})$. 
@@ -183,7 +184,8 @@ ${\sf M}(\bar{x},\sign, CW) =\sum_{i=1}^l\sign[i]\cdot{\sf M}(\bar{x},0^{i-1}0^{
     \State Denote $x=x_1x_2\cdots x_n$. 
     \For{$i = 1$ to $n$}
       \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}(x_1\cdots x_{i-1},\sign,CW^{(i)})$.
-      \State $\seed\|\sign\gets (\seed\oplus C_{\seed})\|(\sign\oplus C_{\sign^{x_i}})$. 
+      \State $\seed||\sign\gets G_{x_i}(\seed)$. 
+      \State $\seed\|\sign\gets G_{x_i}(\seed)\oplus(C_{\seed}\|C_{\sign^{x_i}})$. 
     \EndFor
     \State \Return $(-1)^b\cdot \big(G_{\sf convert}(\seed)+{\sf ConvCorrect}(x,\sign,CW^{(n+1)})\big)$. 
     \EndProcedure
@@ -206,6 +208,7 @@ ${\sf M}(\bar{x},\sign, CW) =\sum_{i=1}^l\sign[i]\cdot{\sf M}(\bar{x},0^{i-1}0^{
     \end{algorithmic}}}
 \end{figure*}
 
+\newpage
 \subsection{Big-State DMPF}
 Displayed in \cref{fig:DMPF_big-state}.
 TBD: explain
@@ -369,7 +372,11 @@ TBD: explain
 	\end{table*}
 
   \Yaxin{Take PCG as a potential application. We care about $\FullEval$ time which is related to PCG seed expanding time. In this aspect, the batch code DMPF consumes $d\times$PRGs than big-state DMPF and OKVS-based DMPF, while big-state DMPF's $\FullEval$ time scales with $t$ and OKVS-based DMPF in addition consumes large field multiplications (in OKVS decoding, and maybe more than this). Therefore we expect different DMPF schemes to be the top choice in different choices of $t$ and depending on the computing time of PRG and large field multiplication. }
+
+  
 \subsection{Distributed Key Generation}
+
+\newpage
 \section{Applications}
 \Yaxin{This section is highly incomplete... Each subsection contains some to do list and I'll do more research. } 
 
@@ -388,9 +395,27 @@ TBD: explain
 	\end{tabular}
 \end{table*}
 \subsection{PCG for OLE from Ring-LPN}
-Characterize parameters\\
-show nonregular optimization\\
-plug in new DMPF and show overall optimization
+\Yaxin{TBD: }
+\begin{itemize}
+  \item Characterize parameters
+  \item Show nonregular optimization
+  \item Plug in new DMPF and show overall optimization
+\end{itemize}
+
+\Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the batch-code and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the batch-code-DMPF. 
+
+\begin{figure}[H]
+	\centering
+	\subfigure{
+		\includegraphics[scale = 0.4]{figures/FullEval_time_PCG.png}
+	}
+	\subfigure{
+		\includegraphics[scale = 0.4]{figures/keysize_PCG.png}
+	}
+	\caption{Full-domain Evaluation time and keysize of DMPF used in PCG for OLE\cite{cryptoeprint:2022/1035} using four different DMPF constructions. Consider the security parameter $\lambda=128$, the domain size $N = 2^{20}$ and various noise weights per $R$-element, from 4 to 160 (the typical weights per $R$-element in \cite{cryptoeprint:2022/1035} are 5, 16 and 76). To obtain little failure probability, the OKVS-DMPF is only applicable for $t\ge 8$ as considered in \cite{cryptoeprint:2022/320}. PRG evaluation is modeled as two AES evaluations with AES evaluation time $1.3$ cycles per byte. Field multiplications in OKVS-DMPF approach $0.3$ cycles per byte \cite{cryptoeprint:2017/168} for the corresponding field. The actual expand time and seed size of PCG is $\sim \times c^2$ of that the FullEval time and key size of DMPF, where $c$ is the compression factor. }
+	\label{fig:detailed_PCG}
+\end{figure}
+
 \subsection{PSI-WCA}
 plug in new DMPF and analyze advantage interval\\
 plug in distributed gen
