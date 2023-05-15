@@ -86,7 +86,7 @@ We require $\Pi$ to satisfy the following requirements:
 
 
 \subsection{Batch Code}
-We introduce batch code and probabilistic batch code, which can be used to construct DMPF (see \cref{constr:DMPF_batch_code}). 
+We introduce batch code and probabilistic batch code, which can be used to construct DMPF (see \cref{con:DMPF_batch_code}). 
 \begin{definition}[Batch Code\cite{10.1145/1007352.1007396}]
   An $(N,M,t,m)$-batch code over alphabet $\Sigma$ is given by a pair of efficient algorithms $(\Encode,\Decode)$ such that:
   \begin{itemize}
@@ -107,7 +107,7 @@ where the probability is taken over the public randomness $r$ and private random
 
 We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PBC\cite{cryptoeprint:2017/1142}.
 
-\paragraph{$w$-way cuckoo hashing}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
+\paragraph{$w$-way cuckoo hashing.}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
 \begin{itemize}
   \item[1.] Choose an arbitrary unallocated ball $b$. If there is no unallocated ball, output the allocation. 
   \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket set $b'$ the current unallocated ball, and repeat step 2. 
@@ -116,7 +116,7 @@ If the algorithm terminates then its output is an allocation of balls to buckets
 
 \Yaxin{Add asymptotic parameters? Also find evident theorem saying cuckoo hashing is efficient. }
 
-\paragraph{The failure probability of cuckoo hashing}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e$ is the expansion parameter that $m=et$. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how...}
+\paragraph{The failure probability of cuckoo hashing.}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e$ is the expansion parameter that $m=et$. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how...}
 
 The balls, buckets and hash functions can be represented by a $w$-regular $(t,m)$-bipartite graph $G=(U,V,E)$ where each left node has $w$ neighbors, and each edge $(u_i,v_j)\in E$ corresponds to $h_l(i)=j$ for some $1\le l\le w$. In this graph representation the $w$-way cuckoo hashing essentially computes a perfect matching from $U$ to $V$. Therefore one can construct a PBC from cuckoo hashing. 
 
@@ -152,7 +152,7 @@ One can obtain a \emph{linear OKVS} if in addition require:
 The $\Encode$ process for a linear OKVS is the process of sampling a random $P$ from the set of solutions of the linear system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$. 
 
 We evaluate an OKVS scheme by its encoding size (output length $m$), encoding time and decoding time. We stress the following two (linear) OKVS constructions:
-\begin{construction}[Polynomial]
+\begin{construction}[Polynomial]\label{con:OKVS_polynomial}
   Suppose $\mathcal{K} = \mathcal{V}=\FF$ is a field. Set 
   \begin{itemize}
     \item $\Encode(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is the coeffients of a $(t-1)$-degree $\FF$-polynomial $g_P$ that $g_P(k_i) = v_i$ for $1\le i\le t$. 
@@ -162,7 +162,7 @@ We evaluate an OKVS scheme by its encoding size (output length $m$), encoding ti
 The polynomial OKVS possesses an optimal encoding size $m=n$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(t\log^2t)$. The time for a single decoding is $O(t)$ and that for batched decodings is (amortized) $O(\log^2 t)$. 
 
 An alternative construction that has near optimal encoding size but much better running time is as follows. 
-\begin{construction}[3-Hash Garbled Cuckoo Table (3H-GCT)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]
+\begin{construction}[3-Hash Garbled Cuckoo Table (3H-GCT)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{con:OKVS_sparse_matrix}
   Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}$ outputs a uniformly random weight-$w$ vector in $\{0,1\}^{m_1}$, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
   \begin{itemize}
     \item $\Encode(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is solved from the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$ using the triangulation algorithm in \cite{cryptoeprint:2022/320}. 

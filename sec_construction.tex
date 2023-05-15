@@ -207,7 +207,7 @@ TBD: explain
 %distributed gen advantage
 \Cref{tab:formulas_DMPF_comparison} displays the keysize, running time of $\Gen$,$\Eval$ and $\FullEval$ for different DMPF schemes, computed in terms of costs of abstract tools such as PRG, batch code and OKVS. \Yaxin{We can plug in the actual costs of these tools after carrying out a complete experiment. }
 	\begin{table*}
-    \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points and computational security parameter $\lambda$. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $w$ stands for the number of buckets that each input coordinate is mapped to (we only consider regular degree because this is the case in most instantiations). }
+    \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points and computational security parameter $\lambda$. The convert layer is ignored for now. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $w$ stands for the number of buckets that each input coordinate is mapped to (we only consider regular degree because this is the case in most instantiations). }
     \label{tab:formulas_DMPF_comparison}
 		\scalebox{0.86}{
 			\begin{tabular}{ccccc}
@@ -235,6 +235,7 @@ TBD: explain
 			\end{tabular}	
 		}
 	\end{table*}
+    \Yaxin{Note that the PRG in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$. }
 
   \Yaxin{Take PCG as a potential application. We care about $\FullEval$ time which is related to PCG seed expanding time. In this aspect, the batch code DMPF consumes $d\times$PRGs than big-state DMPF and OKVS-based DMPF, while big-state DMPF's $\FullEval$ time scales with $t$ and OKVS-based DMPF in addition consumes large field multiplications (in OKVS decoding, and maybe more than this). Therefore we expect different DMPF schemes to be the top choice in different choices of $t$ and depending on the computing time of PRG and large field multiplication. }
 
