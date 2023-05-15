@@ -207,9 +207,9 @@ TBD: explain
 %distributed gen advantage
 \Cref{tab:formulas_DMPF_comparison} displays the keysize, running time of $\Gen$,$\Eval$ and $\FullEval$ for different DMPF schemes, computed in terms of costs of abstract tools such as PRG, batch code and OKVS. \Yaxin{We can plug in the actual costs of these tools after carrying out a complete experiment. }
 	\begin{table*}
+    \renewcommand\arraystretch{1.5}
     \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points and computational security parameter $\lambda$. The convert layer is ignored for now. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $w$ stands for the number of buckets that each input coordinate is mapped to (we only consider regular degree because this is the case in most instantiations). }
     \label{tab:formulas_DMPF_comparison}
-		\scalebox{0.86}{
 			\begin{tabular}{ccccc}
 				\toprule 
         %Header
@@ -217,23 +217,22 @@ TBD: explain
 
         \midrule
 
-				keysize & $t(\lambda+2)\log N$ & $m\lambda\log(wN/m)$ & $t(\lambda+2t)\log N$ &\makecell{ $\log N\times$OKVS code size}\\
+				Keysize & $t(\lambda+2)\log N$ & $m\lambda\log(wN/m)$ & $t(\lambda+2t)\log N$ &\makecell{ $\log N\times\OKVS$ code size}\\
 
-				\begin{tabular}{cc}
-					$Gen()$ & \makecell{Dominating operations \\\hdashline Cheap operations}
-				\end{tabular} &\makecell{$2t\log N\times $ PRG\\\hdashline$O(t\lambda\log N$)} &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets\\\hdashline$O(m\lambda\log(wN/m))$} &\makecell{$2t\log N\times$PRG \\\hdashline$O(t(\lambda+t)\log N)$} &\makecell{$2t\log N\times$PRG, \\$\log N\times $OKVS  Encoding\\\hdashline$O(t\lambda\log N)$} \\
+                \cline{1-5}
+				
+				$Gen()$ & $2t\log N\times $ PRG &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets} &$2t\log N\times$PRG & \makecell{$2t\log N\times$PRG, \\$\log N\times \OKVS.\Encode$} \\
 
-				\begin{tabular}{cc}
-					$Eval()$ & \makecell{Dominating operations \\\hdashline Cheap  operations}
-				\end{tabular} &\makecell{$t\log N\times $PRG\\\hdashline$O(t\lambda\log N)$} &\makecell{$w\log(wN/m)\times $PRG\\Finding all buckets an input is mapped to\\\hdashline$O(w\lambda\log(wN/m))$} & \makecell{$\log N\times$PRG\\\hdashline$O((\lambda+t)\log N)$} &\makecell{$\log N\times$PRG, \\$\log N\times$OKVS Decoding\\\hdashline$O(\lambda\log N)$} \\
+                \cline{1-5}
 
-				\begin{tabular}{cc}
-					$FullEval()$ & \makecell{Dominating operations \\\hdashline Cheap  operations}
-				\end{tabular} &\makecell{$tN\times$PRG\\\hdashline$O(t\lambda N)$} &\makecell{$wN\times$PRG\\Finding the input sequence in every bucket\\\hdashline $O(w\lambda N)$} & \makecell{$N\times$PRG\\\hdashline$O((\lambda+t)N)$}&\makecell{$N\times$PRG, \\ $N\times$ OKVS Decoding\\\hdashline$O(\lambda N)$} \\
+				$Eval()$ & $t\log N\times $PRG &\makecell{$w\log(wN/m)\times $PRG\\Finding all buckets an input is mapped to} & $\log N\times$PRG &\makecell{$\log N\times$PRG, \\$\log N\times\OKVS.\Decode$} \\
+
+                \cline{1-5}
+
+				$FullEval()$ & $tN\times$PRG &\makecell{$wN\times$PRG\\Finding the input sequence in every bucket} & $N\times$PRG & \makecell{$N\times$PRG, \\ $N\times\OKVS.\Decode$} \\
 
         \bottomrule
 			\end{tabular}	
-		}
 	\end{table*}
     \Yaxin{Note that the PRG in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$. }
 
