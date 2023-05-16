@@ -17,12 +17,6 @@ For convenience of discussion DMPF applications, we use $\DMPF_{t, N, \GG}$ to d
 \end{table*}
 
 \subsection{PCG for OLE from Ring-$\LPN$}
-\Yaxin{TBD: 
-\begin{itemize}
-  \item Characterize parameters
-  \item Show nonregular optimization
-  \item Plug in new DMPF and show overall optimization
-\end{itemize}}
 
 We begin by briefly introducing the protocol of PCG for OLE from Ring-$\LPN$ assumption, proposed in \cite{cryptoeprint:2022/1035}. 
 
@@ -53,7 +47,7 @@ One can compute the seed size and expanding time of this PCG protocol as follows
 
 A previous optimization is to substitute $\cHW_{R,t}$ with regular weight-$t$ polynomials denoted as regular-$\cHW_{R,t}$. Each regular weight-$t$ polynomial $e$ contains exactly one nonzero coefficient $e_j$ in the range of degree $[j\cdot (N/t), (j+1)\cdot (N/t)-1]$ for $j=0,\cdots t-1$. When multiplying two regular weight-$t$ polynomials $e$ and $f$, $e_i\cdot f_j$ contributes to a coefficient in the range of degree $[(i+j)\cdot (2N/t), (i+j+2)\cdot (2N/t)-2]$. Therefore the deg-$2N$ polynomial $e\cdot f$ can be shared by invoking $\{\DMPF_{k, 2N/t, \mathbb{Z}_p}\}_{k=1,2,\cdots,t-1,t,t-1,\cdots, 2,1}$, which cuts down the domain size compared to the original design. 
 
-The previous literature uses sum of DPFs to achieve DMPF in either the original design with nonregular noise or the optimized design with regular noise. It indicates using batch code to achieve DMPF as another optimization but not in the clear. We'll analyze the cost of this PCG protocol when 
+The previous literature uses sum of DPFs to achieve DMPF in either the original design with nonregular noise or the optimized design with regular noise. It indicates using batch code to achieve DMPF as another optimization but not in the clear. We'll analyze the cost of this PCG protocol under the following settings:
 \begin{itemize}
     \item[(1)]with regular noise and each multiplication of sparse polynomials is shared by 2 sets of $\{\DMPF_{k, 2N/t, \mathbb{Z}_p}\}_{1\le k\le t-1}$ and $\DMPF_{t, 2N/t, \mathbb{Z}_p}$;
     \item[(2)]with nonregular noise and each multiplication of sparse polynomials is shared by $\DMPF_{t^2, 2N, \mathbb{Z}_p}$. 
@@ -77,9 +71,9 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
             & nonregular & $ec^2t^2\lambda\log(\frac{2wN}{et^2})+ec^2t^2\log p$ & $4c^2wN\times$PRG\\
             \cline{1-4}
 
-            \multirow{2}{*}{Big-state DMPF} & regular & $c^2t^2(\lambda+\frac{4}{3}t)\log (2N)+c^2t^2\log p$ & $8c^2N\times$PRG \\
+            \multirow{2}{*}{Big-state DMPF} & regular & $c^2t^2(\lambda+\frac{4}{3}t)\log (2N)+c^2t^2\log p$ & $8c^2N\times$PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$ whose computation time should grow with $t$. } \\
             %\cline{2-4}
-            & nonregular & $c^2t^2(\lambda+2t)\log (2N)+c^2t^2\log p$ & $4c^2N\times$PRG \\
+            & nonregular & $c^2t^2(\lambda+2t)\log (2N)+c^2t^2\log p$ & $4c^2N\times$PRG$^*$ \\
             \cline{1-4}
 
             \multirow{2}{*}{OKVS-based DMPF} & regular & $e'c^2t^2\lambda\log(2N/t)+e'c^2t^2\log p$ & $8c^2N\times$PRG+$8c^2N\times\OKVS.\Decode$  \\
@@ -89,7 +83,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 		\end{tabular}
 \end{table*}
 
-\Yaxin{One caveat: can bath-code / OKVS-based DMPF fit into the regular design, while it requires shares of $1,2,3$-point functions?}
+\Yaxin{One caveat: can batch-code / OKVS-based DMPF fit into the regular design, while it requires shares of $1,2,3$-point functions?}
 
 From \cref{tab:LPN_error_distribution} we can see that if we allow small blowup of the seed size of PCG, then we can gain much faster seed expansion by using nonregular noise distribution and either batch-code DMPF or big-state DMPF or OKVS-based DMPF. 
 
