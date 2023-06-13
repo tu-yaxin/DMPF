@@ -65,7 +65,7 @@ We require $\Pi$ to satisfy the following requirements:
   with the following syntax: 
   \begin{itemize}
       \item $\Gen(1^\lambda,\hat{f}_{A,B})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{A,B}=(N,\hat{\GG},t,A,B)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. \Yaxin{On Matan's behalf: same comment as well. Maybe $|k_i|=\poly(\lambda,t)$. }
-      \item $\Eval_b(k_b,x)\rightarrow y_b$: On input key $k_b\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $b$, $\Eval_b$ returns $y_b\in\GG$.
+      \item $\Eval_b(1^\lambda, k_b,x)\rightarrow y_b$: On input key $k_b\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $b$, $\Eval_b$ returns $y_b\in\GG$.
   \end{itemize}
   We require $\Pi$ to satisfy the following requirements:
   \begin{itemize}

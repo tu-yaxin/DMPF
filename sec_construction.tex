@@ -8,24 +8,24 @@ Each node of this tree is associated with a $\lambda$-bit seed string and a $l$-
 The computation of values on evaluation trees $T_0,T_1$ involves the following methods in the paradigm in \cref{fig:DMPF_paradigm}: 
 \begin{itemize}
   \item $\sf Initialize$ computes the values on the roots of $T_0,T_1$.
-  \item $\sf GenCW$ computes correction words associated with the first $n$ layers, namely $\{CW^{(1)},\cdots CW^{(n)}\}$. 
-  \item $\sf GenConvCW$ computes the correction word $CW^{(n+1)}$ associated with the last layer that'll help genereate the final result in the output group $\GG$. 
+  \item $\sf GenCW$ computes correction words associated with the first $n$ layers, namely $\{CW^{(1)},\cdots CW^{(n)}\}$. Two parties use the same set of correction words. 
+  \item $\sf GenConvCW$ computes the correction word $CW^{(n+1)}$ associated with the last layer that'll help genereate the final result in the output group $\GG$. Two parties use the same set of correction words. 
   \item $\sf Correct$ on input a node's position, its $\sign$ and the correction word $CW^{(i)}$ corresponding to its layer, outputs an additive correction for its children's value. 
   \item $\sf ConvCorrect$ on input a leaf node's position, its $\sign$ and the correction word $CW^{(n+1)}$, outputs an additive correction for the final result in the output group $\GG$. 
 \end{itemize}
 
-Call any path from the root a leaf corresponding to an input string in $A$ an accepting path. To force the correctness, we maintain the following invariance on the evaluation trees $T_0$, $T_1$ of the two parties: 
+Call any path from the root to a leaf (corresponding to a string in $A$) an accepting path. To force the correctness, we maintain the following invariance on the evaluation trees $T_0$, $T_1$ of the two parties: 
 \begin{itemize}
   \item If a node is not on any accepting path, then in $T_0$ and $T_1$ it is associated with the same $\seed$ and $\sign$. 
   \item If a node is on an accepting path, then $T_0$ and $T_1$ assign to it with different signs that controls the corrections on its children (or on the output if it's a leaf node). 
 \end{itemize}
-It is easy to see that if a node is not on any accepting path, then its children are associated with the same values in $T_0$ and $T_1$, and so is the subtree rooted at this node. Hence one only needs to design how to correct children of nodes on the accepting paths. We provides the big-state DMPF and the OKVS-based DMPF basing on this paradigm, that differ mainly on the way of generating and computing corrections. 
+If a node is not on any accepting path, then its children are associated with the same values in $T_0$ and $T_1$, and so is the subtree rooted at this node. Hence one only needs to design how to correct children of nodes on the accepting paths. We provides the big-state DMPF and the OKVS-based DMPF basing on this paradigm, that differ mainly on the way of generating and computing corrections. 
 
 %We make the following restrictions on the methods in order to guarantee the invariance on the evaluation trees: 
 %${\sf M}(\bar{x},\sign, CW) =\sum_{i=1}^l\sign[i]\cdot{\sf M}(\bar{x},0^{i-1}10^{l-i},CW)$ for all $\sf M\in\{Correct, ConvCorrect\}$, input $\bar{x}$ and $CW$.
 
 \begin{figure*}
-  \caption{The paradigm of our DMPF schemes. We leave the sign string length $l$, methods $\sf Initialize, GenCW,$ $\sf GenConvCW, Correct, ConvCorrect$ to be determined by specific constructions. }
+  \caption{The paradigm of our DMPF schemes. We leave the sign string length $l$, methods $\sf Initialize, GenCW,$ $\sf GenConvCW, Correct, ConvCorrect$ to be determined by specific constructions. In the paradigm $A^{(i)}$ denotes the list of accepting paths reaching the $i$th layer, and $\seed^{(i)}$ and $\sign^{(i)}$ denote the lists of $\seed$ values and $\sign$ values at the nodes on the $i$th layer that are on accepting paths.}
   \label{fig:DMPF_paradigm}
   \fbox{\parbox{\linewidth}{
   \begin{algorithmic}
@@ -214,15 +214,15 @@ TBD: explain
 
                 \cline{1-5}
 				
-				$Gen()$ & $2t\log N\times $ PRG &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets} &$2t\log N\times$PRG & \makecell{$2t\log N\times$PRG, \\$\log N\times \OKVS.\Encode$} \\
+				$Gen()$ & $2t\log N\times $ PRG &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets} &$2t\log N\times$PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$ whose computation time should grow with $t$. } & \makecell{$2t\log N\times$PRG, \\$\log N\times \OKVS.\Encode$} \\
 
                 \cline{1-5}
 
-				$Eval()$ & $t\log N\times $PRG &\makecell{$w\log(wN/m)\times $PRG\\Finding all buckets an input is mapped to} & $\log N\times$PRG &\makecell{$\log N\times$PRG, \\$\log N\times\OKVS.\Decode$} \\
+				$Eval()$ & $t\log N\times $PRG &\makecell{$w\log(wN/m)\times $PRG\\Finding all buckets an input is mapped to} & $\log N\times$PRG$^*$ &\makecell{$\log N\times$PRG, \\$\log N\times\OKVS.\Decode$} \\
 
                 \cline{1-5}
 
-				$FullEval()$ & $tN\times$PRG &\makecell{$wN\times$PRG\\Finding the input sequence in every bucket} & $N\times$PRG & \makecell{$N\times$PRG, \\ $N\times\OKVS.\Decode$} \\
+				$FullEval()$ & $tN\times$PRG &\makecell{$wN\times$PRG\\Finding the input sequence in every bucket} & $N\times$PRG$^*$ & \makecell{$N\times$PRG, \\ $N\times\OKVS.\Decode$} \\
 
         \bottomrule
 			\end{tabular}	

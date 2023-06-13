@@ -52,11 +52,11 @@ The previous literature uses sum of DPFs to achieve DMPF in either the original 
     \item[(1)]with regular noise and each multiplication of sparse polynomials is shared by 2 sets of $\{\DMPF_{k, 2N/t, \mathbb{Z}_p}\}_{1\le k\le t-1}$ and $\DMPF_{t, 2N/t, \mathbb{Z}_p}$;
     \item[(2)]with nonregular noise and each multiplication of sparse polynomials is shared by $\DMPF_{t^2, 2N, \mathbb{Z}_p}$. 
 \end{itemize}
-We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF_comparison}. The costs of PCG protocols under different settings are listed in \cref{tab:LPN_error_distribution}. 
+We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF_comparison}. The costs of PCG protocols under different settings are listed in \cref{tab:PCG_plug_in_formula}. 
 \begin{table*}
     \renewcommand\arraystretch{1.5}
     \caption{Seed size and expanding time of PCG protocols for the same $(\lambda,N, c, t)$ with different choices of noise distributions in module-LPN assumption, and with different $\DMPF$ instantiations. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The seed size is represented by total $\DMPF$ share size and the expanding time is represented by total $\DMPF.\FullEval$ time. The PRG evaluations in the first $\log N$ layers and in the convert layer are both regarded as the same PRG. $e$ in the second row represents the expansion parameter for PBC, and $e'$ in the last row represents the expansion parameter for OKVS. }
-	\label{tab:LPN_error_distribution}
+	\label{tab:PCG_plug_in_formula}
 		\begin{tabular}{cccc}
             \toprule
 			$\DMPF$ instantiation & Noise type & Total share size & Total $\FullEval$ time \textcolor{red}{(only listed PRG and $\OKVS$)} \\
@@ -71,7 +71,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
             & nonregular & $ec^2t^2\lambda\log(\frac{2wN}{et^2})+ec^2t^2\log p$ & $4c^2wN\times$PRG\\
             \cline{1-4}
 
-            \multirow{2}{*}{Big-state DMPF} & regular & $c^2t^2(\lambda+\frac{4}{3}t)\log (2N)+c^2t^2\log p$ & $8c^2N\times$PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$ whose computation time should grow with $t$. } \\
+            \multirow{2}{*}{Big-state DMPF} & regular & $c^2t^2(\lambda+\frac{4}{3}t)\log (2N)+c^2t^2\log p$ & $8c^2N\times$PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t^2}$ whose computation time should grow with $t^2$. } \\
             %\cline{2-4}
             & nonregular & $c^2t^2(\lambda+2t)\log (2N)+c^2t^2\log p$ & $4c^2N\times$PRG$^*$ \\
             \cline{1-4}
@@ -85,9 +85,9 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 
 \Yaxin{One caveat: can batch-code / OKVS-based DMPF fit into the regular design, while it requires shares of $1,2,3$-point functions?}
 
-From \cref{tab:LPN_error_distribution} we can see that if we allow small blowup of the seed size of PCG, then we can gain much faster seed expansion by using nonregular noise distribution and either batch-code DMPF or big-state DMPF or OKVS-based DMPF. 
+From \cref{tab:PCG_plug_in_formula} we can see that if we allow small blowup of the seed size of PCG, then we can gain much faster seed expansion by using nonregular noise distribution and either batch-code DMPF or big-state DMPF or OKVS-based DMPF. 
 
-\paragraph{Comparing the entropy of regular and nonregular noise.}Moreover, let's consider using the entropy of the noise distribution as the security parameter (which means that we consider the adversary's attack being randomly guessing the secret). Since the entropy of the nonregular noise distribution $\cHW_{R_1,t_1}$ is $\log(\frac{N_1^{t_1}}{t_1^{t_1}})$ while the entropy of the regular noise distribution regular-$\cHW_{R_2,t_2}$ is $\log(\frac{N_2^{t_2}}{t_2!})$, to settle for the same level of security we only need $t_1=t_2$ and $N_1 = N_2/\mathrm{e}$ where $\mathrm{e}$ is the natural logarithm. Placing this back to \cref{tab:LPN_error_distribution}, the total $\FullEval$ time (i.e., the seed expanding time of PCG) can have an extra $\times \mathrm{e}$ speedup. 
+\paragraph{Comparing the entropy of regular and nonregular noise.}Moreover, let's consider using the entropy of the noise distribution as the security parameter (which means that we consider the adversary's attack being randomly guessing the secret). Since the entropy of the nonregular noise distribution $\cHW_{R_1,t_1}$ is $\log(\frac{N_1^{t_1}}{t_1^{t_1}})$ while the entropy of the regular noise distribution regular-$\cHW_{R_2,t_2}$ is $\log(\frac{N_2^{t_2}}{t_2!})$, to settle for the same level of security we only need $t_1=t_2$ and $N_1 = N_2/\mathrm{e}$ where $\mathrm{e}$ is the natural logarithm. Placing this back to \cref{tab:PCG_plug_in_formula}, the total $\FullEval$ time (i.e., the seed expanding time of PCG) can have an extra $\times \mathrm{e}$ speedup. 
 
 \Yaxin{Double check i the cost of practical attacks against $R^c$-$\LPN$ scales with entropy. }
 
@@ -98,12 +98,49 @@ Define the number of noisy coordinate $W:=ct$. We set $(\lambda, c, N, W)$ such 
 
 \Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the batch-code and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the batch-code-DMPF. 
 
-\subsection{PSI-WCA}
-\Yaxin{TBD: 
+\subsection{Unbalanced PSI-WCA}
+A private set intersection (PSI) protocol allows two parties with input $X$, $Y$ being two sets to learn about their intersection $X\cap Y$ without revealing additional information of $X$ or $Y$. We denote by PSI-WCA (weighted cardinality) a variant of PSI that computes the weighted cardinality of elements in $X\cap Y$ where the weights are determined by a pre-fixed function $w(\cdot)$. 
+
+We will be interested in \emph{unbalanced} PSI-WCA where $|X|\gg |Y|$ and the output should be received by the party holding $Y$. In this problem we call the party holding $X$ as the server, and the party holding $Y$ as the client. If further the big set $X$ is held by two non-colluding servers, then such an unbalanced PSI-WCA protocol can be constructed from DMPF, as suggested in \cite{cryptoeprint:2020/1599}: 
 \begin{itemize}
-  \item plug in new DMPF and analyze advantage interval
-  \item plug in distributed gen
-\end{itemize}}
+  \item The client invokes $\DMPF.\Gen(1^\lambda, \hat{f}_{Y,w(Y)})\rightarrow (k_0,k_1)$, where $w(Y)$ is the set of weights of elements in $Y$. Then the client send $k_0$ to server 0 and $k_1$ to server 1. 
+  \item Server $b$ computes $s_b=\sum_{x\in X}\DMPF.\Eval_b(1^\lambda, k_b,x)$ and send it back to the client. 
+  \item The client computes $s_0+s_1$, which will be the weighted cardinality of $X\cap Y$. 
+\end{itemize}
+One caveat is that this protocol reveals information about $Y$ that is leaked by $\DMPF$. Plugging in any $\DMPF$ instantiations we have mentioned, the size of $|Y|$ will be leaked to the servers. 
+
+The cost of our unbalanced PSI-WCA can be computed as follows: 
+\begin{itemize}
+  \item The communication cost equals the keysize of $\DMPF$. 
+  \item The client computation time equals the key generation time of $\DMPF$. 
+  \item The server computation time equals $|X|\times$the evaluation time of $\DMPF$. 
+\end{itemize}
+
+We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF_comparison}. As suggested in \cite{cryptoeprint:2020/1599}, we take an infeasibly large domain for the sets $X$ and $Y$ to locate, whose size is $N = 2^{128}$. The set sizes $|X|$ and $|Y|$ can vary depending on application scenarios. Since $|Y|$ is the crucial factor that distinguishes different $\DMPF$ instantiations, we will only consider the change of $|Y|$. The costs of PSI-WCA protocols under different settings of $|Y|$ are listed in \cref{tab:PSI_plug_in_formula}. 
+
+
+\begin{table*}
+  \renewcommand\arraystretch{1.5}
+  \caption{Communication cost, client and server computation time of the PSI-WCA protocol for domain size $N = 2^{128}$, weight group $\GG$, and  different choices of client's set size $|Y|$. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The PRG evaluations in the first $\log N$ layers and in the convert layer are both regarded as the same PRG. $e$ in the second row represents the expansion parameter for PBC, and $e'$ in the last row represents the expansion parameter for OKVS. }
+\label{tab:PSI_plug_in_formula}
+  \begin{tabular}{cccc}
+          \toprule
+    $\DMPF$ instantiation & Communication cost & Client computation time & Server computation time \\
+          \midrule
+
+          Sum of DPFs & $|Y|\lambda\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG & $|X|\cdot |Y|\log N\times $PRG\\
+
+          Batch-code DMPF & $e|Y|\lambda\log(\frac{wN}{e|Y|})+e|Y|\log|\GG|$ & $2e|Y|\log(\frac{wN}{e|Y|})\times$PRG & $w|X|\log(\frac{wN}{e|Y|})\times$PRG\\
+
+          Big-state DMPF & $|Y|(\lambda+2|Y|)\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG$^*$ & $|X|\log N \times$PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2|Y|}$ whose computation time should grow with $|Y|$. }\\
+
+          OKVS-based DMPF& $e'|Y|\log N +e'|Y|\log|\GG|$ & $2|Y|\log N\times$PRG+$\log N\times \OKVS.\Encode$ & $|X|(\log N\times$PRG+$\log N\times \OKVS.\Decode)$\\
+          \bottomrule
+  \end{tabular}
+\end{table*}
+
+
+
 \Yaxin{Previous calculation as a reference: }A short conclusion is using big-state DMPF for $t<64$ and the OKVS-DMPF for $t\ge 64$ gives at $\sim \times 2$ faster Eval() time and faster Gen() time compared to the naive and batch-code construction. The keysize ($\propto$ communication complexity) of our choice is usually smaller than the batch-code DMPF and slightly larger than the naive construction. 
 \subsection{Security analysis}
 \subsection{Heavy-hitters}
