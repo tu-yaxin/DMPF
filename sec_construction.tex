@@ -201,6 +201,7 @@ TBD: explain
 \Cref{tab:formulas_DMPF_comparison} displays the keysize, running time of $\Gen$,$\Eval$ and $\FullEval$ for different DMPF schemes, computed in terms of costs of abstract tools such as PRG, batch code and OKVS. \Yaxin{We can plug in the actual costs of these tools after carrying out a complete experiment. }
 	\begin{table*}
     \renewcommand\arraystretch{1.5}
+    \begin{threeparttable}
     \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points and computational security parameter $\lambda$. The convert layer is ignored for now. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $w$ stands for the number of buckets that each input coordinate is mapped to (we only consider regular degree because this is the case in most instantiations). }
     \label{tab:formulas_DMPF_comparison}
 			\begin{tabular}{ccccc}
@@ -214,7 +215,8 @@ TBD: explain
 
                 \cline{1-5}
 				
-				$Gen()$ & $2t\log N\times $ PRG &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets} &$2t\log N\times$PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$ whose computation time should grow with $t$. } & \makecell{$2t\log N\times$PRG, \\$\log N\times \OKVS.\Encode$} \\
+				$Gen()$ & $2t\log N\times $ PRG &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets} &$2t\log N\times$PRG$^*$\tnote{1}
+        & \makecell{$2t\log N\times$PRG, \\$\log N\times \OKVS.\Encode$} \\
 
                 \cline{1-5}
 
@@ -226,6 +228,10 @@ TBD: explain
 
         \bottomrule
 			\end{tabular}	
+      \begin{tablenotes}
+        \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$ whose computation time should grow with $t$. 
+        \end{tablenotes}
+    \end{threeparttable}
 	\end{table*}
     \Yaxin{Note that the PRG in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$. }
 

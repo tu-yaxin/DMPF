@@ -55,6 +55,7 @@ The previous literature uses sum of DPFs to achieve DMPF in either the original 
 We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF_comparison}. The costs of PCG protocols under different settings are listed in \cref{tab:PCG_plug_in_formula}. 
 \begin{table*}
     \renewcommand\arraystretch{1.5}
+    \begin{threeparttable}
     \caption{Seed size and expanding time of PCG protocols for the same $(\lambda,N, c, t)$ with different choices of noise distributions in module-LPN assumption, and with different $\DMPF$ instantiations. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The seed size is represented by total $\DMPF$ share size and the expanding time is represented by total $\DMPF.\FullEval$ time. The PRG evaluations in the first $\log N$ layers and in the convert layer are both regarded as the same PRG. $e$ in the second row represents the expansion parameter for PBC, and $e'$ in the last row represents the expansion parameter for OKVS. }
 	\label{tab:PCG_plug_in_formula}
 		\begin{tabular}{cccc}
@@ -71,7 +72,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
             & nonregular & $ec^2t^2\lambda\log(\frac{2wN}{et^2})+ec^2t^2\log p$ & $4c^2wN\times$PRG\\
             \cline{1-4}
 
-            \multirow{2}{*}{Big-state DMPF} & regular & $c^2t^2(\lambda+\frac{4}{3}t)\log (2N)+c^2t^2\log p$ & $8c^2N\times$PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t^2}$ whose computation time should grow with $t^2$. } \\
+            \multirow{2}{*}{Big-state DMPF} & regular & $c^2t^2(\lambda+\frac{4}{3}t)\log (2N)+c^2t^2\log p$ & $8c^2N\times$PRG$^*$\tnote{1} \\
             %\cline{2-4}
             & nonregular & $c^2t^2(\lambda+2t)\log (2N)+c^2t^2\log p$ & $4c^2N\times$PRG$^*$ \\
             \cline{1-4}
@@ -81,6 +82,10 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
             & nonregular & $e'c^2t^2\lambda\log(2N)+e'c^2t^2\log p$ & $4c^2N\times$PRG+$4c^2N\times\OKVS.\Decode$\\
             \bottomrule
 		\end{tabular}
+    \begin{tablenotes}
+      \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t^2}$ whose computation time should grow with $t^2$. 
+    \end{tablenotes}
+  \end{threeparttable}
 \end{table*}
 
 \Yaxin{One caveat: can batch-code / OKVS-based DMPF fit into the regular design, while it requires shares of $1,2,3$-point functions?}
@@ -93,7 +98,7 @@ From \cref{tab:PCG_plug_in_formula} we can see that if we allow small blowup of 
 
 Next we plug in concrete parameters and evaluate the performance of different $\DMPF$ schemes under different PCG parameter settings. 
 
-Define the number of noisy coordinate $W:=ct$. We set $(\lambda, c, N, W)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. According to \cite{cryptoeprint:2022/1035}, for $R$ from irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^W\approx N\cdot c^W$. For $R$ from reducible $F$, we lowerbound the number of arithmetic operations by $2^i\cdot c^{W_i}$ \Yaxin{(to be checked)}, where $i:=\mathop{\arg\min}\limits_{1\le i\le \log N}\left((\frac{c\cdot 2^i}{(c-1)\cdot 2^i-1})^{w_i}\cdot 2^i\right)$ and $W_i:=c(c-1)\cdot 2^i\left(1-(1-\frac{1}{(c-1)2^i})^{W/c}\right)$. \Yaxin{(to be checked) In the end we round $W$ such that $t=W/c$ is an integer. }
+Define the number of noisy coordinate $W:=ct$. We set $(\lambda, c, N, W)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. According to \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^W\approx N\cdot c^W$. \Yaxin{Check \cite{cryptoeprint:2022/712} for latest update about this cost. } For $R$ from a reducible $F$, we lowerbound the number of arithmetic operations by $2^i\cdot c^{W_i}$ , where $i:=\mathop{\arg\min}\limits_{1\le i\le \log N}\left(2^i\cdot c^{W_i}\right)$ and $W_i:=W-cn+(c(n-1)+W)\cdot \left(1-\frac{1}{n}\right)^{W/c-1}$. In the end we round $W$ such that $t=W/c$ is an integer. 
 
 
 \Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the batch-code and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the batch-code-DMPF. 
@@ -121,6 +126,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 
 \begin{table*}
   \renewcommand\arraystretch{1.5}
+  \begin{threeparttable}
   \caption{Communication cost, client and server computation time of the PSI-WCA protocol for domain size $N = 2^{128}$, weight group $\GG$, and  different choices of client's set size $|Y|$. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The PRG evaluations in the first $\log N$ layers and in the convert layer are both regarded as the same PRG. $e$ in the second row represents the expansion parameter for PBC, and $e'$ in the last row represents the expansion parameter for OKVS. }
 \label{tab:PSI_plug_in_formula}
   \begin{tabular}{cccc}
@@ -132,11 +138,15 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 
           Batch-code DMPF & $e|Y|\lambda\log(\frac{wN}{e|Y|})+e|Y|\log|\GG|$ & $2e|Y|\log(\frac{wN}{e|Y|})\times$PRG & $w|X|\log(\frac{wN}{e|Y|})\times$PRG\\
 
-          Big-state DMPF & $|Y|(\lambda+2|Y|)\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG$^*$\footnote{The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2|Y|}$ whose computation time should grow with $|Y|$. } & $|X|\log N \times$PRG$^*$\\
+          Big-state DMPF & $|Y|(\lambda+2|Y|)\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG$^*$\tnote{1} & $|X|\log N \times$PRG$^*$\\
 
           OKVS-based DMPF& $e'|Y|\log N +e'|Y|\log|\GG|$ & $2|Y|\log N\times$PRG+$\log N\times \OKVS.\Encode$ & $|X|(\log N\times$PRG+$\log N\times \OKVS.\Decode)$\\
           \bottomrule
   \end{tabular}
+  \begin{tablenotes}
+    \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2|Y|}$ whose computation time should grow with $|Y|$.
+  \end{tablenotes}
+\end{threeparttable}
 \end{table*}
 
 
