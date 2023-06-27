@@ -67,7 +67,7 @@ If a node is not on any accepting path, then its children are associated with th
     \Procedure{FullEval\(_b\)}{$1^\lambda,k_b$}
     \State Parse $k_b=(\seed^{(0)},\sign^{(0)},CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
     \State For $1\le i\le n$, ${\sf Path}^{(i)}\gets$ the lexicographical ordered list of $\{0,1\}^i$. ${\sf Path}^{(0)}\gets[\epsilon]$. 
-    \State\Yaxin{The evaluation is BFS-style, which costs a lot of memory to store lists $\seed^{(i)}, \sign^{(i)}$. Need a DFS version for large $t$ to reduce memory use. Write in the clear or explain by words?}
+    \State\Yaxin{The evaluation is BFS-style, which costs a lot of memory to store lists $\seed^{(i)}, \sign^{(i)}$. Need a DFS version for large $N$ to reduce memory use? Write in the clear or explain by words?}
     \For{$i=1$ to $n$} 
       \For{$k = 1$ to $2^{i-1}$}
         \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}({\sf Path}^{(i-1)}[k],\sign^{(i-1)}[k],CW^{(i)})$.
