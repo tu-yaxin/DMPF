@@ -203,8 +203,9 @@ TBD: explain
 \Cref{tab:formulas_DMPF_comparison} displays the keysize, running time of $\Gen$,$\Eval$ and $\FullEval$ for different DMPF schemes, computed in terms of costs of abstract tools such as PRG, batch code and OKVS. \Yaxin{We can plug in the actual costs of these tools after carrying out a complete experiment. }
 	\begin{table*}
     \renewcommand\arraystretch{1.5}
+    \scalebox{0.9}{
     \begin{threeparttable}
-    \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points and computational security parameter $\lambda$. The convert layer is ignored for now. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $w$ stands for the number of buckets that each input coordinate is mapped to (we only consider regular degree because this is the case in most instantiations). }
+    \caption{Keysize and running time comparison for different DMPF constructions for domain size $N$, $t$ accepting points, output group $\GG$ and computational security parameter $\lambda$. We leave this table with the abstraction of (probabilistic) batch code in the second column and the abstraction of OKVS in the last column, and plug in concrete instantiations later. $m$ in the second column stands for the number of buckets used in batch code, and $w$ stands for the number of buckets that each input coordinate is mapped to (we only consider regular degree because this is the case in most instantiations). \Yaxin{Denote $T_G$ as the time for computing $G:\{0,1\}^{\lambda+1}\rightarrow \{0,1\}^{2\lambda+2}$, and $T_{G_{\sf convert}}$ as the time for computing $G_{\sf convert}:\{0,1\}^\lambda\rightarrow \GG$. In the last column, denote $\OKVS$ as the $\OKVS$ scheme used for the first $n$ correction words, and $\OKVS_{\sf conv}$ as the $\OKVS$ scheme used for the last correction word. }}
     \label{tab:formulas_DMPF_comparison}
 			\begin{tabular}{ccccc}
 				\toprule 
@@ -213,27 +214,27 @@ TBD: explain
 
         \midrule
 
-				Keysize & $t(\lambda+2)\log N$ & $m\lambda\log(wN/m)$ & $t(\lambda+2t)\log N$ &\makecell{ $\log N\times\OKVS$ code size}\\
+				Keysize & $t(\lambda+2)\log N+t\log\GG$ & $m(\lambda+2)\log(wN/m)+m\log\GG$ & $t(\lambda+2t)\log N+t\log \GG$ &\makecell{ $\log N\times\OKVS$.Codesize\\$+\OKVS_{\sf conv}$.Codesize}\\
 
-                \cline{1-5}
+        \cline{1-5}
 				
-				$Gen()$ & $2t\log N\times $ PRG &\makecell{$2m\log(wN/m)\times $PRG\\Finding a matching of $t$ inputs to $m$ buckets} &$2t\log N\times$PRG$^*$\tnote{1}
-        & \makecell{$2t\log N\times$PRG, \\$\log N\times \OKVS.\Encode$} \\
+				$Gen()$ & $2t\log N\times T_G+2t\times T_{G_{\sf convert}}$ &\makecell{$2m\log(wN/m)\times T_G+2m\times T_{G_{\sf convert}}$\\Finding a matching of $t$ inputs to $m$ buckets} &$2t\log N\times T_{G^*}$\tnote{1}
+        & \makecell{$2t\log N\times T_G+2t\times T_{G_{\sf convert}}$\\$+\log N\times \OKVS.\Encode$\\$+ \OKVS_{\sf conv}.\Encode$} \\
 
-                \cline{1-5}
+        \cline{1-5}
 
-				$Eval()$ & $t\log N\times $PRG &\makecell{$w\log(wN/m)\times $PRG\\Finding all buckets an input is mapped to} & $\log N\times$PRG$^*$ &\makecell{$\log N\times$PRG, \\$\log N\times\OKVS.\Decode$} \\
+				$Eval()$ & $t\log N\times T_G+t\times T_{G_{\sf convert}}$ &\makecell{$w\log(wN/m)\times T_G + w\times T_{G_{\sf convert}}$\\Finding all positions the input is mapped to} & $\log N\times T_{G^*} + T_{G_{\sf convert}}$ &\makecell{$\log N\times T_G$ \\$+\log N\times\OKVS.\Decode$\\ $+\OKVS_{\sf conv}.\Decode$} \\
 
-                \cline{1-5}
+        \cline{1-5}
 
-				$FullEval()$ & $tN\times$PRG &\makecell{$wN\times$PRG\\Finding the input sequence in every bucket} & $N\times$PRG$^*$ & \makecell{$N\times$PRG, \\ $N\times\OKVS.\Decode$} \\
-
+				$FullEval()$ & $tN\times T_G+tN\times T_{G_{\sf convert}}$ &\makecell{$wN\times T_G+ N\times T_{G_{\sf convert}}$\\Finding the full domain in buckets} & $N\times T_{G^*} + N\times T_{G_{\sf convert}}$ & \makecell{$N\times T_G$ \\ $+N\times\OKVS.\Decode$\\$+N\times \OKVS_{\sf conv}.\Decode$} \\
         \bottomrule
 			\end{tabular}	
       \begin{tablenotes}
-        \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$ whose computation time should grow with $t$. 
+        \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$ whose computation time should grow with $t$. We mark this PRG as $G^*$ and its computation time as $T_{G^*}$. 
         \end{tablenotes}
     \end{threeparttable}
+    }
 	\end{table*}
     \Yaxin{Note that the PRG in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t}$. }
 
