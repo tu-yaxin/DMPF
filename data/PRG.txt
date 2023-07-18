@@ -1,0 +1,11 @@
+output.png: how long it takes (in nanoseconds) to expand a single PRG seed for different expansion factors (the x axis is log scaled, so y(x) is how many nanoseconds it takes to expand a PRG seed of size lambda to lambda*2^x outputs).
+// The first line means that for x=1 we get an average of 15.481 seconds, with 1 stddev below (to the left) and 1 stddev above (to the right).
+// For each size I gathered 100 samples.
+prg/prg expansion/1     time:   [15.473 ns 15.481 ns 15.489 ns]            
+prg/prg expansion/2     time:   [17.609 ns 17.667 ns 17.755 ns]                                
+prg/prg expansion/3     time:   [27.845 ns 27.864 ns 27.885 ns]                                
+prg/prg expansion/4     time:   [51.743 ns 51.869 ns 52.031 ns]                                
+prg/prg expansion/5     time:   [85.597 ns 85.656 ns 85.727 ns]                                
+prg/prg expansion/6     time:   [165.18 ns 165.33 ns 165.51 ns]                                
+prg/prg expansion/7     time:   [312.37 ns 312.57 ns 312.78 ns]                                
+prg/prg expansion/8     time:   [606.68 ns 607.19 ns 607.83 ns]     
