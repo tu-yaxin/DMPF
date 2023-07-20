@@ -31,12 +31,12 @@ We begin by briefly introducing the protocol of PCG for OLE from Ring-$\LPN$ ass
     When we only consider $m=1$, each $R^c$-$\LPN$ instance $ \ipd{\vec{a}}{\vec{s}}+\vec{e}$ can be restated as $\ipd{\vec{a'}}{\vec{e'}}$ where $\vec{a'}=1||\vec{a}$ and $\vec{e'}\leftarrow \cHW_{R,t}^c$. 
 \end{definition}
 
-The PCG protocol in \cite{cryptoeprint:2022/1035} generates seed for the OLE correlation $(x_0,x_1,z_0,z_1)\in R^4$ such that $x_0+x_1 = z_0\cdot z_1$. The idea is to first set $z_b = \ipd{\vec{a}}{\vec{e_b}}$ (an $R^c$-$\LPN$ instance with public $\vec{a}$ and $\vec{e_b}\leftarrow \cHW_{R,t}^c$). Basing on the fact that $\ipd{\vec{a}}{ \vec{e_0}}\cdot \ipd{\vec{a}}{\vec{e_1}} = \ipd{\vec{a}\otimes \vec{a}}{\vec{e_0}\otimes \vec{e_1}}$, the next step is to additively share the tensor product $\vec{e_1}\otimes \vec{e_1}$ and each party can compute an additive share of $z_0\cdot z_1$. Note that the tensor product $\vec{e_0}\otimes\vec{e_1}$ consists of $c^2$ entries, each being an deg-$2N$ polynomial with at most $t^2$ nonzero coefficients. Therefore it can be shared by invoking $\DMPF_{t^2, 2N, \mathbb{Z}_p}$ for $c^2$ times.
+The PCG protocol in \cite{cryptoeprint:2022/1035} generates seed for the OLE correlation $(x_0,x_1,z_0,z_1)\in R^4$ such that $x_0+x_1 = z_0\cdot z_1$. The idea is to first set $z_b = \ipd{\vec{a}}{\vec{e_b}}$ (an $R^c$-$\LPN$ instance with public $\vec{a}$ and $\vec{e_b}\leftarrow \cHW_{R,t}^c$). Basing on the fact that $\ipd{\vec{a}}{ \vec{e_0}}\cdot \ipd{\vec{a}}{\vec{e_1}} = \ipd{\vec{a}\otimes \vec{a}}{\vec{e_0}\otimes \vec{e_1}}$, the next step is to additively share the tensor product $\vec{e_0}\otimes \vec{e_1}$ and each party can compute an additive share of $z_0\cdot z_1$. Note that the tensor product $\vec{e_0}\otimes\vec{e_1}$ consists of $c^2$ entries, each being an deg-$2N$ polynomial with at most $t^2$ nonzero coefficients. Therefore it can be shared by invoking $\DMPF_{t^2, 2N, \mathbb{Z}_p}$ for $c^2$ times.
 
 One can compute the seed size and expanding time of this PCG protocol as follows: 
 \begin{itemize}
     \item The seed size is $ct(\log N+\log p)$ bits for specifying $\vec{e_b}$ plus the $c^2\times $keysize of $\DMPF$. 
-    \item The expanding time is $c^2N$ multiplications in $R$ plus $c^2\times$full-domain evaluation time of $\DMPF$. 
+    \item The expanding time is $c^2$ multiplications in the deg-$2N$ polynomial ring plus $c^2\times$full-domain evaluation time of $\DMPF$. 
 \end{itemize}
 
 \begin{remark}\label{rem:use_reducible_ring}
