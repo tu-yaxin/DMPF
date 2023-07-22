@@ -144,7 +144,7 @@ The scheme is correct with overwhelming probability and has distinguish advantag
 \end{construction}
 Note that if one use batch code instead of PBC then the DMPF scheme perfectly correct and secure. When instantiating PBC from $w$-way cuckoo hashing, the \emph{key generation time} is roughly the time needed for computing cuckoo hashing algorithm plus the total time of all DPF$.\Gen(1^\lambda, f_i)$. The \emph{evaluation time} is roughly the total time of all DPF$.\Eval_b(k_b^{j_i},l_i)$. Similarly, the \emph{full-domain evaluation time} is roughly the total time of all DPF$.\FullEval_b(k_b^{j})$ for $j=1,\dots,m$. 
 
-\subsection{Oblivious Key-Value Stores}
+\subsection{Oblivious Key-Value Stores}\label{sec:prelim_okvs}
 We introduce the notion of Oblivious key-value stores (OKVS) which can be used to construct DMPF. OKVS was originally proposed as a primitive for private set intersection (PSI) protocols (see \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}). 
 \begin{definition}[Oblivious Key-Value Stores (OKVS)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{def:OKVS}
   An Oblivious Key-Value Stores scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $t$ and output length $m$. The algorithms are of the following syntax: 
@@ -169,7 +169,7 @@ One can obtain a \emph{linear OKVS} if in addition require:
 \end{definition}
 The $\Encode$ process for a linear OKVS is the process of sampling a random $P$ from the set of solutions of the linear system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$. 
 
-We evaluate an OKVS scheme by its encoding size (output length $m$), encoding time and decoding time. We stress the following two (linear) OKVS constructions:
+We evaluate an OKVS scheme by its rate ($\frac{\text{input length }t}{\text{output length }m}$), encoding time and decoding time. We stress the following two (linear) OKVS constructions:
 \begin{construction}[Polynomial]\label{con:OKVS_polynomial}
   Suppose $\mathcal{K} = \mathcal{V}=\FF$ is a field. Set 
   \begin{itemize}
