@@ -83,6 +83,20 @@ We require $\Pi$ to satisfy the following requirements:
  
  We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DMPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_b$ an algorithm which computes $\Eval_b$ on every input $x$. Hence, $\FullEval_b$ receives only a key $k_b$ as input.
 
+ One can construct a DMPF scheme for $t$-point functions by simply summing $t$ DPFs. We denote this DMPF scheme as the na\"ive construction. 
+\begin{construction}[Na\"ive construction of DMPF]
+  Given DPF for domain of size $N$ and output group $\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
+  \begin{itemize}
+    \item $\Gen(1^\lambda, \hat{f}_{A, B})\rightarrow (k_0, k_1)$: Suppose $A = \{\alpha_1,\dots, \alpha_t\}$ and $B = \{\beta_1,\dots, \beta_t\}$. For $1\le i\le t$, invoke DPF$.\Gen(1^\lambda, \hat{f}_{\alpha_i, \beta_i})\rightarrow (k_0^i, k_1^i)$. Set $(k_0, k_1) = (\{k_0^i\}_{i\in [t]}, \{k_1^i\}_{i\in [t]})$. 
+    \item $\Eval_b(k_b, x)\rightarrow y_b$: Compute $y_b = \sum_{i\in [t]}$DPF$.\Eval_b(k_b^i, x)$. 
+    \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b = \sum_{i\in [t]}$DPF$.\FullEval_b(k_b^i, x)$. 
+  \end{itemize}
+\end{construction}
+When the DPF scheme is correct and secure, the na\"ive construction of DMPF is also correct and secure. We note that the keysize and running time of $\Gen$, $\Eval$ and $\FullEval$ of the na\"ive construction of DMPF equals $t\times $ the keysize and $t\times$ the running time of $\Gen$, $\Eval$ and $\FullEval$ of DPF, respectively. We aim to provide DMPF schemes that has $\Eval$ and $\FullEval$ time almost independent to $t$. 
+ 
+ 
+
+
 
 
 \subsection{Batch Code}

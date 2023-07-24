@@ -1,37 +1,41 @@
 \section{Applications}\label{sec:applications}
-For convenience of discussion DMPF applications, we use $\DMPF_{t, N, \GG}$ to denote a DMPF scheme for $t$-point functions with domain $[N]$ and output group $\GG$. 
+In this section we compare and discuss about the efficiency of different DMPF schemes in concrete application scenarios, namely when used for constructing pseudorandom correlation generator (PCG) and unbalanced private set intersection protocol (unbalanced PSI).  For convenience of discussion, we use $\DMPF_{t, N, \GG}$ to denote a DMPF scheme for $t$-point functions with domain $[N]$ and output group $\GG$. 
+
+To give a rough impression, we list the number of accepting points $t$, the domain size $N$ and the output group $\GG$ of DMPF usually used in generating the PCG or unbalanced PSI protocol in \cref{tab:app_parameters}. 
 
 \begin{table*}
-  \caption{Concrete applications of DMPF. }
+  \caption{Parameters of DMPF in concrete applications. }
   \label{tab:app_parameters}
 	\begin{tabular}{ccc}
     \toprule
 		Concrete application &\makecell{Cost in terms of DMPF\\per correlation/execution}& Typical DMPF parameters \\
     \midrule
-		PCG for OLE from Ring-LPN &\makecell{seedsize $\propto$ DMPF.$keysize$\\expand time $\propto$ DMPF.$FullEval()$} & \makecell{$t = 5^2, 16^2, 76^2$\\$N = 2^{20}$}  \\
-		PSI-WCA & \makecell{communication $\propto$ DMPF.$keysize$\\client computation $\propto$ DMPF.$Gen()$\\server computation $\propto$ DMPF.$Eval()$} & \makecell{$t = $any\\$N = 2^{128}$}\\
+		PCG for OLE from Ring-LPN &\makecell{seedsize $\propto$ DMPF.$keysize$\\expand time $\propto$ DMPF.$FullEval()$} & \makecell{Number of accepting points: $5^2, 16^2, 76^2$\\Domain size: $2^{20}$\\Output group: $\ZZ_p$ where $\log p =128$}  \\
+    \cline{1-3}
+		PSI-WCA & \makecell{communication $\propto$ DMPF.$keysize$\\client computation $\propto$ DMPF.$Gen()$\\server computation $\propto$ DMPF.$Eval()$} & \makecell{Number of accepting points: any\\Domain size: $2^{128}$\\Output group: any}\\
     \bottomrule
 	\end{tabular}
 \end{table*}
 
 \subsection{PCG for OLE from Ring-$\LPN$}
 
-We begin by briefly introducing the protocol of PCG for OLE from Ring-$\LPN$ assumption, proposed in \cite{cryptoeprint:2022/1035}. 
+In this section we discuss the efficiency of different DMPF schemes in the PCG application. We begin by briefly introducing the protocol of PCG for OLE from Ring-$\LPN$ assumption, proposed in \cite{cryptoeprint:2022/1035}. 
 
 \paragraph{The PCG protocol for OLE correlation.}The hardness assumption we will make use of is a variant of Ring-$\LPN$, called module-$\LPN$ assumption. 
 \begin{definition}[Module-$\LPN$]\label{def:module-LPN}
     Let $c\ge 2$ be an integer, $R = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg-$N$ polynomial $F(X)\in \ZZ_p[X]$, and $\mathcal{HW}_{R,t}$ be the uniform distribution over \`weight-$t$\' polynomials in $R$ whose degree is less than $N$ and has at most $t$ nonzero coefficients. 
     %(We write $\mathcal{HW}_t$ when $R$ is clear from the context. )
      For $R=R(\lambda)$, $t=t(\lambda)$ and $m=m(\lambda)$, we say that the module-$\LPN$ problem $R^c$-$\LPN$ is hard if for every nonuniform polynomial-time probabilistic distinguisher $\cA$, it holds that 
-    \[
-        |\Pr[\cA(\{\vec{a}^{(i)}, \ipd{\vec{a}^{(i)}}{\vec{s}}+\vec{e}^{(i)}\}_{i\in [m]})] - \Pr[\cA(\{\vec{a}^{(i)},\vec{u}^{(i)}\}_{i\in [m]})] \le \mathsf{negl}(\lambda)
-    \]
+    \begin{align*}
+        |&\Pr[\cA(\{\vec{a}^{(i)}, \ipd{\vec{a}^{(i)}}{\vec{s}}+\vec{e}^{(i)}\}_{i\in [m]})] \\
+        -&\Pr[\cA(\{\vec{a}^{(i)},\vec{u}^{(i)}\}_{i\in [m]})]| \le \mathsf{negl}(\lambda)
+    \end{align*}
     where the probabilities are taken over the randomness of $\cA$, random samples $\vec{a}^{(1)},\cdots, \vec{a}^{(m)}\leftarrow R^{c-1}$, $\vec{u}^{(1)},\cdots, \vec{u}^{(m)}\leftarrow R$, $\vec{s}\leftarrow \cHW_{R,t}^{c-1}$, and $\vec{e}^{(1)},\cdots, \vec{e}^{(m)}\leftarrow \cHW_{R,t}$. 
 
     When we only consider $m=1$, each $R^c$-$\LPN$ instance $ \ipd{\vec{a}}{\vec{s}}+\vec{e}$ can be restated as $\ipd{\vec{a'}}{\vec{e'}}$ where $\vec{a'}=1||\vec{a}$ and $\vec{e'}\leftarrow \cHW_{R,t}^c$. 
 \end{definition}
 
-The PCG protocol in \cite{cryptoeprint:2022/1035} generates seed for the OLE correlation $(x_0,x_1,z_0,z_1)\in R^4$ such that $x_0+x_1 = z_0\cdot z_1$. The idea is to first set $z_b = \ipd{\vec{a}}{\vec{e_b}}$ (an $R^c$-$\LPN$ instance with public $\vec{a}$ and $\vec{e_b}\leftarrow \cHW_{R,t}^c$). Basing on the fact that $\ipd{\vec{a}}{ \vec{e_0}}\cdot \ipd{\vec{a}}{\vec{e_1}} = \ipd{\vec{a}\otimes \vec{a}}{\vec{e_0}\otimes \vec{e_1}}$, the next step is to additively share the tensor product $\vec{e_0}\otimes \vec{e_1}$ and each party can compute an additive share of $z_0\cdot z_1$. Note that the tensor product $\vec{e_0}\otimes\vec{e_1}$ consists of $c^2$ entries, each being an deg-$2N$ polynomial with at most $t^2$ nonzero coefficients. Therefore it can be shared by invoking $\DMPF_{t^2, 2N, \mathbb{Z}_p}$ for $c^2$ times.
+The PCG protocol in \cite{cryptoeprint:2022/1035} generates seed for the OLE correlation $(x_0,x_1,z_0,z_1)\in R^4$ such that $x_0+x_1 = z_0\cdot z_1$, where $R = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg$-N$ polynomial $F(X)\in \ZZ_p[X]$. The idea is to first set $z_b = \ipd{\vec{a}}{\vec{e_b}}$ (an $R^c$-$\LPN$ instance with public $\vec{a}$ and $\vec{e_b}\leftarrow \cHW_{R,t}^c$). Basing on the fact that $\ipd{\vec{a}}{ \vec{e_0}}\cdot \ipd{\vec{a}}{\vec{e_1}} = \ipd{\vec{a}\otimes \vec{a}}{\vec{e_0}\otimes \vec{e_1}}$, the next step is to additively share the tensor product $\vec{e_0}\otimes \vec{e_1}$ and each party can compute an additive share of $z_0\cdot z_1$. Note that the tensor product $\vec{e_0}\otimes\vec{e_1}$ consists of $c^2$ entries, each being an deg-$2N$ polynomial with at most ${t}^2$ nonzero coefficients. Therefore it can be shared by invoking $\DMPF_{{t}^2, 2N, \mathbb{Z}_p}$ for $c^2$ times.
 
 One can compute the seed size and expanding time of this PCG protocol as follows: 
 \begin{itemize}
@@ -40,7 +44,7 @@ One can compute the seed size and expanding time of this PCG protocol as follows
 \end{itemize}
 
 \begin{remark}\label{rem:use_reducible_ring}
-    Note that the above PCG protocol generates seed for OLE correlation over ring $R$. One can immediately convert an OLE correlation over ring $R$ to $N$ OLE correlations over $\ZZ_p$ if the polynomial $F(X)$ splits into $N$ distinct linear factors modulo $p$. Therefore we mostly consider reducible $F$ of such form. 
+    Note that the above PCG protocol generates seed for OLE correlation over deg-$N$ polynomial ring $R$. One can immediately convert an OLE correlation over ring $R$ to $N$ OLE correlations over $\ZZ_p$ if the polynomial $F(X)$ splits into $N$ distinct linear factors modulo $p$\cite{cryptoeprint:2022/1035}. Therefore we mostly consider reducible $F$ of such form. 
 \end{remark}
 
 A previous optimization is to substitute $\cHW_{R,t}$ with regular weight-$t$ polynomials denoted as regular-$\cHW_{R,t}$. Each regular weight-$t$ polynomial $e$ contains exactly one nonzero coefficient $e_j$ in the range of degree $[j\cdot (N/t), (j+1)\cdot (N/t)-1]$ for $j=0,\cdots t-1$. When multiplying two regular weight-$t$ polynomials $e$ and $f$, $e_i\cdot f_j$ contributes to a coefficient in the range of degree $[(i+j)\cdot (2N/t), (i+j+2)\cdot (2N/t)-2]$. Therefore the deg-$2N$ polynomial $e\cdot f$ can be shared by invoking $\{\DMPF_{k, 2N/t, \mathbb{Z}_p}\}_{k=1,2,\cdots,t-1,t,t-1,\cdots, 2,1}$, which cuts down the domain size compared to the original design. 
@@ -54,7 +58,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 \begin{table*}
     \renewcommand\arraystretch{1.5}
     \begin{threeparttable}
-    \caption{Seed size and expanding time of PCG protocols for the same $(\lambda,N, c, t)$ with different choices of noise distributions in module-LPN assumption, and with different $\DMPF$ instantiations. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The seed size is represented by total $\DMPF$ share size and the expanding time is represented by total $\DMPF.\FullEval$ time. The PRG evaluations in the first $\log N$ layers and in the convert layer are both regarded as the same PRG. $e$ in the second row represents the expansion parameter for PBC, and $e'$ in the last row represents the expansion parameter for OKVS. }
+    \caption{Seed size and expanding time of PCG protocols for the same $(\lambda,N, c, t)$ with different choices of noise distributions in module-LPN assumption, and with different DMPF instantiations. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The seed size is represented by total DMPF share size and the expanding time is represented by total $\DMPF.\FullEval$ time. The PRG evaluations in the first $\log (2N)$ layers and in the convert layer are both regarded as the same PRG. $e = m/t$ in the second row represents the expansion parameter for PBC where $m$ is the number of buckets, and $e'$ in the last row represents the expansion parameter (the inverse of rate) for OKVS. }
 	\label{tab:PCG_plug_in_formula}
 		\begin{tabular}{cccc}
             \toprule
