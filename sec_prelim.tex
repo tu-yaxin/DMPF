@@ -104,22 +104,29 @@ We introduce batch code and probabilistic batch code, which can be used to const
 \begin{definition}[Batch Code\cite{10.1145/1007352.1007396}]
   An $(N,M,t,m)$-batch code over alphabet $\Sigma$ is given by a pair of efficient algorithms $(\Encode,\Decode)$ such that:
   \begin{itemize}
-    \item $\Encode(x\in\Sigma^N)\rightarrow (C_1,C_2,\cdots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$-tuple of strings $C_1,C_2,\cdots C_m\in\Sigma^*$ (called buckets) of total length $M$.
-    \item $\Decode(I,C_1,C_2,\cdots,C_m)\rightarrow \{x[i]\}_{i\in I}$: On input a set $I$ of $t$ distinct indices in $[N]$ and $m$ buckets, recover $t$ coordinates of $x$ indexed by $I$ by reading at most one coordinate from each of the $m$ buckets. 
+    \item $\Encode(x\in\Sigma^N)\rightarrow (C_1,C_2,\cdots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$-tuple of codewords $C_1,C_2,\cdots C_m\in\Sigma^*$ of total length $M$.
+    \item $\Decode(I,C_1,C_2,\cdots,C_m)\rightarrow \{x[i]\}_{i\in I}$: On input a set $I$ of $t$ distinct indices in $[N]$ and $m$ codewords, recover $t$ coordinates of $x$ indexed by $I$ by reading at most one coordinate from each of the $m$ codeword. 
   \end{itemize}
 \end{definition}
 
-An $(N,M,t,m)$-batch code can be represented by an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the bucket $C_j$, while it is guaranteed that any subset $S\subseteq U$ such that $|S|=t$ has a perfect matching to $V$. \Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient. }
+We will focus on a special class of batch code called combinatorial batch code (CBC)\cite{10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$ and during decoding the elements read from $m$ codewords should cover the desired set $\{x[i]\}_{i\in I}$. 
 
-\begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142}]
+Note that the existence of an $(N,M,t,m)$-CBC is equivalent to the existence of an $(N,M,t,m)$-CBC where the encoding and decoding are independent of the input string $x$. Thus we can only consider the latter CBC. In this case, the encoding algorithm is equivalent to replicating and allocating the indices in $[N]$ to $m$ buckets, and the decoding algorithm is equivalent to finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, while indicating which position in each bucket should be read. 
+%The latter $(N,M,t,m)$-CBC can be represented by an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the codeword $C_j$ (we call it a bucket), while it is guaranteed that any subset $T\subseteq U$ such that $|T|=t$ has a perfect matching to $V$. 
+
+\Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient? }
+
+It is useful to relax the definition of batch code, allowing failure probability when decoding. 
+
+\begin{definition}[Probabilistic Batch Code \cite{cryptoeprint:2017/1142}]
 An\\ $(N,M,t,m,\epsilon)$-probabilistic batch code over alphabet $\Sigma$ is a randomized $(N,M,t,m)$-batch code with \textbf{public randomness} $r$ (and possibly private randomness for each sub-procedure) such that for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
 \[
   \Pr[\Decode_r(I,\Encode_r(x))\rightarrow \{x[i]\}_{i\in I}] = 1-\epsilon
 \]
-where the probability is taken over the public randomness $r$ and private randomness of $\Encode$ and $\Decode$ algorithms. 
+where the probability is taken over the public randomness $r$ and private randomness of  $\Encode$ and $\Decode$ algorithms. 
 \end{definition}
 
-We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PBC\cite{cryptoeprint:2017/1142}.
+Similarly, a probabilistic CBC (PCBC) will just be a CBC with failure probability when decoding. We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PCBC\cite{cryptoeprint:2017/1142}.
 
 \paragraph{$w$-way cuckoo hashing.}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
 \begin{itemize}
@@ -132,27 +139,28 @@ If the algorithm terminates then its output is an allocation of balls to buckets
 
 \paragraph{The failure probability of cuckoo hashing.}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e$ is the expansion parameter that $m=et$. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how...}
 
-The balls, buckets and hash functions can be represented by a $w$-regular $(t,m)$-bipartite graph $G=(U,V,E)$ where each left node has $w$ neighbors, and each edge $(u_i,v_j)\in E$ corresponds to $h_l(i)=j$ for some $1\le l\le w$. In this graph representation the $w$-way cuckoo hashing essentially computes a perfect matching from $U$ to $V$. Therefore one can construct a PBC from cuckoo hashing. 
+With the $t$ balls replicated and allocated to $m$ buckets, the cuckoo hashing algorithm essentially finds a perfect matching from $t$ balls to $m$ buckets, which coincides with the form of (probabilistic) CBC decoding. Therefore one can construct a PCBC from cuckoo hashing. 
 
-\begin{construction}[PBC from cuckoo hashing]
-  Given $w$-way cuckoo hashing as a sub-procedure allocating $t$ balls to $m$ buckets with failure probability $\epsilon$, an $(N,wN,t,m,\epsilon)$-PBC is as follows: 
+\begin{construction}[PCBC from cuckoo hashing]
+  Given $w$-way cuckoo hashing as a sub-procedure allocating $t$ balls to $m$ buckets with failure probability $\epsilon$, an $(N,wN,t,m,\epsilon)$-PCBC is as follows: 
   \begin{itemize}
-    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,\cdots,C_m)$: Use $r$ to determine $w$ independent random hash functions $h_1,h_2,\cdots h_w$ that maps from $[N]$ to $[m]$. Initialize $C_1,\cdots,C_m$ to be empty. Let $C_j$ contain $\{x[i]:h_l(i) = j$ for some $l\in [w]\}$, in ascending order of $i$. 
-    \item $\Decode_r(I, C_1,\cdots, C_m)\rightarrow \{x[i]\}_{i\in I}$: Determine $h_1,\cdots, h_w$ as in $\Encode$. For $I$ of size $t$, allocate $I$ to $[m]$ using $w$-way cuckoo hashing. For each $i\in I$, fetch $x[i]$ from the $C_j$ where $i$ is allocated to $C_j$. Note that $x[i]$ can be found in the $k$th position of $C_j$ where $i$ is the $k$th smallest index of $\{i:h_l(i) = j$ for some $l\in [w]\}$. 
+    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,\cdots,C_m)$: Use $r$ to determine $w$ independent random hash functions $h_1,h_2,\cdots h_w$ that maps from $[N]$ to $[m]$.  Let $C_j$ be $\{x[i]:h_l(i) = j$ for some $l\in [w]\}$, in ascending order of $i$. 
+    \item $\Decode_r(I, C_1,\cdots, C_m)\rightarrow \{x[i]\}_{i\in I}$: Determine $h_1,\cdots, h_w$ as in $\Encode$. For $I$ of size $t$, find a perfect matching from $I$ to $[m]$ using $w$-way cuckoo hashing. For each $i\in I$, fetch $x[i]$ from $C_j$ the index $i$ is matched with. Note that $x[i]$ can be found in the $k$th position of $C_j$ where $i$ is the $k$th smallest index of $\{i:h_l(i) = j$ for some $l\in [w]\}$. 
   \end{itemize}
 \end{construction}
 \subsection{DMPF Construction from (Probabilistic) Batch Code}
-We display the construction of DMPF from black-box usage of DPF basing on PBC with appropriate parameters, which has been discussed in previous literature\cite{cryptoeprint:2019/273,cryptoeprint:2021/580}. 
-\begin{construction}[DMPF from DPF]\label{con:DMPF_batch_code}
-  Given DPF for any domain of size no larger than $N$ and output group $\GG$, and an $(N,M,t,m,\epsilon)$-PBC with alphabet $\Sigma=\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
+We display the construction of DMPF from black-box usage of DPF basing on PCBC with appropriate parameters, which has been discussed in previous literature\cite{cryptoeprint:2019/273,cryptoeprint:2021/580}. As discussed before, we assume that the PCBC encoding and decoding are oblivious of the content of the input string.  
+\begin{construction}[DMPF from DPF basing on PCBC]\label{con:DMPF_batch_code}
+  Given DPF for any domain of size no larger than $N$ and output group $\GG$, and an $(N,M,t,m,\epsilon)$-PCBC with alphabet $\Sigma=\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
   \begin{itemize}
-    \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Let $TT\in \GG^N$ be the truth table of $\hat{f}_{A,B}$. Compute $\Encode(TT)\rightarrow (C_1,\cdots,C_m)$ according to the PBC. Then run $\Decode(A, C_1,\cdots, C_m)$ to determine a perfect matching from $A$ to $\{C_1,\cdots,C_m\}$. For $1\le i\le m$, let $f_i:[|C_i|]\rightarrow \GG$ be the following: 
+    \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Let $TT\in \GG^N$ be the truth table of $\hat{f}_{A,B}$. Compute $\Encode(TT)\rightarrow (C_1,\cdots,C_m)$ according to the PCBC. Then run $\Decode(A, C_1,\cdots, C_m)$ to determine a perfect matching from $A$ to $\{C_1,\cdots,C_m\}$. For $1\le i\le m$, let $f_i:[|C_i|]\rightarrow \GG$ be the following: 
     \begin{itemize}
       \item If $C_i$ is assigned none of $A$ by the perfect matching, then set $f_i$ to be the all-zero function. 
       \item If exactly one $\alpha_j$ of $A$ is assigned to the $l$th position of $C_i$, then set $f_i$ to be the point function that outputs $\beta_j$ on $l$ and 0 elsewhere. 
     \end{itemize}
     For $1\le i\le m$, invoke DPF$.\Gen(1^\lambda, f_i)\rightarrow (k_0^i,k_1^i)$. Set $(k_0,k_1)=(\{k_0^i\}_{i\in [m]}, \{k_1^i\}_{i\in [m]})$. If $\Decode$ fails then run $\Encode$ and $\Decode$ again with fresh randomness. 
-    \item $\Eval_b(k_b,x)\rightarrow y_b$: Follow $\Encode(TT)$ to determine the positions $l_{j_1},l_{j_2},\cdots, l_{j_s}$ such that the $x$th entry of $TT$ is sent to the $l_{j_i}$-th position of $C_{j_i}$. Compute $y_b=\sum_{i=1}^s$DPF$.\Eval_b(k_b^{j_i},l_i)$. 
+    \item $\Eval_b(k_b,x)\rightarrow y_b$: Follow $\Encode(0_\GG^N)$ to determine the positions $l_{j_1},l_{j_2},\cdots, l_{j_s}$ such that the $x$th entry of $TT$ is sent to the $l_{j_i}$-th position of $C_{j_i}$ (since the allocation of indices is oblivious of the content of $TT$). Compute $y_b=\sum_{i=1}^s$DPF$.\Eval_b(k_b^{j_i},l_i)$. 
+    \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b^i = $DPF$.\FullEval_b(k_b^i)$ for $1\le i\le m$. For each input $x\in [N]$, follow $\Encode(0_\GG^N)$ to choose a position $l_x$ in bucket $C_{j_x}$ that the $x$th entry of $TT$ is sent to. Let $Y_b[x]\gets Y_b^{j_x}[l_x]$. 
   \end{itemize}
 The scheme is correct with overwhelming probability and has distinguish advantage $<2\epsilon$. 
 \end{construction}
