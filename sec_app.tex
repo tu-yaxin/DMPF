@@ -90,9 +90,9 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
   \end{threeparttable}
 \end{table*}
 
-\Yaxin{One caveat: can batch-code / OKVS-based DMPF fit into the regular design, while it requires shares of $1,2,3$-point functions?}
+\Yaxin{One caveat: can CBC-based / OKVS-based DMPF fit into the regular design, while it requires shares of $1,2,3$-point functions?}
 
-From \cref{tab:PCG_plug_in_formula} we can see that if we allow small blowup of the seed size of PCG, then we can gain much faster seed expansion by using nonregular noise distribution and either batch-code DMPF or big-state DMPF or OKVS-based DMPF. 
+From \cref{tab:PCG_plug_in_formula} we can see that if we allow small blowup of the seed size of PCG, then we can gain much faster seed expansion by using nonregular noise distribution and either CBC-based DMPF or big-state DMPF or OKVS-based DMPF. 
 
 \paragraph{Comparing the entropy of regular and nonregular noise.}Moreover, let's consider using the entropy of the noise distribution as the security parameter (which means that we consider the adversary's attack being randomly guessing the secret). Since the entropy of the nonregular noise distribution $\cHW_{R_1,t_1}$ is $\log(\frac{N_1^{t_1}}{t_1^{t_1}})$ while the entropy of the regular noise distribution regular-$\cHW_{R_2,t_2}$ is $\log(\frac{N_2^{t_2}}{t_2!})$, to settle for the same level of security we only need $t_1=t_2$ and $N_1 = N_2/\mathrm{e}$ where $\mathrm{e}$ is the natural logarithm. Placing this back to \cref{tab:PCG_plug_in_formula}, the total $\FullEval$ time (i.e., the seed expanding time of PCG) can have an extra $\times \mathrm{e}$ speedup. 
 
@@ -103,7 +103,7 @@ Next we plug in concrete parameters and evaluate the performance of different $\
 Define the number of noisy coordinate $W:=ct$. We set $(\lambda, c, N, W)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. According to \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^W\approx N\cdot c^W$. \Yaxin{TBD: Check \cite{cryptoeprint:2022/712} for latest update about this cost. } For $R$ from a reducible $F$, we lowerbound the number of arithmetic operations by $2^i\cdot c^{W_i}$ , where $i:=\mathop{\arg\min}\limits_{1\le i\le \log N}\left(2^i\cdot c^{W_i}\right)$ and $W_i:=W-cn+(c(n-1)+W)\cdot \left(1-\frac{1}{n}\right)^{W/c-1}$. In the end we round $W$ such that $t=W/c$ is an integer. 
 
 
-\Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the batch-code and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the batch-code-DMPF. 
+\Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the CBC-based and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the CBC-based-DMPF. 
 
 \subsection{Unbalanced PSI-WCA}
 A private set intersection (PSI) protocol allows two parties with input $X$, $Y$ being two sets to learn about their intersection $X\cap Y$ without revealing additional information of $X$ or $Y$. We denote by PSI-WCA (weighted cardinality) a variant of PSI that computes the weighted cardinality of elements in $X\cap Y$ where the weights are determined by a pre-fixed function $w(\cdot)$. 
@@ -153,7 +153,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 
 
 
-\Yaxin{Previous calculation as a reference: }A short conclusion is using big-state DMPF for $t<64$ and the OKVS-DMPF for $t\ge 64$ gives at $\sim \times 2$ faster Eval() time and faster Gen() time compared to the naive and batch-code construction. The keysize ($\propto$ communication complexity) of our choice is usually smaller than the batch-code DMPF and slightly larger than the naive construction. 
+\Yaxin{Previous calculation as a reference: }A short conclusion is using big-state DMPF for $t<64$ and the OKVS-DMPF for $t\ge 64$ gives at $\sim \times 2$ faster Eval() time and faster Gen() time compared to the naive and CBC-based construction. The keysize ($\propto$ communication complexity) of our choice is usually smaller than the CBC-based DMPF and slightly larger than the naive construction. 
 \subsection{Security analysis}
 \subsection{Heavy-hitters}
 private heavy-hitter\\

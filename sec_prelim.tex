@@ -96,9 +96,6 @@ When the DPF scheme is correct and secure, the na\"ive construction of DMPF is a
  
  
 
-
-
-
 \subsection{Batch Code}
 We introduce batch code and probabilistic batch code, which can be used to construct DMPF (see \cref{con:DMPF_batch_code}). 
 \begin{definition}[Batch Code\cite{10.1145/1007352.1007396}]
@@ -110,8 +107,8 @@ We introduce batch code and probabilistic batch code, which can be used to const
 \end{definition}
 
 We will focus on a special class of batch code called combinatorial batch code (CBC)\cite{10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$ and during decoding the elements read from $m$ codewords should cover the desired set $\{x[i]\}_{i\in I}$. 
-
-Note that the existence of an $(N,M,t,m)$-CBC is equivalent to the existence of an $(N,M,t,m)$-CBC where the encoding and decoding are independent of the input string $x$. Thus we can only consider the latter CBC. In this case, the encoding algorithm is equivalent to replicating and allocating the indices in $[N]$ to $m$ buckets, and the decoding algorithm is equivalent to finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, while indicating which position in each bucket should be read. 
+%Note that the existence of an $(N,M,t,m)$-CBC is equivalent to the existence of an $(N,M,t,m)$-CBC where the encoding and decoding are independent of the input string $x$. Thus we can only consider the latter CBC.
+ In this case, the encoding algorithm is equivalent to replicating and allocating the indices in $[N]$ to $m$ buckets, and the decoding algorithm is equivalent to finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, while indicating which position in each bucket should be read. 
 %The latter $(N,M,t,m)$-CBC can be represented by an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the codeword $C_j$ (we call it a bucket), while it is guaranteed that any subset $T\subseteq U$ such that $|T|=t$ has a perfect matching to $V$. 
 
 \Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient? }
@@ -137,7 +134,7 @@ If the algorithm terminates then its output is an allocation of balls to buckets
 
 \Yaxin{Add asymptotic parameters? Also find evident theorem saying cuckoo hashing is efficient. }
 
-\paragraph{The failure probability of cuckoo hashing.}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e$ is the expansion parameter that $m=et$. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how...}
+\paragraph{The failure probability of cuckoo hashing.}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e$ is the expansion parameter that $m=et$. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how...Check \cite{cryptoeprint:2022/1455} for concrete parameters with different $N$ and $t$. }
 
 With the $t$ balls replicated and allocated to $m$ buckets, the cuckoo hashing algorithm essentially finds a perfect matching from $t$ balls to $m$ buckets, which coincides with the form of (probabilistic) CBC decoding. Therefore one can construct a PCBC from cuckoo hashing. 
 
@@ -148,23 +145,31 @@ With the $t$ balls replicated and allocated to $m$ buckets, the cuckoo hashing a
     \item $\Decode_r(I, C_1,\cdots, C_m)\rightarrow \{x[i]\}_{i\in I}$: Determine $h_1,\cdots, h_w$ as in $\Encode$. For $I$ of size $t$, find a perfect matching from $I$ to $[m]$ using $w$-way cuckoo hashing. For each $i\in I$, fetch $x[i]$ from $C_j$ the index $i$ is matched with. Note that $x[i]$ can be found in the $k$th position of $C_j$ where $i$ is the $k$th smallest index of $\{i:h_l(i) = j$ for some $l\in [w]\}$. 
   \end{itemize}
 \end{construction}
-\subsection{DMPF Construction from (Probabilistic) Batch Code}
+%The above PCBC scheme has its encoding and decoding process independent of the content of the input string $x$. 
+An ambiguous point in $\Decode_r$ is how to find the index of $x[i]$ in $C_j$ it is mapped to. We  display two solutions to this index finding problem: 
+\begin{enumerate}
+  \item When $N$ is a feasible number, one can directly compute the entire hash tables derived by $h_1,\dots, h_w$ and compute the index of $x[i]$ in $C_j$. 
+  \item One can implement $w$ hash functions by a single \emph{random permutation} $P$ mapping from $[w]\times [N]$ to $[m]\times [B]$, where $B = wN/m$. Invocation of $h_i(j)$ is done by computing $P(i,j)$, which outputs the bucket number in $[m]$ and the index in $[B]$. Note that in this case $h_1,\dots,h_w$ are not independent random hash functions, but as long as they \Yaxin{satisfy some sufficient property. To be clarified. }This solution is noted in \cite{cryptoeprint:2021/580} where $P$ is realized by a PRP. 
+\end{enumerate}
+\subsection{DMPF Construction from CBC}
 We display the construction of DMPF from black-box usage of DPF basing on PCBC with appropriate parameters, which has been discussed in previous literature\cite{cryptoeprint:2019/273,cryptoeprint:2021/580}. As discussed before, we assume that the PCBC encoding and decoding are oblivious of the content of the input string.  
 \begin{construction}[DMPF from DPF basing on PCBC]\label{con:DMPF_batch_code}
   Given DPF for any domain of size no larger than $N$ and output group $\GG$, and an $(N,M,t,m,\epsilon)$-PCBC with alphabet $\Sigma=\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
   \begin{itemize}
-    \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Let $TT\in \GG^N$ be the truth table of $\hat{f}_{A,B}$. Compute $\Encode(TT)\rightarrow (C_1,\cdots,C_m)$ according to the PCBC. Then run $\Decode(A, C_1,\cdots, C_m)$ to determine a perfect matching from $A$ to $\{C_1,\cdots,C_m\}$. For $1\le i\le m$, let $f_i:[|C_i|]\rightarrow \GG$ be the following: 
+    \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Compute $\Encode([N])\rightarrow (C_1,\cdots,C_m)$ according to the PCBC. Then run $\Decode(A, C_1,\cdots, C_m)$ to determine a perfect matching from $A$ to $\{C_1,\cdots,C_m\}$. For $1\le i\le m$, let $f_i:[|C_i|]\rightarrow \GG$ be the following: 
     \begin{itemize}
       \item If $C_i$ is assigned none of $A$ by the perfect matching, then set $f_i$ to be the all-zero function. 
       \item If exactly one $\alpha_j$ of $A$ is assigned to the $l$th position of $C_i$, then set $f_i$ to be the point function that outputs $\beta_j$ on $l$ and 0 elsewhere. 
     \end{itemize}
     For $1\le i\le m$, invoke DPF$.\Gen(1^\lambda, f_i)\rightarrow (k_0^i,k_1^i)$. Set $(k_0,k_1)=(\{k_0^i\}_{i\in [m]}, \{k_1^i\}_{i\in [m]})$. If $\Decode$ fails then run $\Encode$ and $\Decode$ again with fresh randomness. 
-    \item $\Eval_b(k_b,x)\rightarrow y_b$: Follow $\Encode(0_\GG^N)$ to determine the positions $l_{j_1},l_{j_2},\cdots, l_{j_s}$ such that the $x$th entry of $TT$ is sent to the $l_{j_i}$-th position of $C_{j_i}$ (since the allocation of indices is oblivious of the content of $TT$). Compute $y_b=\sum_{i=1}^s$DPF$.\Eval_b(k_b^{j_i},l_i)$. 
-    \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b^i = $DPF$.\FullEval_b(k_b^i)$ for $1\le i\le m$. For each input $x\in [N]$, follow $\Encode(0_\GG^N)$ to choose a position $l_x$ in bucket $C_{j_x}$ that the $x$th entry of $TT$ is sent to. Let $Y_b[x]\gets Y_b^{j_x}[l_x]$. 
+    \item $\Eval_b(k_b,x)\rightarrow y_b$: Follow $\Encode([N])$ to determine the positions $l_{j_1},l_{j_2},\cdots, l_{j_s}$ such that the $x$ is sent to the $l_{j_i}$-th position of $C_{j_i}$ (since the allocation of indices is oblivious of the content of $TT$). Compute $y_b=\sum_{i=1}^s$DPF$.\Eval_b(k_b^{j_i},l_i)$. 
+    \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b^i = $DPF$.\FullEval_b(k_b^i)$ for $1\le i\le m$. For each input $x\in [N]$, follow $\Encode([N]])$ to choose a position $l_x$ in bucket $C_{j_x}$ that $x$ is sent to. Let $Y_b[x]\gets Y_b^{j_x}[l_x]$. 
   \end{itemize}
 The scheme is correct with overwhelming probability and has distinguish advantage $<2\epsilon$. 
 \end{construction}
-Note that if one use batch code instead of PBC then the DMPF scheme perfectly correct and secure. When instantiating PBC from $w$-way cuckoo hashing, the \emph{key generation time} is roughly the time needed for computing cuckoo hashing algorithm plus the total time of all DPF$.\Gen(1^\lambda, f_i)$. The \emph{evaluation time} is roughly the total time of all DPF$.\Eval_b(k_b^{j_i},l_i)$. Similarly, the \emph{full-domain evaluation time} is roughly the total time of all DPF$.\FullEval_b(k_b^{j})$ for $j=1,\dots,m$. 
+Note that if one use CBC instead of PCBC then the DMPF scheme is perfectly correct and secure. 
+
+When instantiating PCBC using $w$-way cuckoo hashing, the \emph{key generation time} is roughly the time for computing cuckoo hashing algorithm, the time for finding $t$ indices for $t$ elements in the buckets, plus the total time of all DPF$.\Gen(1^\lambda, f_i)$. The \emph{evaluation time} is roughly the time for finding $w$ indices for one element in the buckets plus the total time of all DPF$.\Eval_b(k_b^{j_i},l_i)$. Similarly, the \emph{full-domain evaluation time} is roughly the time for finding $N$ indices for $N$ elements in the buckets plus the total time of all DPF$.\FullEval_b(k_b^{j})$ for $j=1,\dots,m$. 
 
 \subsection{Oblivious Key-Value Stores}\label{sec:prelim_okvs}
 We introduce the notion of Oblivious key-value stores (OKVS) which can be used to construct DMPF. OKVS was originally proposed as a primitive for private set intersection (PSI) protocols (see \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}). 
