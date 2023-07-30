@@ -196,7 +196,7 @@ One can obtain a \emph{linear OKVS} if in addition require:
 \end{definition}
 The $\Encode$ process for a linear OKVS is the process of sampling a random $P$ from the set of solutions of the linear system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$. 
 
-We evaluate an OKVS scheme by its rate ($\frac{\text{input length }t}{\text{output length }m}$), encoding time and decoding time. We stress the following two (linear) OKVS constructions:
+We evaluate an OKVS scheme by its rate ($\frac{\text{input length }t}{\text{output length }m}$), encoding time and decoding time. A well-known, optimal-rate OKVS construction is encoding $t$ key-value pairs using a deg-$t$ polynomial: 
 \begin{construction}[Polynomial]\label{con:OKVS_polynomial}
   Suppose $\mathcal{K} = \mathcal{V}=\FF$ is a field. Set 
   \begin{itemize}
@@ -206,20 +206,19 @@ We evaluate an OKVS scheme by its rate ($\frac{\text{input length }t}{\text{outp
 \end{construction}
 The polynomial OKVS possesses an optimal encoding size $m=n$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(t\log^2t)$. The time for a single decoding is $O(t)$ and that for batched decodings is (amortized) $O(\log^2 t)$. 
 
-An alternative construction that has near optimal encoding size but much better running time is as follows. 
-\begin{construction}[3-Hash Garbled Cuckoo Table (3H-GCT)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{con:OKVS_sparse_matrix}
+In the sequel we stress two alternative (linear) OKVS constructions that has near optimal encoding size but much better running time. 
+
+\begin{construction}[RR22\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{con:OKVS_sparse_matrix}
   Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}(k)$ outputs a uniformly random weight-$w$ vector in $\{0,1\}^{m_1}$, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
   \begin{itemize}
-    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is solved from the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$ using the triangulation algorithm in \cite{cryptoeprint:2022/320}. 
-    \item $\Decode(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
+    \item $\Encode_r(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is randomly chosen from the solutions of the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$, solved by the triangulation algorithm in \cite{cryptoeprint:2022/320}. If the system has no solution then output $\bot$. 
+    \item $\Decode_r(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
   \end{itemize}
-  We denote $m_1=et$, where $e$ is an expandion parameter indicating the rough blowup to store $t$ pairs. In practice the number of dense columns $m_2$ is usually set to a small constant. 
+  We denote $m_1=et$, where $e$ is an expansion parameter indicating the rough blowup to store $t$ pairs. In practice the number of dense columns $m_2$ is usually set to a small constant. 
 \end{construction}
-This OKVS construction features a linear encoding time, constant decoding time (the constant relates to $w$ and $m_2$) while having a linear encoding size. 
+This OKVS construction features an efficient encoding process, constant decoding time ($(w+m_2)$ additions and $m_2$ multiplications in $\FF$) while having a linear encoding size. 
 
-\Yaxin{TBD: Carefully(!) recompute the comparison table for OKVS. }
-
-We'll mostly use the expansion parameter $e$ and the number of dense columns $m_2:=\hat{g}$ (where $\hat{g}$ is a parameter relating to the equation system solving process) according to the analysis in \cite{cryptoeprint:2022/320}: Given $w$, $t$ and $\lambda_\stat$, the choices of the $e$ and $\hat{g}$ are fixed through the following steps: 
+$\Encode$ may output $\bot$ if the matrix formed by $\{\row_r(k_i)\}_{1\le i\le t}$ is not full-rank. Therefore we need to adjust the parameters $m_1=et$ and $m_2$ to ensure negligible error probability (represented by the statistical security parameter $\lambda_\stat$). The expansion parameter $e$ and the number of dense columns $m_2:=\hat{g}$ (where $\hat{g}$ is a parameter relating to the equation system solving process) are given by the analysis in \cite{cryptoeprint:2022/320}, with the range of $N$ from $2^6$ to $2^{18}$: Given $w$, $t$ and $\lambda_\stat$, the choices of the $e$ and $\hat{g}$ are fixed through the following steps: 
 \begin{itemize}
   \item Set $e^* = \begin{cases}
     1.223 & w=3\\
@@ -236,6 +235,25 @@ We'll mostly use the expansion parameter $e$ and the number of dense columns $m_
 
 The range of $t$ previous literature \cite{cryptoeprint:2021/883,cryptoeprint:2022/320} have considered in their empirical results are also limited, which will be one of our problems. We want to cover small $t$, say $t<100$, while previous literature aiming for constructing PSI protocols usually consider very large $t$. }
 
-One may also let $row_r^{\sf dense}$ output a short dense vector in $\{0,1\}^{m_2}$, which avoids multiplication of large field elements in the encoding and decoding processes. To achieve same level of security one could simply set $m_2=\hat{g}+\lambda_\stat$, as proposed in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}. 
+One may let $row_r^{\sf dense}$ output a short dense vector in $\{0,1\}^{m_2}$ to avoid multiplication of large field elements in the encoding and decoding processes. To achieve same level of security one could simply set $m_2=\hat{g}+\lambda_\stat$, as proposed in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}. As indicated by the empirical results in \cite{cryptoeprint:2022/320}, this binary scheme is usually not as efficient as the original design. Therefore we mostly refer to \cref{con:OKVS_sparse_matrix}. 
 
-\Yaxin{Put the new ribbon-OKVS here and summarize with a table. Indicate that \cref{con:OKVS_sparse_matrix} will be used. }
+\begin{construction}[RB-OKVS\cite{cryptoeprint:2023/903}]\label{con:OKVS_ribbon}
+  Suppose $\mathcal{V} = \GG$ is a group. Let $\row_r(k)$ output a $\{0,1\}^m$ vector consisting of a width-$w$ random band. Formally speaking, $\row_r(k)$ first determine a starting point $1\le i\le m-w+1$ for the band, and then determine random $w$-bit string to fill in the positions $[i,i+w-1]$ of $\row_r(k)$ and leave the rest as 0 entries. 
+  \begin{itemize}
+    \item $\Encode_r(\{(k_i,v_i)\}_{1\le i\le t})\rightarrow P$ where $P$ is randomly chosen from the random band matrix system $\{\ipd{\row_r(k_i)}{P}=v_i\}_{1\le i\le t}$. If the system has no solution then output $\bot$. 
+    \item $\Decode_r(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
+  \end{itemize}
+  Denote $m=et$ where $e>1$ is an expansion parameter indicating the blowup to store $t$ pairs. 
+\end{construction}
+
+The encoding time is equivalent to solving a random band matrix system, which can be efficiently done in $O(Nw+n\log n)$ time \cite{cryptoeprint:2023/903}. The decoding time is $w$ additions in $\FF$ and the rate can be very close to 1. 
+
+Again, to guarantee the success of $\Encode$, the random band matrix must be full-rank with overwhelming probability. According to \cite{cryptoeprint:2023/903}, fixing $e>1$ and taking $w = O(\lambda_\stat/(e-1)+\log N)$ ensures the correctness and obliviousness with probability $2^{-\lambda_\stat}$ and $2^{-w}$, respectively. Practically, $e=1.03,1.05,1.07,1.1$ are taken while $w$ being several hundred to reach the security $\lambda_\stat=40$, with the choice of $N$ varying from $2^{10}$ to $2^{20}$. 
+
+According to the comparison in \cite{cryptoeprint:2023/903} of the RR22-OKVS (\cref{con:OKVS_sparse_matrix}) and the RB-OKVS (\cref{con:OKVS_ribbon}) with the choices of $N = 2^{16}, 2^{20}, 2^{24}$, the RB-OKVS has a better rate and features a tradeoff between rate and encoding/decoding time (one can choose to have better rate with longer encoding/decoding time). The RB-OVS has better encoding time while the RR22-OKVS has better decoding time. 
+
+\Yaxin{Maybe (and how to) put a (quantitative) summarizing table of OKVS efficiency here?}
+
+\medskip
+
+In our later sections, we will give the decoding efficiency of the OKVS the most priority. To this end, we refer to the RR22-OKVS (\cref{con:OKVS_sparse_matrix}) when instantiating OKVS. One may switch to other OKVS constructions depending on different needs in practice. 
