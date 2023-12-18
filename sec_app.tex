@@ -68,7 +68,7 @@ is the amortized cost for computing each entry of a share of $\vec{e_0}\otimes\v
   \item $\OKVS$-based $\DMPF$: $2\left(T_G + \OKVS.\Decode\right)$, where $\OKVS.$\\$\Decode$ usually takes a small number of field addition or field multiplication in $\FF_{2^\lambda}$, depending on the implementation. 
 \end{itemize}
 
-The parameters $N, c, t$ should be set in a way that the corresponding $R^c$-$\LPN$ problem is secure with computational security parameter $\lambda$. In \cite{cryptoeprint:2022/1035} the parameters are taken to be $(\lambda, N, c, t) \in\{ (128, 2^{20}, 8, 5), (128, 2^{20}, 4, 16), (128, 2^{20}, 2, 76)\}$. 
+The parameters $N, c, t$ should be set in a way that the corresponding $R^c$-$\LPN$ problem is secure with computational security parameter $\lambda$. In \cite{cryptoeprint:2022/1035} the parameters are taken to be $(\lambda, N, c, t) \in\{ (128, 2^{20}, 8, 5), (128, 2^{20}, 4, 16), (128, 2^{20}, 2, 76)\}$. The three parameters are comparable in efficiency in \cite{cryptoeprint:2022/1035} because they used the second $\DMPF$ instantiation (sum of DPFs under $\cRHW_t$ distribution) whose cost scales with $c^2t$. By using the new $\DMPF$ instantiations we may see significant difference among the three tuples of parameters. \Yaxin{It is likely that we may use big-state for $c=8, t=5$ and CBC/OKVS-based for the other two. More to be computed. }
 
 \paragraph{Regular v.s. nonregular noise distribution}
 
