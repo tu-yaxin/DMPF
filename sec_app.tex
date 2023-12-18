@@ -40,14 +40,39 @@ The PCG protocol in \cite{cryptoeprint:2022/1035} generates seed for the OLE cor
 One can compute the seed size and expanding time of this PCG protocol as follows: 
 \begin{itemize}
     \item The seed size is $ct(\log N+\log p)$ bits for specifying $\vec{e_b}$ plus the $c^2\times $keysize of $\DMPF$. 
-    \item The expanding time is $c^2$ multiplications in the deg-$2N$ polynomial ring plus $c^2\times$full-domain evaluation time of $\DMPF$. 
+    \item The expanding time is $c^2$ multiplications in the deg-$2N$ polynomial ring \Yaxin{or $2c^2$ multiplications since $\vec a\otimes\vec a$ need also be computed? } plus $c^2\times$full-domain evaluation time of $\DMPF$. 
 \end{itemize}
 
 \begin{remark}\label{rem:use_reducible_ring}
-    Note that the above PCG protocol generates seed for OLE correlation over deg-$N$ polynomial ring $R$. One can immediately convert an OLE correlation over ring $R$ to $N$ OLE correlations over $\ZZ_p$ if the polynomial $F(X)$ splits into $N$ distinct linear factors modulo $p$\cite{cryptoeprint:2022/1035}. Therefore we mostly consider reducible $F$ of such form. 
+    Note that the above PCG protocol generates seed for OLE correlation over deg-$N$ polynomial ring $R$. One can immediately convert an OLE correlation over ring $R$ to \textbf{$N$ OLE correlations over $\ZZ_p$} if the polynomial $F(X)$ splits into $N$ distinct linear factors modulo $p$\cite{cryptoeprint:2022/1035}. Therefore we mostly consider reducible $F$ and more concretely $F$ a two-power cyclotomic due to its useful properties. 
 \end{remark}
 
-A previous optimization is to substitute $\cHW_{R,t}$ with regular weight-$t$ polynomials denoted as regular-$\cHW_{R,t}$. Each regular weight-$t$ polynomial $e$ contains exactly one nonzero coefficient $e_j$ in the range of degree $[j\cdot (N/t), (j+1)\cdot (N/t)-1]$ for $j=0,\cdots t-1$. When multiplying two regular weight-$t$ polynomials $e$ and $f$, $e_i\cdot f_j$ contributes to a coefficient in the range of degree $[(i+j)\cdot (2N/t), (i+j+2)\cdot (2N/t)-2]$. Therefore the deg-$2N$ polynomial $e\cdot f$ can be shared by invoking $\{\DMPF_{k, 2N/t, \mathbb{Z}_p}\}_{k=1,2,\cdots,t-1,t,t-1,\cdots, 2,1}$, which cuts down the domain size compared to the original design. 
+\paragraph{Amortized exapanding time for each OLE correlation over $\ZZ_p$}The amortized expanding time for each OLE correlation over $\ZZ_p$ is computed by 
+\[
+  T_\text{Amortized} = c^2\cdot(2\bar{T}^\MULT_{N} + \bar{T}^\FullEval_{t,N})
+\]
+where 
+\[
+  \bar{T}^\MULT_{N} := \frac{\text{deg-}2N\text{ polynomial multiplication}}{N}
+\]
+is the amortized cost for computing one deg-$2N$ polynomial multiplication, and 
+\[
+  \bar{T}^\FullEval_{t,N}:=\frac{\DMPF_{t^2, 2N, \ZZ_p}.\FullEval}{N}
+\]
+is the amortized cost for computing each entry of a share of $\vec{e_0}\otimes\vec{e_1}$ by  $\DMPF.\FullEval$. This cost differs under different $\DMPF$ instantiations, with particular noise distributions $(\cHW$ by default/$ \cRHW$): \Yaxin{$T_{G_{\sf conv}}$ is ignored for now. }
+\begin{itemize}
+  \item Sum of $\DPF$s ($\cHW_t$): $2t^2\times T_G$.
+  \item Sum of DPFs ($\cRHW_t$): $2t\times T_G$.
+  \item CBC-based $\DMPF$ ($\cHW_t$): $2w\times T_G$ + $2w\times T_{\rm hash}$.
+  \item Big-state $\DMPF$: $2T_{G^*}$, where $G^*$ maps $\lambda$-bit to $(2\lambda+2t)$-bit. 
+  \item $\OKVS$-based $\DMPF$: $2\left(T_G + \OKVS.\Decode\right)$, where $\OKVS.$\\$\Decode$ usually takes a small number of field addition or field multiplication in $\FF_{2^\lambda}$, depending on the implementation. 
+\end{itemize}
+
+The parameters $N, c, t$ should be set in a way that the corresponding $R^c$-$\LPN$ problem is secure with computational security parameter $\lambda$, which we'll discuss about in the sequel. 
+
+\paragraph{Regular v.s. nonregular noise distribution}
+
+A previous optimization is to substitute $\cHW_{R,t}$ with regular weight-$t$ polynomials denoted as regular-$\cHW_{R,t}$. Each regular weight-$t$ polynomial $e$ contains exactly one nonzero coefficient $e_j$ in the range of degree $[j\cdot (N/t), (j+1)\cdot (N/t)-1]$ for $j=0,\cdots t-1$. When multiplying two regular weight-$t$ polynomials $e$ and $f$, $e_i\cdot f_j$ contributes to a coefficient in the range of degree $[(i+j)\cdot (2N/t), (i+j+2)\cdot (2N/t)-2]$. Therefore the deg-$2N$ polynomial $e\cdot f$ can be shared by invoking $\{\DMPF_{k, 2N/t, \mathbb{Z}_p}\}_{k=1,2,\cdots,t-1,t,t-1,\cdots, 2,1}$, which cuts down the domain size compared to the original design. \Yaxin{Indicate entropy loss and align security level. }
 
 The previous literature uses sum of DPFs to achieve DMPF in either the original design with nonregular noise or the optimized design with regular noise. It indicates using batch code to achieve DMPF as another optimization but not in the clear. We'll analyze the cost of this PCG protocol under the following settings:
 \begin{itemize}
@@ -100,7 +125,13 @@ From \cref{tab:PCG_plug_in_formula} we can see that if we allow small blowup of 
 
 Next we plug in concrete parameters and evaluate the performance of different $\DMPF$ schemes under different PCG parameter settings. 
 
-Define the number of noisy coordinate $W:=ct$. We set $(\lambda, c, N, W)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. According to \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^W\approx N\cdot c^W$. \Yaxin{TBD: Check \cite{cryptoeprint:2022/712} for latest update about this cost. } For $R$ from a reducible $F$, we lowerbound the number of arithmetic operations by $2^i\cdot c^{W_i}$ , where $i:=\mathop{\arg\min}\limits_{1\le i\le \log N}\left(2^i\cdot c^{W_i}\right)$ and $W_i:=W-cn+(c(n-1)+W)\cdot \left(1-\frac{1}{n}\right)^{W/c-1}$. In the end we round $W$ such that $t=W/c$ is an integer. 
+Define the number of noisy coordinate $W:=ct$. We set the parameters $(\lambda, c, N, W)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. According to \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^W\approx N\cdot c^W$. \Yaxin{TBD: Check \cite{cryptoeprint:2022/712} for latest update about this cost. } For $R$ from a reducible $F$, we lowerbound the number of arithmetic operations by $2^i\cdot c^{W_i}$ , where 
+\[
+  \begin{split}
+    i:=&\mathop{\arg\min}\limits_{1\le j\le \log N}\left(2^j\cdot c^{W_j}\right)\\ W_j:=&W-2^jc+((2^j-1)c+W)\cdot \left(1-2^{-j}\right)^{W/c-1}
+  \end{split}
+\]
+ In the end we round $W$ such that $t=W/c$ is an integer. 
 
 
 \Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the CBC-based and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the CBC-based-DMPF. 
