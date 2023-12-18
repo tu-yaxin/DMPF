@@ -68,7 +68,7 @@ is the amortized cost for computing each entry of a share of $\vec{e_0}\otimes\v
   \item $\OKVS$-based $\DMPF$: $2\left(T_G + \OKVS.\Decode\right)$, where $\OKVS.$\\$\Decode$ usually takes a small number of field addition or field multiplication in $\FF_{2^\lambda}$, depending on the implementation. 
 \end{itemize}
 
-The parameters $N, c, t$ should be set in a way that the corresponding $R^c$-$\LPN$ problem is secure with computational security parameter $\lambda$, which we'll discuss about in the sequel. 
+The parameters $N, c, t$ should be set in a way that the corresponding $R^c$-$\LPN$ problem is secure with computational security parameter $\lambda$. In \cite{cryptoeprint:2022/1035} the parameters are taken to be $(\lambda, N, c, t) \in\{ (128, 2^{20}, 8, 5), (128, 2^{20}, 4, 16), (128, 2^{20}, 2, 76)\}$. 
 
 \paragraph{Regular v.s. nonregular noise distribution}
 
