@@ -131,7 +131,6 @@ Similarly, a probabilistic CBC (PCBC) will just be a CBC with failure probabilit
   \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket set $b'$ the current unallocated ball, and repeat step 2. 
 \end{itemize}
 If the algorithm terminates then its output is an allocation of balls to buckets such that each bucket contains at most one ball. However there is no guarantee that the algorithm will terminate - it may end up in a loop and keeps running forever. To fixed this problem, the algorithm should be given a fixed amount of time to run, or equipped with a loop detection process to guarantee termination. We call it a \emph{failure} whenver the algorithm fails to output a proper allocation where each bucket contains at most one ball. 
-
 \Yaxin{Asymptotic parameters: 
 
 On one extreme of linear buckets and many hash functions: \cite[Theorem 1]{cryptoeprint:2022/1455} gives $w$-way cuckoo hashing scheme for $t$ balls, with $w = O(\sqrt{\lambda_{\stat}\log t})$ and $m = O(t)$, making $O(\sqrt{\lambda_\stat \log t})$ queries to the hash functions. It supposes the hash functions from a $O(t\sqrt{\lambda_\stat \log t})$-wise independent hash function family. 
