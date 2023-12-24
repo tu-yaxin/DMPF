@@ -55,7 +55,7 @@ where
 \[
   \bar{T}^\MULT_{N} := \frac{\text{deg-}N\text{ polynomial multiplication}}{N}
 \]
-is the amortized cost for computing one deg-$2N$ polynomial multiplication, and 
+is the amortized cost for computing one deg-$N$ polynomial multiplication, and 
 \[
   \bar{T}^\FullEval_{t,N}:=\frac{\DMPF_{t^2, 2N, \ZZ_p}.\FullEval}{N}
 \]
@@ -119,7 +119,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 
 From \cref{tab:PCG_plug_in_formula} we can see that if we allow small blowup of the seed size of PCG, then we can gain much faster seed expansion by using nonregular noise distribution and either CBC-based DMPF or big-state DMPF or OKVS-based DMPF. 
 
-\paragraph{Comparing the entropy of regular and nonregular noise.}View the $R^c$-$\LPN$ problem as a restricted case of primal $\LPN_{N, (c-1)N, \mathcal{D}}$ with public matrix being a circular matrix of size $N\times (c-1)N$, and the noise distribution over $R$ (or equivalently written as a vector in $\ZZ_p^N$) being either $\cHW_{R, t}$ or the regular $\cRHW_{R,t}$. 
+\paragraph{Comparing the entropy of regular and nonregular noise.}View the $R^c$-$\LPN$ problem as a restricted case of primal $\LPN_{N, (c-1)N, \mathcal{D}}$ with public matrix being a circular matrix of size $N\times (c-1)N$, and the noise distribution over $R$ (or equivalently written as a vector in $\ZZ_p^N$) being either $\cHW_{R, t}$ or $\cRHW_{R,t}$. 
 
 %Moreover, let's consider using the entropy of the noise distribution as the security parameter (which means that we consider the adversary's attack being randomly guessing the secret). Since the entropy of the nonregular noise distribution $\cHW_{R_1,t_1}$ is $\log(\frac{N_1^{t_1}}{t_1^{t_1}})$ while the entropy of the regular noise distribution $\cRHW_{R_2,t_2}$ is $\log(\frac{N_2^{t_2}}{t_2!})$, to settle for the same level of security we only need $t_1=t_2$ and $N_1 = N_2/\mathrm{e}$ where $\mathrm{e}$ is the natural logarithm. Placing this back to \cref{tab:PCG_plug_in_formula}, the total $\FullEval$ time (i.e., the seed expanding time of PCG) can have an extra $\times \mathrm{e}$ speedup. 
 

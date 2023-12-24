@@ -5,7 +5,7 @@
     \begin{algorithmic}[1]
       \State Set $l\leftarrow 1$. 
       \State For $1\le i\le n$, let $\OKVS_i$ be an OKVS scheme (\cref{def:OKVS}) with key space $\mathcal{K} = \{0,1\}^{i-1}$, value space $\mathcal{V} = \{0,1\}^{\lambda+2}$ and input length $t$. 
-      \State let $\OKVS_{\sf conv}$ be an OKVS scheme with key space $\mathcal{K} = \{0,1\}^n$, value space $\mathcal{V} = \GG$ and input length $t$. 
+      \State let $\OKVS_{\sf conv}$ be an OKVS scheme with key space $\mathcal{K} = \{0,1\}^n$, value space $\mathcal{V} = \GG$ and input length $\max\{2^{i-1}, t\}$. 
       \item[]
       \Procedure{Initialize}{$\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1}$}
       \State For $b=0,1$, let $\seed_b^{(0)} = [r_b\xleftarrow{\$}\{0,1\}^\lambda]$ and $\sign_b^{(0)} = [b]$. 
@@ -19,13 +19,18 @@
         \State Compute $\Delta\seed^c = \seed_0^c\oplus\seed_1^c$ and $\Delta \sign^c = \sign_0^c\oplus\sign_1^c$ for $c=0,1$. 
         \State Denote ${\sf path}\leftarrow A^{(i-1)}[k]$. 
         \If{both ${\sf path}\|z$ for $z=0,1$ are in $A^{(i)}$}
-          \State $V[k]\gets r\|(\Delta\sign^0\oplus 1)\|(\Delta\sign^1\oplus 1)$, where $r\xleftarrow{\$}\{0,1\}^\lambda$. \label{alg:okvs_gen_cw_case_1}
+          \State $V[k]\gets r\|\Delta\sign^0\oplus 1\|\Delta\sign^1\oplus 1$, where $r\xleftarrow{\$}\{0,1\}^\lambda$. \label{alg:okvs_gen_cw_case_1}
         \Else
           \State Let $z$ be such that ${\sf path}\|z\in A^{(i)}$. 
-          \State $V[k]\gets \Delta \seed^1\|\left(\Delta\sign^0\oplus (1-z)\right)\|(\Delta\sign^1\oplus z)$. \label{alg:okvs_gen_cw_case_2} 
+          \State $V[k]\gets \Delta \seed^{1-z}\|\Delta\sign^0\oplus (1-z)\|\Delta\sign^1\oplus z$. \label{alg:okvs_gen_cw_case_2} 
         \EndIf
       \EndFor
-      \State \Return $\OKVS_i.\Encode(\{A^{(i-1)}[k], V[k]\}_{1\le k\le |A^{(i-1)}|})$. \label{alg:okvs_gen_cw}
+      \State Copy the list $A^{(i-1)}$ to the list $K$. 
+      \For{$j=|K|+1$ to $\max\{2^{i-1}, t\}$}
+      \State Set $K[j]$ to be an arbitrary string in $\{0,1\}^{i-1}$ that is different from $K[1\dots j-1]$. 
+      \State Set $V[j]$ to be a random string in $\{0,1\}^{\lambda+2}$. 
+      \EndFor 
+      \State \Return $\OKVS_i.\Encode(\{K[j], V[j]\}_{1\le j\le |K|})$. \label{alg:okvs_gen_cw}
       \EndProcedure
       \item[]
       \Procedure{GenConvCW}{$A,B,\{\seed_b^{(n)},\sign_b^{(n)}\}$}
