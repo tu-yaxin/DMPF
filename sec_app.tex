@@ -134,14 +134,13 @@ To force $E_n = E_r$, let's consider fixing two varibles and change one:
   \item Fix $(N_n, c_n) = (N_r, c_r)$, then $t_n<t_r<t_n+1$. 
   \item Fix $(N_n, t_n) = (N_r, t_r)$, then $\frac{c_r}{c_n} = 1 + \frac{1}{N_n - t_n}\approx 1.05$. 
 \end{enumerate}
+All of these three changes of variables don't seem to lead to noticeable changes in the amortized expanding time for each OLE correlation. 
 
 %Moreover, let's consider using the entropy of the noise distribution as the security parameter (which means that we consider the adversary's attack being randomly guessing the secret). Since the entropy of the nonregular noise distribution $\cHW_{R_1,t_1}$ is $\log(\frac{N_1^{t_1}}{t_1^{t_1}})$ while the entropy of the regular noise distribution $\cRHW_{R_2,t_2}$ is $\log(\frac{N_2^{t_2}}{t_2!})$, to settle for the same level of security we only need $t_1=t_2$ and $N_1 = N_2/\mathrm{e}$ where $\mathrm{e}$ is the natural logarithm. Placing this back to \cref{tab:PCG_plug_in_formula}, the total $\FullEval$ time (i.e., the seed expanding time of PCG) can have an extra $\times \mathrm{e}$ speedup. 
 
-\Yaxin{Double check if the cost of practical attacks against $R^c$-$\LPN$ scales with entropy. }
+\paragraph{Comparing the best attack of regular and nonregular noise}Next we plug in concrete parameters and evaluate the performance of different $\DMPF$ schemes under different PCG parameter settings. 
 
-Next we plug in concrete parameters and evaluate the performance of different $\DMPF$ schemes under different PCG parameter settings. 
-
-Define the number of noisy coordinate $W:=ct$. We set the parameters $(\lambda, c, N, W)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. According to \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^W\approx N\cdot c^W$. \Yaxin{TBD: Check \cite{cryptoeprint:2022/712} for latest update about this cost. } For $R$ from a reducible $F$, we lowerbound the number of arithmetic operations by $2^i\cdot c^{W_i}$ , where 
+Define the number of noisy coordinate $W:=ct$. We set the parameters $(\lambda, c, N, W)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. According to \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^W\approx N\cdot c^W$. \Yaxin{TBD: Check \cite{cryptoeprint:2022/712} for latest update about this cost. Double check if the cost of practical attacks against $R^c$-$\LPN$ scales with entropy. } For $R$ from a reducible $F$, we lowerbound the number of arithmetic operations by $2^i\cdot c^{W_i}$ , where 
 \[
   \begin{split}
     i:=&\mathop{\arg\min}\limits_{1\le j\le \log N}\left(2^j\cdot c^{W_j}\right)\\ W_j:=&W-2^jc+((2^j-1)c+W)\cdot \left(1-2^{-j}\right)^{W/c-1}
