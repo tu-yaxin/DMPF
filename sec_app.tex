@@ -161,7 +161,7 @@ According \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we low
 
 
 
-\Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the CBC-based and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the CBC-based-DMPF. 
+%\Yaxin{Previous calculation as a reference: } choosing the big-state DMPF for $t<8$ and the OKVS-DMPF for $t\ge 8$ gives at least $\times 2$ acceleration on expand time over other choices with sacrifice on the keysize. There is a tradeoff between the CBC-based and OKVS-DMPF in that the OKVS-DMPF always provides a $\sim\times 2$ acceleration on expand time, but a loss in seed size that when $t$ is large it may blow up the seed size to $\sim \times 2$ that of the CBC-based-DMPF. 
 
 \subsection{Unbalanced PSI-WCA}
 A private set intersection (PSI) protocol allows two parties with input $X$, $Y$ being two sets to learn about their intersection $X\cap Y$ without revealing additional information of $X$ or $Y$. We denote by PSI-WCA (weighted cardinality) a variant of PSI that computes the weighted cardinality of elements in $X\cap Y$ where the weights are determined by a pre-fixed function $w(\cdot)$. 
@@ -211,7 +211,7 @@ We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF
 
 
 
-\Yaxin{Previous calculation as a reference: }A short conclusion is using big-state DMPF for $t<64$ and the OKVS-DMPF for $t\ge 64$ gives at $\sim \times 2$ faster Eval() time and faster Gen() time compared to the naive and CBC-based construction. The keysize ($\propto$ communication complexity) of our choice is usually smaller than the CBC-based DMPF and slightly larger than the naive construction. 
+%\Yaxin{Previous calculation as a reference: }A short conclusion is using big-state DMPF for $t<64$ and the OKVS-DMPF for $t\ge 64$ gives at $\sim \times 2$ faster Eval() time and faster Gen() time compared to the naive and CBC-based construction. The keysize ($\propto$ communication complexity) of our choice is usually smaller than the CBC-based DMPF and slightly larger than the naive construction. 
 \subsection{Security analysis}
 \subsection{Heavy-hitters}
 private heavy-hitter\\

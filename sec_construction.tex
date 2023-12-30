@@ -146,16 +146,16 @@ In this section we summarize the efficiency of the DMPF instantiations we've men
 
         \cline{1-5}
 				
-				$Gen()$ & $2t\log N\times T_G+2t\times T_{G_{\sf conv}}$ &\makecell{$2m\log(wN/m)\times T_G+2m\times T_{G_{\sf conv}}$\\$\CBC.\Encode+\CBC.\Decode$} &$2t\log N\times T_{G^*}$\tnote{1}
+				$Gen()$ & $2t\log N\times T_G+2t\times T_{G_{\sf conv}}$ &\makecell{$2m\log(wN/m)\times T_G+2m\times T_{G_{\sf conv}}$\\$\CBC.\Encode+\CBC.\Decode$} &\makecell{$2t\log N\times T_{G^*}$\tnote{1}\\$+t\log N\times (\lambda+t)$-bit-XOR}
         & \makecell{$2t\log N\times T_G+2t\times T_{G_{\sf conv}}$\\$+\log N\times \OKVS.\Encode$\\$+ \OKVS_{\sf conv}.\Encode$} \\
 
         \cline{1-5}
 
-				$Eval()$ & $t\log N\times T_G+t\times T_{G_{\sf conv}}$ &\makecell{$w\log(wN/m)\times T_G + w\times T_{G_{\sf conv}}$\\Finding all positions the input is mapped to} & $\log N\times T_{G^*} + T_{G_{\sf conv}}$ &\makecell{$\log N\times T_G$ \\$+\log N\times\OKVS.\Decode$\\ $+\OKVS_{\sf conv}.\Decode$} \\
+				$Eval()$ & $t\log N\times T_G+t\times T_{G_{\sf conv}}$ &\makecell{$w\log(wN/m)\times T_G + w\times T_{G_{\sf conv}}$\\Finding all positions the input is mapped to} & \makecell{$\log N\times T_{G^*} + T_{G_{\sf conv}}$\\$+t\log N \times (\lambda+t)$-bit-XOR}&\makecell{$\log N\times T_G$ \\$+\log N\times\OKVS.\Decode$\\ $+\OKVS_{\sf conv}.\Decode$} \\
 
         \cline{1-5}
 
-				$FullEval()$ & $tN\times T_G+tN\times T_{G_{\sf conv}}$ &\makecell{$wN\times T_G+ wN\times T_{G_{\sf conv}}$\\Finding the full mapping} & $N\times T_{G^*} + N\times T_{G_{\sf conv}}$ & \makecell{$N\times T_G$ \\ $+N\times\OKVS.\Decode$\\$+N\times \OKVS_{\sf conv}.\Decode$} \\
+				$FullEval()$ & $tN\times T_G+tN\times T_{G_{\sf conv}}$ &\makecell{$wN\times T_G+ wN\times T_{G_{\sf conv}}$\\Finding the full mapping} & \makecell{$N\times T_{G^*} + N\times T_{G_{\sf conv}}$\\$+2tN\times (\lambda+t)$-bit-XOR }& \makecell{$N\times T_G$ \\ $+N\times\OKVS.\Decode$\\$+N\times \OKVS_{\sf conv}.\Decode$} \\
         \bottomrule
 			\end{tabular}	
       \begin{tablenotes}
@@ -165,7 +165,7 @@ In this section we summarize the efficiency of the DMPF instantiations we've men
     }
 	\end{table*}
 
-Take PCG as a potential application. We care about $\FullEval$ time which is related to PCG seed expanding time. In this aspect, the CBC-based DMPF consumes $d\times$PRGs than big-state DMPF and OKVS-based DMPF, while big-state DMPF's $\FullEval$ time scales with $t$ and OKVS-based DMPF in addition consumes large field multiplications (in OKVS decoding, and maybe more than this). Therefore we expect different DMPF schemes to be the top choice in different choices of $t$ and depending on the computing time of PRG and large field multiplication. 
+Take PCG as a potential application. We care about $\FullEval$ time which is related to PCG seed expanding time. In this aspect, the CBC-based DMPF consumes $w$ times the number of PRGs than big-state DMPF and OKVS-based DMPF, while big-state DMPF's $\FullEval$ time scales with $t^2$ (since the large-bit-XOR time scales with $t^2$) and OKVS-based DMPF in addition consumes large field operations (in OKVS decoding, and maybe more than this). Therefore we expect different DMPF schemes to be the top choice in different choices of $t$ and depending on the computing time of PRG and large field multiplication, and it is likely that the big-state construction performs the best when $t$ is small, while the CBC-based and OKVS-based constructions performs well when $t$ is large. 
 
   
 \subsection{Distributed Key Generation}
