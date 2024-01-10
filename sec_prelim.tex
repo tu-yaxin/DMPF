@@ -128,16 +128,54 @@ Similarly, a probabilistic CBC (PCBC) will just be a CBC with failure probabilit
 \paragraph{$w$-way cuckoo hashing.}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
 \begin{itemize}
   \item[1.] Choose an arbitrary unallocated ball $b$. If there is no unallocated ball, output the allocation. 
-  \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket set $b'$ the current unallocated ball, and repeat step 2. 
+  \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket, set $b'$ the current unallocated ball, and repeat step 2. 
 \end{itemize}
 If the algorithm terminates then its output is an allocation of balls to buckets such that each bucket contains at most one ball. However there is no guarantee that the algorithm will terminate - it may end up in a loop and keeps running forever. To fixed this problem, the algorithm should be given a fixed amount of time to run, or equipped with a loop detection process to guarantee termination. We call it a \emph{failure} whenver the algorithm fails to output a proper allocation where each bucket contains at most one ball. 
-\Yaxin{Asymptotic parameters: 
 
-On one extreme of linear buckets and many hash functions: \cite[Theorem 1]{yeo_cuckoo_2023} gives $w$-way cuckoo hashing scheme for $t$ balls, with $w = O(\sqrt{\lambda_{\stat}\log t})$ and $m = O(t)$, making $O(\sqrt{\lambda_\stat \log t})$ queries to the hash functions. It supposes the hash functions from a $O(t\sqrt{\lambda_\stat \log t})$-wise independent hash function family. 
+\paragraph{The failure probability of cuckoo hashing.}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $40$. The relations among the number of balls $t$, the number of hash functions $w$, the number of buckets $m$ and the security parameters $\lambda_\stat$ are listed in \Cref{tab:cuckoo_hashing_prm}. 
 
-On the other extreme of 3 hash functions and quasi-linear buckets: \cite[Remark 1]{cryptoeprint:2021/580} gives $w=3$ and $m = O(\lambda_\stat t + t\log t)$, while supposing the hash functions are collision resilient. It also claims empirical results that $\lambda=80$, $w=3$, $m\le 2t$ for $30\le t\le 2^{37}$. }
+\begin{table*}
+  \renewcommand\arraystretch{1.5}
+  %\scalebox{1}{
+  \begin{threeparttable}
+  \caption{he relations among the number of balls $t$, the number of hash functions $w$, the number of buckets $m$ and the security parameters $\lambda_\stat$ in cuckoo hashing. }
+  \label{tab:cuckoo_hashing_prm}
+    \begin{tabular}{cccccc}
+      \toprule 
+      %Header
+      &  Type&$t$ &$\lambda_\stat$ & $w$ & $e = m/t$  \\
+       
 
-\paragraph{The failure probability of cuckoo hashing.}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $30$ or $40$. The empirical result in \cite{chen_fast_2017} shows for $w=3$, $m=16384$, $\lambda_\stat = 124.4e-144.6$ where $e=m/t$ is the expansion parameter. For $w=3$, $m=8192$, $\lambda_\stat=125e-145$. However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. \Yaxin{\cite{cryptoeprint:2017/1142} uses $w=3, e=1.5, t>200$ and $\lambda_\stat\approx 40$ and claims it follows the analysis from \cite{chen_fast_2017}, but I don't see how... It also claims $\lambda_\stat\approx 20$ for small $k$, but not sure how small can $k$ be. }
+      \midrule
+      \cite[Theorem 1]{yeo_cuckoo_2023}\tnote{$\dag$}& Asymptotic & & & $O(\sqrt{\lambda_{\stat}\log t})$ & $O(1)$ \\
+     
+      \cline{1-6}
+      \cite{cryptoeprint:2021/580}& Asymptotic & & & 3 & $O(\lambda_\stat+\log t)$ \\
+
+      \cline{1-6}
+      \cite[Appendix B]{cryptoeprint:2018/579} & Empirical & $t\ge 4$ & \makecell{$\lambda_\stat = a_t\cdot e - b_t - \log t$\\$a_t = 123.5\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.3, \sigma = 2.3)$\\$b_t = 120\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.45, \sigma = 2.18)$} & 3\tnote{$\ddag$} & $e$ \\
+
+      \cline{1-6}
+      \makecell{\cite{cryptoeprint:2021/580}\\ simplifying the above} & Empirical & $t\ge 30$\tnote{*} & \makecell{$\lambda_\stat = 123.5 e -120 - \log t$} & 3 & $e$\\
+
+      \cline{1-6}
+      \multirow{2}{*}{\cite{chen_fast_2017}\tnote{**}} &\multirow{2}{*}{ Empirical }& $11041$ & $40\,(\lambda_\stat = 124.4 e - 144.6)$ & 3 &$m=2^{14},\,e\approx 1.5$\\
+      \cline{3-6}
+      & & $5535$ & $40\,(\lambda_\stat = 125 e - 145)$ & 3 &$m=2^{13}, \, e\approx 1.5$\\
+      
+      \bottomrule
+    \end{tabular}	
+    \begin{tablenotes}
+      \item [$\dag$] $O(\sqrt{\lambda_\stat \log t})$ queries to the hash functions and supposes the hash functions from a $O(t\sqrt{\lambda_\stat \log t})$-wise independent hash function family. 
+      \item [$\ddag$] Parameters are only slightly different for $w>3$. 
+      \item [*] Should extend to smaller $t$ like $t = 16, 25$.
+      \item [**]It first fixes $m = 2^{13}, 2^{14}$ and then computes the correlation between $\lambda_\stat$ and $e$.   
+      \end{tablenotes}
+  \end{threeparttable}
+  %}
+\end{table*}
+
+%However we use cuckoo hashing to construct DMPF for $t$-point functions, in which case we'd also care about $t$ being small, say $2,3$ or $100$, and $m$ should not be too large. In this sense the previous empirical results are not complete. 
 
 With the $t$ balls replicated and allocated to $m$ buckets, the cuckoo hashing algorithm essentially finds a perfect matching from $t$ balls to $m$ buckets, which coincides with the form of (probabilistic) CBC decoding. Therefore a PCBC follows directly from a cuckoo hashing scheme: \Yaxin{Dec 31: The following construction is mentioned in \cite{yeo_cuckoo_2023}. There are several points to note: 
 
