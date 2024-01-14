@@ -97,33 +97,30 @@ When the DPF scheme is correct and secure, the na\"ive construction of DMPF is a
  
 
 \subsection{Batch Code}
-We introduce batch code and probabilistic batch code, which can be used to construct DMPF (see \cref{con:DMPF_batch_code}). 
-\begin{definition}[Batch Code\cite{10.1145/1007352.1007396}]
-  An $(N,M,t,m)$-batch code over alphabet $\Sigma$ is given by a pair of efficient algorithms $(\Encode,\Decode)$ such that:
+We introduce probabilistic batch code, a batch code permitting small decoding errors, which can be used to construct DMPF (see \cref{con:DMPF_batch_code}). 
+\begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,yeo_cuckoo_2023}]
+  An $(N,M,t,m,b,\epsilon)$-PBC over alphabet $\Sigma$ is given by a tuple of efficient algorithms $(\Encode,\Schedule,\Decode)$ with public randomness $r$ such that:
   \begin{itemize}
-    \item $\Encode(x\in\Sigma^N)\rightarrow (C_1,C_2,\cdots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$-tuple of codewords $C_1,C_2,\cdots C_m\in\Sigma^*$ of total length $M$.
-    \item $\Decode(I,C_1,C_2,\cdots,C_m)\rightarrow \{x[i]\}_{i\in I}$: On input a set $I$ of $t$ distinct indices in $[N]$ and $m$ codewords, recover $t$ coordinates of $x$ indexed by $I$ by reading at most one coordinate from each of the $m$ codeword. 
+    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,C_2,\dots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$-tuple of codewords $C_1,C_2,\cdots C_m\in\Sigma^*$ of total length $M$.
+    \item $\Schedule_r(I)\rightarrow (S_1,S_2,\dots, S_m)$: For any $I\subseteq [N]$ and $|I|\le t$, $\Schedule_r$ outputs $m$ sets of indices to read in the $m$ codewords, respectively, and that for all $i$, $|S_i|\le b$. 
+    \item $\Decode_r(I,C_1|_{S_1},C_2|_{S_2},\dots,C_m|_{S_m})\rightarrow x|_I$: On input a set $I\subseteq[N]$ of $\le t$ distinct indices in $[N]$, and the scheduled indices to read in the $m$ codewords, recover the subset of $x$ indexed by $I$. 
+    \item Correctness: for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
+    \[
+    \begin{split}
+      \Pr_r[&(C_1,\dots, C_m)\gets \Encode_r(x), \\
+      &(S_1,\dots ,S_m)\gets \Schedule_r(I), \\
+      &x_I\not= \Decode_r(I,C_1|_{S_1},\dots,C_m|_{S_m} )] \le \epsilon
+    \end{split}
+    \]
   \end{itemize}
 \end{definition}
 
-We will focus on a special class of batch code called combinatorial batch code (CBC)\cite{10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$ and during decoding the elements read from $m$ codewords should cover the desired set $\{x[i]\}_{i\in I}$. 
-%Note that the existence of an $(N,M,t,m)$-CBC is equivalent to the existence of an $(N,M,t,m)$-CBC where the encoding and decoding are independent of the input string $x$. Thus we can only consider the latter CBC.
- In this case, the encoding algorithm is equivalent to replicating and allocating the indices in $[N]$ to $m$ buckets, and the decoding algorithm is equivalent to finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, while indicating which position in each bucket should be read. 
-%The latter $(N,M,t,m)$-CBC can be represented by an $(N,m)$-bipartite graph $G=(U,V,E)$ where each edge $(u_i,v_j)\in E$ corresponds to $\Encode$ assigning $x[i]$ to the codeword $C_j$ (we call it a bucket), while it is guaranteed that any subset $T\subseteq U$ such that $|T|=t$ has a perfect matching to $V$. 
+We will focus on the case $b=1$ and a special class of batch code called combinatorial batch code (CBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$ and the decoding algorithm recovers $x|_I$ by collecting from the scheduled sets of indices. 
+In this case, the encoding algorithm is equivalent to replicating and allocating the indices in $[N]$ to $m$ buckets (codewords), and the scheduling algorithm is equivalent to finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, while indicating which position in each bucket should be read. 
 
-\Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient? }
+\Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient?  }
 
-It is useful to relax the definition of batch code, allowing failure probability when decoding. 
-
-\begin{definition}[Probabilistic Batch Code \cite{cryptoeprint:2017/1142}]
-An\\ $(N,M,t,m,\epsilon)$-probabilistic batch code over alphabet $\Sigma$ is a randomized $(N,M,t,m)$-batch code with \textbf{public randomness} $r$ (and possibly private randomness for each sub-procedure) such that for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
-\[
-  \Pr[\Decode_r(I,\Encode_r(x))\rightarrow \{x[i]\}_{i\in I}] = 1-\epsilon
-\]
-where the probability is taken over the public randomness $r$ and private randomness of  $\Encode$ and $\Decode$ algorithms. 
-\end{definition}
-
-Similarly, a probabilistic CBC (PCBC) will just be a CBC with failure probability when decoding. We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PCBC\cite{cryptoeprint:2017/1142,yeo_cuckoo_2023}.
+Based on the definition of CBC, a probabilistic CBC (PCBC) is a CBC with failure probability when decoding. We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PCBC\cite{cryptoeprint:2017/1142,yeo_cuckoo_2023}.
 
 \paragraph{$w$-way cuckoo hashing.}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
 \begin{itemize}
