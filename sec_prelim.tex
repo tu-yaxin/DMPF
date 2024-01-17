@@ -92,37 +92,37 @@ We require $\Pi$ to satisfy the following requirements:
     \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b = \sum_{i\in [t]}$DPF$.\FullEval_b(k_b^i, x)$. 
   \end{itemize}
 \end{construction}
-When the DPF scheme is correct and secure, the na\"ive construction of DMPF is also correct and secure. We note that the keysize and running time of $\Gen$, $\Eval$ and $\FullEval$ of the na\"ive construction of DMPF equals $t\times $ the keysize and $t\times$ the running time of $\Gen$, $\Eval$ and $\FullEval$ of DPF, respectively. We aim to provide DMPF schemes that has $\Eval$ and $\FullEval$ time almost independent to $t$. 
+When the DPF scheme is correct and secure, the na\"ive construction of DMPF is also correct and secure. We note that the keysize and running time of $\Gen$, $\Eval$ and $\FullEval$ of the na\"ive construction of DMPF equals $t\times $ the keysize and $t\times$ the running time of $\Gen$, $\Eval$ and $\FullEval$ of DPF, respectively. In the remainder of this paper, we'll provide DMPF schemes that has $\Eval$ and $\FullEval$ time almost independent to $t$. 
  
  
 
 \subsection{Batch Code}
 We introduce probabilistic batch code, a batch code permitting small decoding errors, which can be used to construct DMPF (see \cref{con:DMPF_batch_code}). 
 \begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,yeo_cuckoo_2023}]
-  An $(N,M,t,m,b,\epsilon)$-PBC over alphabet $\Sigma$ is given by a tuple of efficient algorithms $(\Encode,\Schedule,\Decode)$ with public randomness $r$ such that:
+  An $(N,M,t,m,l,\epsilon)$-PBC over alphabet $\Sigma$ is given by a tuple of efficient algorithms $(\Encode,\Decode)$ with respect to the public randomness $r$ such that:
   \begin{itemize}
-    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,C_2,\dots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$-tuple of codewords $C_1,C_2,\cdots C_m\in\Sigma^*$ of total length $M$.
-    \item $\Schedule_r(I)\rightarrow (S_1,S_2,\dots, S_m)$: For any $I\subseteq [N]$ and $|I|\le t$, $\Schedule_r$ outputs $m$ sets of indices to read in the $m$ codewords, respectively, and that for all $i$, $|S_i|\le b$. 
-    \item $\Decode_r(I,C_1|_{S_1},C_2|_{S_2},\dots,C_m|_{S_m})\rightarrow x|_I$: On input a set $I\subseteq[N]$ of $\le t$ distinct indices in $[N]$, and the scheduled indices to read in the $m$ codewords, recover the subset of $x$ indexed by $I$. 
-    \item Correctness: for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
+    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,C_2,\dots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$ codewords (or `buckets') $C_1,C_2,\cdots C_m\in\Sigma^*$ of total length $M$.
+    \item $\Decode_r(I,C_1,C_2,\dots,C_m)\rightarrow x[I]$: On input a set $I\subseteq[N]$ of $\le t$ distinct elements in $[N]$ and $m$ codewords, recover the subset $x[I]$ of $x$ indexed by $I$, while querying at most $l$ positions in each codeword. 
+    \item \textbf{Correctness}: for any string $x$ and any set $I$ of $t$ distinct indices in $[N]$, 
     \[
     \begin{split}
       \Pr_r[&(C_1,\dots, C_m)\gets \Encode_r(x), \\
-      &(S_1,\dots ,S_m)\gets \Schedule_r(I), \\
-      &x_I\not= \Decode_r(I,C_1|_{S_1},\dots,C_m|_{S_m} )] \le \epsilon
+      &x[I]\not= \Decode_r(I,C_1,\dots,C_m)] \le \epsilon
     \end{split}
     \]
   \end{itemize}
+  By default, we assume the batch code to be systematic, which means each symbol of $x$ is encoded to some fixed positions in the buckets. This is formalized by two sub-processes of $\Encode_r$ and $\Decode_r$ respectively: 
+  \begin{itemize}
+    \item $\Position_r(k\in[N])\rightarrow (i_1, j_1),(i_2,j_2),\dots$: On input an index $k\in[N]$, output the sequence of positions in buckets relavant to $x[k]$. The pair $(i_t, j_t)$ represents the symbol $C_{i_t}[j_t]$. 
+    \item $\Schedule_r(I)\rightarrow (S_1,S_2,\dots, S_m)$: For any $I\subseteq [N]$ and $|I|\le t$, $\Schedule_r$ outputs $m$ sets of indices that $\Decode_r$ reads in the $m$ buckets, such that for all $i$, $|S_i|\le l$. 
+  \end{itemize}
 \end{definition}
 
-We will focus on the case $b=1$ and a special class of batch code called combinatorial batch code (CBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$ and the decoding algorithm recovers $x|_I$ by collecting from the scheduled sets of indices. 
-In this case, the encoding algorithm is equivalent to replicating and allocating the indices in $[N]$ to $m$ buckets (codewords), and the scheduling algorithm is equivalent to finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, while indicating which position in each bucket should be read. 
+We will focus on the case $b=1$ and a special class of batch code called combinatorial batch code (CBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$. In this case, $\Encode_r$ sends $x[k]$ to the positions defined by $\Position_r(k)$, and $\Decode_r$ recovers $x[I]$ by rearranging the symbols it reads, whose positions are defined by $\Schedule$. Note that when $b=1$, $\Schedule$ algorithm implies finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, in an $(N,m)$-bipartite graph where $k\in[N]$ is connected to $j\in[m]$ if and only if $x[k]$ is contained in $C_j$. 
 
-\Yaxin{Add example instantiation (random regular bipartite graph) and explain it is not efficient?  }
+A natural way to construct PBC is to define the allocation of symbols in $x$ to the buckets by a random $(N,m)$-bipartite graph where each left node has degree-$w$ for a fixed parameter $w$. To implement $\Encode$ and $\Decode$ (or more specifically $\Position$ and $\Schedule$), we mention the $w$-way cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete and efficient instantiation of PBC\cite{cryptoeprint:2017/1142,cryptoeprint:2018/579,yeo_cuckoo_2023}, which implements and completes details of the natural idea
 
-Based on the definition of CBC, a probabilistic CBC (PCBC) is a CBC with failure probability when decoding. We mention Cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete instantiation of PCBC\cite{cryptoeprint:2017/1142,yeo_cuckoo_2023}.
-
-\paragraph{$w$-way cuckoo hashing.}Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
+\paragraph{$w$-way cuckoo hashing.}\Yaxin{bucket size $l=1$, stash $s=0$. }Given $t$ balls, $m=et$ buckets ($e$ is some expansion parameter that is bigger than 1), and $w$ independent hash functions $h_1, h_2,\cdots, h_w$ randomly mapping every ball to a bucket, allocates all balls to the buckets such that each bucket contains at most one ball through the following process: 
 \begin{itemize}
   \item[1.] Choose an arbitrary unallocated ball $b$. If there is no unallocated ball, output the allocation. 
   \item[2.] Choose a random hash function $h_i$ compute the bucket index $h_i(b)$. If this bucket is empty, then allocate $b$ to this bucket and go to step 1. If this bucket is not empty and filled with ball $b'$, then evict $b'$, allocate $b$ to this bucket, set $b'$ the current unallocated ball, and repeat step 2. 
