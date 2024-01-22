@@ -9,24 +9,24 @@
       \State For $b=0,1$, set $\sign_b^{(0)} = [b\|0^{t-1}]$. 
       \EndProcedure
       \item[]
-      \Procedure{GenCW}{$i,A,\{\seed_b^{(i-1)},\sign_b^{(i-1)}\}_{b=0,1}$}
+      \Procedure{GenCW}{$i,A,V^{(i-1)}$}
       \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_paradigm}. 
       \State Sample a list $CW$ of $t$ random strings from $\{0,1\}^{\lambda+2t}$.  
       \For{$k = 1$ to $|A^{(i-1)}|$}
-        \State Parse $G(\seed_b^{(i-1)}[k]) = \seed_b^0\|\sign_b^0\|\seed_b^1\|\sign_b^1$, for $b=0,1$, $\seed_b^0,\seed_b^1\in\{0,1\}^\lambda$ and $\sign_b^0,\sign_b^1\in\{0,1\}^t$. 
-        \State Compute $\Delta\seed^c = \seed_0^c\oplus\seed_1^c$ and $\Delta \sign^c = \sign_0^c\oplus\sign_1^c$ for $c=0,1$. 
-        \State Denote ${\sf path}\leftarrow A^{(i-1)}[k]$. 
-        \If{both ${\sf path}\|z$ for $z=0,1$ are in $A^{(i)}$}
-          \State $d\gets$ the index of ${\sf path}\|0$ in $A^{(i)}$.
-          \State $CW[k]\gets r\|(\Delta\sign^0\oplus e_d) \|(\Delta\sign^1\oplus e_{d+1})$ where $r\xleftarrow{\$}\{0,1\}^\lambda$, $e_d = 0^{d-1}10^{t-d}$. 
+        \State Parse $V^{(i-1)}[k] = \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$.
+        %\State Denote ${\sf path}\leftarrow A^{(i-1)}[k]$. 
+        \If{$A^{(i-1)}[k]\|z\in A^{(i)}$ holds for both $z=0,1$}
+          \State $d\gets$ the index of $A^{(i-1)}[k]\|0$ in $A^{(i)}$.
+          \State $CW[k]\gets \Delta\seed\|(\Delta\sign^0\oplus e_d) \|(\Delta\sign^1\oplus e_{d+1})$ where $e_d = 0^{d-1}10^{t-d}$. 
         \Else
-          \State Let $z$ be such that ${\sf path}\|z\in A^{(i)}$. 
-          \State $d\gets$ the index of ${\sf path}\|z$ in $A^{(i)}$. 
-          \State $CW[k]\gets 
-            \begin{cases}
-              \Delta \seed^1\|(\Delta\sign^0\oplus e_d)\|\Delta\sign^1 & z=0\\
-              \Delta \seed^0\|\Delta\sign^0\|(\Delta\sign^1\oplus e_d) & z=1
-            \end{cases}$.\label{alg:big_state_gen_cw}    
+          \State Suppose $A^{(i-1)}[k]\|z\in A^{(i)}$. Let $d$ be the index of $A^{(i-1)}[k]\|z$ in $A^{(i)}$. 
+          \State $\Delta\sign^z\gets\Delta\sign^z\oplus e_d$. 
+          %\State $CW[k]\gets 
+           % \begin{cases}
+             % \Delta \seed^1\|(\Delta\sign^0\oplus e_d)\|\Delta\sign^1 & z=0\\
+            %  \Delta \seed^0\|\Delta\sign^0\|(\Delta\sign^1\oplus e_d) & z=1
+            %\end{cases}$.
+          \State $CW[k]\gets \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$. \label{alg:big_state_gen_cw}    
         \EndIf 
       \EndFor
       \State\Return $CW$. 
