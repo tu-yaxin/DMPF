@@ -21,8 +21,44 @@
 %%
 %%\acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection,
 %%  June 03--05, 2018, Woodstock, NY}
-\acmPrice{15.00}
-\acmISBN{tbd}
+\acmISBN{978-1-4503-XXXX-X/18/06}
+
+
+%%
+%% Submission ID.
+%% Use this when submitting an article to a sponsored event. You'll
+%% receive a unique submission ID from the organizers
+%% of the event, and this ID should be used as the parameter to this command.
+%%\acmSubmissionID{123-A56-BU3}
+
+%%
+%% For managing citations, it is recommended to use bibliography
+%% files in BibTeX format.
+%%
+%% You can then either use BibTeX with the ACM-Reference-Format style,
+%% or BibLaTeX with the acmnumeric or acmauthoryear sytles, that include
+%% support for advanced citation of software artefact from the
+%% biblatex-software package, also separately available on CTAN.
+%%
+%% Look at the sample-*-biblatex.tex files for templates showcasing
+%% the biblatex styles.
+%%
+
+%%
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+%%\citestyle{acmauthoryear}
+
+
+%%
+%% end of the preamble, start of the body of the document source.
 
 
 \usepackage{amsmath,amsfonts}
@@ -106,16 +142,28 @@
 \title{Notes for New Constructions of DMPF}
 
 \author{tbd}
-%\authornote{}
-%\email{tbd}
-%\affiliation{%
-  %\institution{tbd}
-  %\streetaddress{P.O. Box 1212}
-  %\city{tbd}
-  %\state{tbd}
-  %\country{tbd}
-  %\postcode{tbd}
-%}
+\authornote{Both authors contributed equally to this research.}
+\email{tbd}
+\orcid{tbd}
+\author{tbd}
+\authornotemark[1]
+\email{tbd}
+\affiliation{%
+  \institution{tbd}
+  \streetaddress{tbd}
+  \city{tbd}
+  \state{tbd}
+  \country{tbd}
+  \postcode{tbd}
+}
+
+\author{tbd}
+\affiliation{%
+  \institution{tbd}
+  \streetaddress{tbd}
+  \city{tbd}
+  \country{tbd}}
+\email{tbd}
 
 %%
 %% By default, the full list of authors will be used in the page
@@ -123,7 +171,7 @@
 %% other information printed in the page headers. This command allows
 %% the author to define a more concise list
 %% of authors' names for this purpose.
-\renewcommand{\shortauthors}{tbd}
+\renewcommand{\shortauthors}{tbd et al.}
 
 \begin{abstract}
   tbd. 
@@ -147,10 +195,20 @@
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
 \keywords{tbd}
+%% A "teaser" image appears between the author and affiliation
+%% information and the body of the document, and typically spans the
+%% page.
+%\begin{teaserfigure}
+  %\includegraphics[width=\textwidth]{sampleteaser}
+  %\caption{Seattle Mariners at Spring Training, 2010.}
+  %\Description{Enjoying the baseball game from the third-base
+  %seats. Ichiro Suzuki preparing to bat.}
+  %\label{fig:teaser}
+%\end{teaserfigure}
 
-%\received{20 February 2007}
-%\received[revised]{12 March 2009}
-%\received[accepted]{5 June 2009}
+\received{20 February 2007}
+\received[revised]{12 March 2009}
+\received[accepted]{5 June 2009}
 
 \maketitle
 
@@ -165,20 +223,16 @@ tbd
 
 \input{sec_app.tex}
 
-\section{Acknowledgments}
-tbd
+\begin{acks}
+  TBD, if any. 
+\end{acks}
 
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
 
-
-%%
-%% If your work has an appendix, this is the place to put it.
 \appendix
 \input{sec_security_proof.tex}
 
 \end{document}
 \endinput
-%%
-%% End of file `sample-sigconf.tex'.
