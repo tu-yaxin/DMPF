@@ -78,7 +78,7 @@ We require $\Pi$ to satisfy the following requirements:
  We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DMPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_b$ an algorithm which computes $\Eval_b$ on every input $x$. Hence, $\FullEval_b$ receives only a key $k_b$ as input.
 
  One can construct a DMPF scheme for $t$-point functions by simply summing $t$ DPFs. We denote this DMPF scheme as the na\"ive construction. 
-\begin{construction}[Na\"ive construction of DMPF]
+\begin{construction}[Na\"ive construction of DMPF]\label{con:naive_DMPF}
   Given DPF for domain of size $N$ and output group $\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
   \begin{itemize}
     \item $\Gen(1^\lambda, \hat{f}_{A, B})\rightarrow (k_0, k_1)$: Suppose $A = \{\alpha_1,\dots, \alpha_t\}$ and $B = \{\beta_1,\dots, \beta_t\}$. For $1\le i\le t$, invoke DPF$.\Gen(1^\lambda, \hat{f}_{\alpha_i, \beta_i})\rightarrow (k_0^i, k_1^i)$. Set $(k_0, k_1) = (\{k_0^i\}_{i\in [t]}, \{k_1^i\}_{i\in [t]})$. 
@@ -92,7 +92,7 @@ When the DPF scheme is correct and secure, the na\"ive construction of DMPF is a
 
 \subsection{Batch Code}
 We introduce probabilistic batch code, a batch code permitting small decoding errors, which can be used to construct DMPF (see \cref{con:DMPF_batch_code}). 
-\begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,yeo_cuckoo_2023}]
+\begin{definition}[Probabilistic Batch Code (PBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,yeo_cuckoo_2023}]\label{def:PBC}
   An $(N,M,t,m,l,\epsilon)$-$\PBC$ over alphabet $\Sigma$ is given by a tuple of efficient algorithms $(\Encode,\Decode)$ with respect to the public randomness $r$ such that:
   \begin{itemize}
     \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,C_2,\dots,C_m)$: Any string $x\in\Sigma^N$ is encoded into an $m$ codewords (or `buckets') $C_1,C_2,\cdots C_m\in\Sigma^*$ of total length $M$.
@@ -166,7 +166,7 @@ If the algorithm terminates then it outputs a desired allocation of balls to buc
   %}
 \end{table*}
 
-There are different ways to generalize cuckoo hashing algorithm in order to achieve negligible failure probability. For instance, one may allow at most $l>1$ balls to be allocated to each bucket, instead of allowing at most one. One may also add an overflow stash with size $s$ as an additional cache-like bucket \cite{KMW10}. We mostly use cuckoo hashing with $l=1$ and $s=0$ to construct PBC and DMPF, but will also point out how general cuckoo hashing may help with these constructions. \Yaxin{argue again after construction. }
+There are different ways to generalize cuckoo hashing algorithm in order to achieve negligible failure probability. For instance, one may allow at most $l>1$ balls to be allocated to each bucket, instead of allowing at most one. One may also add an overflow stash with size $s$ as an additional cache-like bucket \cite{KMW10}. We mostly use cuckoo hashing with $l=1$ and $s=0$ to construct PBC and DMPF, but will also point out how general cuckoo hashing may help with these constructions.
 
 Now we display the instantiation of PBC using cuckoo hashing. 
 
@@ -175,7 +175,7 @@ Now we display the instantiation of PBC using cuckoo hashing.
 
 (1) \cite{yeo_cuckoo_2023} modified the hash functions' domain in the following way: it divides the $m$ buckets evenly to $w$ blocks, and for $1\le i\le w$, $h_i:[N]\rightarrow [m/w]$ maps an element to a bucket in the $i$th block. The paper does this to claim better asymptotic provable success probability of cuckoo hashing, but using superconstant number ($w = \lambda_\stat/\log\log N$) of hash functions, which does not align with empirical results that suggests constant number (say 3) of hash functions. I think to us this means that if making $h_i$ to map to the $i$th block could be useful in implementation somehow (although I doubt this), then it also makes sense to do this modification. 
 
-(2) It should be mentioned that both the capacity of cuckoo-hashing bins (which is 1 here) and the number of lookup in each $C_i$ that PCBC is allowed (also 1 here) can be simultaneously generalized to any number $l$ along with different parameters and overheads, but the paper still applied only $l=1$ case to applications like batch PIR, and I haven't seen any efficient empirical parameters and results for $l>1$ setting. However it is plausible to use general $l$ along with $O(t/l)$ buckets, each expanded to a $\DMPF_l$ truth table. It may be mentioned as a future direction in the end. }
+(2) (Resolved) It should be mentioned that both the capacity of cuckoo-hashing bins (which is 1 here) and the number of lookup in each $C_i$ that PCBC is allowed (also 1 here) can be simultaneously generalized to any number $l$ along with different parameters and overheads, but the paper still applied only $l=1$ case to applications like batch PIR, and I haven't seen any efficient empirical parameters and results for $l>1$ setting. However it is plausible to use general $l$ along with $O(t/l)$ buckets, each expanded to a $\DMPF_l$ truth table. It may be mentioned as a future direction in the end. }
 
 \begin{construction}[PBC from cuckoo hashing]\label{con:PBC_from_cuckoo}
   Given $w$-way cuckoo hashing as a sub-procedure allocating $t$ balls to $m$ buckets with failure probability $\epsilon$, an $(N,wN,t,m,1,\epsilon)$-$\PBC$ is as follows: 
@@ -215,8 +215,9 @@ The scheme is correct with at least $1-\epsilon$ probability and has distinguish
 
 When instantiating PBC using $w$-way cuckoo hashing as in \Cref{con:PBC_from_cuckoo}, the \emph{evaluation time} is the sum of the time for $\PBC.\Position(x)$ plus the time for $w$ invocations of $\DPF.\Eval$. Similarly, the \emph{full-domain evaluation time} is roughly the time for $N$ invocations of $\PBC.\Position$ plus $w$ invocations of $\DPF.\FullEval$. Therefore, one may expect the evaluation time for the above construction of DMPF to be dependent to $w$ instead of $t$. We will discuss about its efficiency in later sections. 
 %the \emph{key generation time} is roughly the sum of time for computing cuckoo hashing algorithm, the time for finding $t$ indices for $t$ elements in the buckets, plus the total time of all DPF$.\Gen(1^\lambda, \hat{f}_i)$. The 
-
-\Yaxin{Discuss about using PBC with bucket size $l>1$. }
+\begin{remark}
+  As a future direction, it is intriguing to try to use a $(N,M,t,m,l,\epsilon)$-$\PBC$ where $l>1$ (say, instantiated by an $w$-way cuckoo hashing with bucket size $l$) to construct a DMPF scheme using $l$-DMPF with adjustable $l$, where the primitive $l$-DMPF can be implemented by any one of the DMPF schemes we discuss about in this paper. 
+\end{remark}
 
 \subsection{Oblivious Key-Value Stores}\label{sec:prelim_okvs}
 We introduce the notion of Oblivious key-value stores (OKVS) which can be used to construct DMPF. OKVS was originally proposed as a primitive for private set intersection (PSI) protocols (see \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}). 
