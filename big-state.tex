@@ -21,22 +21,16 @@
         \Else
           \State Suppose $A^{(i-1)}[k]\|z\in A^{(i)}$. Let $d$ be the index of $A^{(i-1)}[k]\|z$ in $A^{(i)}$. 
           \State $\Delta\sign^z\gets\Delta\sign^z\oplus e_d$. 
-          %\State $CW[k]\gets 
-           % \begin{cases}
-             % \Delta \seed^1\|(\Delta\sign^0\oplus e_d)\|\Delta\sign^1 & z=0\\
-            %  \Delta \seed^0\|\Delta\sign^0\|(\Delta\sign^1\oplus e_d) & z=1
-            %\end{cases}$.
           \State $CW[k]\gets \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$. \label{alg:big_state_gen_cw}    
         \EndIf 
       \EndFor
       \State\Return $CW$. 
       \EndProcedure
       \item[]
-      \Procedure{GenConvCW}{$A,B,\{\seed_b^{(n)},\sign_b^{(n)}\}$}
+      \Procedure{GenConvCW}{$A,B,\Delta g,\sign_0^{(n)},\sign_1^{(n)}$}
         \State Sample a list $CW$ of $t$ random $\GG$-elements.  
         \For{$k = 1$ to $|A|$}
-          \State $\Delta g\gets G_{\sf conv}(\seed_0^{(n)}[k]) - G_{\sf conv}(\seed_1^{(n)}[k])$. 
-          \State$CW[k]\gets (-1)^{\sign_0^{(n)}[k][k]}(\Delta g-B[k])$.\label{alg:big_state_gen_convert_cw}
+          \State$CW[k]\gets (-1)^{\sign_0^{(n)}[k][k]}(\Delta g[k]-B[k])$.\label{alg:big_state_gen_convert_cw}
         \EndFor
         \State \Return $CW$. 
       \EndProcedure

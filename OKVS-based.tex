@@ -33,11 +33,10 @@
       \State \Return $\OKVS_i.\Encode(\{(K[j], V[j])\}_{1\le j\le |K|})$. \label{alg:okvs_gen_cw}
       \EndProcedure
       \item[]
-      \Procedure{GenConvCW}{$A,B,\{\seed_b^{(n)},\sign_b^{(n)}\}$}
+      \Procedure{GenConvCW}{$A,B,\Delta g,\sign_0^{(n)}, \sign_1^{(n)}$}
         \State Sample a list $V$ of $t$ random $\GG$-elements. 
         \For{$k = 1$ to $|A|$}
-          \State $\Delta g\gets G_{\sf conv}(\seed_0^{(n)}[k]) - G_{\sf conv}(\seed_1^{(n)}[k])$. 
-          \State$V[k]\gets (-1)^{\sign_0^{(n)}[k][k]}(\Delta g-B[k])$.
+          \State$V[k]\gets (-1)^{\sign_0^{(n)}[k][k]}(\Delta g[k]-B[k])$.
         \EndFor 
         \State \Return $\OKVS_{\sf conv}(\{(A[k], V[k])\}_{1\le k\le t})$. 
       \EndProcedure
