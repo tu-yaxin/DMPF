@@ -11,18 +11,14 @@
     \State For $b=0,1$, let $\seed_b^{(0)} = [r_b\xleftarrow{\$}\{0,1\}^\lambda]$ and $\sign_b^{(0)} = [b]$. 
     \EndProcedure
     \item[]
-    \Procedure{GenCW}{$i,A,V^{(i-1)}$}
-    \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_paradigm}. 
-
-
-    \State Sample a list $V$ of $t$ random strings from $\{0,1\}^{\lambda+2}$.  
-    
+    \Procedure{GenCW}{$i,A,V$}
+    \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_paradigm}.     
     \For{$k = 1$ to $|A^{(i-1)}|$}
-        \State Parse $V^{(i-1)}[k] = \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$. 
+        \State Parse $V[k] = \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$. 
         \For{$z = 0,1$ such that $A^{(i-1)}[k]\|z\in A^{(i)}$}
           \State $\sign^z\gets \sign^z\oplus 1$. 
         \EndFor
-        \State Update $V^{(i-1)}[k] \gets \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$. 
+        \State Update $V[k] \gets \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$. 
     \EndFor
 
     \State Copy the list $A^{(i-1)}$ to the list $K$. 

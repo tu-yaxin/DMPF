@@ -54,6 +54,8 @@ For the convert layer, $\sf GenConvCW$ set $CW^{(n+1)}[k]$ to be the correction 
 
 We informally argue that the correctness of the big-state DMPF holds since properties \ref{enu:tree_invariance_1} and \ref{enu:tree_invariance_2} of $T_0$ and $T_1$ are ensured, which in turn gives correct shares of outputs in the end of evaluation. The security holds since (1) the $\seed||\sign$ string at the root of $T_b$ is independent of $A$ and $B$, and (2) each hint $CW^{(i)}$ is masked by the pseudorandom value determined by the other party's key, which is indistinguishable with a truly random hint. 
 
+The big-state DMPF is computationally secure when the PRGs $G$ and $G_\conv$ are secure. We defer the proof to \Cref{sec:big-state_security_proof}. 
+
 In the end of this section we briefly discuss about the efficiency of the big-state DMPF, which will be discussed in more details in \cref{sec:applications}. Set the na\"ive solution of DMPF that is a sum of $t$ DPFs as a primary benchmark. The ratio of keysize of the big-state DMPF over the na\"ive solution is roughly $(\lambda+2t)/(\lambda+2)>1$, which is close to 1 if $t\ll \lambda$. $\Gen$, $\Eval$ and $\FullEval$ all traverse one evaluation tree while the na\"ive solution traverse $t$ evaluation trees. However, the PRG used in the big-state DMPF have output length $2\lambda+2t$, which means the running time still grows with $t$. In short, the big-state DMPF is faster than the na\"ive solution with the sacrifice of larger keysize. When $t\ll\lambda$, compared to the na\"ive solution, the big-state DMPF has similar keysize and almost $\times t$ speedup in running time. 
 
 \subsection{OKVS-based DMPF}\label{sec:OKVS_based_DMPF}
@@ -70,6 +72,8 @@ Note that in \cref{fig:DMPF_OKVS} the OKVS scheme $\OKVS_i$ we use for the depth
 \input{OKVS-based.tex}
 
 We informally argue that armed with an OKVS scheme that fails with negligible probabllity, the correctness of the OKVS-based DMPF holds with overwhelming probability since properties \ref{enu:tree_invariance_1} and \ref{enu:tree_invariance_2} are ensured, which in turn gives correct shares of outputs in the end of evaluation. The security holds as long as the OKVS scheme is oblivious. Since the corrections are pseudorandom strings that are masked by pseudorandom values determined by the other party's key, the OKVS scheme won't leak any information about the accepting paths due to its obliviousness. 
+
+The OKVS-based DMPF is computationally secure when the PRGs $G$ and $G_\conv$ are secure and the OKVS schemes $\{\OKVS_i\}_{1\le i\le n}$ and $\OKVS_\conv$ are oblivious. We defer the proof to \Cref{sec:OKVS_DMPF_security_proof}. 
 
 The efficiency of OKVS-based DMPF highly relies on the efficiency of the OKVS scheme it uses. Setting the na\"ive solution as a benchmark, the ratio of keysize of the na\"ive solution over the OKVS-based DMPF is roughly the rate of the OKVS scheme. Similar to the advantage of the big-state DMPF, the OKVS-based DMPF also only traverse one evaluation tree (as opposed to traversing $t$ evaluation trees in the na\"ive solution). However $\Gen$ consumes an OKVS encoding time per layer, and $\Eval$ and $\FullEval$ consume an OKVS decoding/batch decodings per layer. Therefore with an OKVS scheme that has high rate, fast encoding and decoding will result in an OKVS-based DMPF scheme that has small keysize, fast $\Gen$ and $\Eval$/$\FullEval$, respectively. 
 

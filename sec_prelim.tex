@@ -235,6 +235,7 @@ We introduce the notion of Oblivious key-value stores (OKVS) which can be used t
     &\{r, \Encode_r(\{(k_1^0,v_1),\cdots,(k_t^0,v_t)\})\}_{v_1,\cdots,v_t\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}\\
     \approx_c &\{r, \Encode_r(\{(k_1^1,v_1),\cdots,(k_t^1,v_t)\})\}_{v_1,\cdots,v_t\leftarrow \mathcal{V},r\leftarrow\{0,1\}^\kappa}
   \end{align*}
+  If the distinguishing advantage is upperbounded by a negligible function $\epsilon$, then the OKVS scheme is $\epsilon$-oblivious. 
   \end{itemize}
 One can obtain a \emph{linear OKVS} if in addition require:
 \begin{itemize}
