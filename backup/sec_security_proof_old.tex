@@ -1,0 +1,142 @@
+\section{Security proof for the DMPF scheme \ref{fig:DMPF_scheme}}\label{sec_security_proof}
+\subsubsection{Privacy}
+\newpage
+We argue the privacy of our scheme by a standard hybrid argument. 
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\caption{$Hyb_j(1^\lambda, b,A,B)$}
+		\State Randomly sample $S_b^{(0)} = [s_b^{(0)}]$ from $\{0,1\}^\lambda$.
+		\State Set $T_0^{(0)} = [0]$ and $T_1^{(0)} = [1]$. 
+		\For{$i = 1$ to $n$}
+		
+		\If{$i\le j$}
+		\State Randomly sample $CW^{(i)}\leftarrow \mathbb{F}^t$.
+		\State Let $S_b^{(i)}$ be an empty list. 
+		\State Interpret $CW^{(i)}$ as a polynomial $P_{CW^{(i)}}$.
+		\For{$l = 1$ to $|A^{(i-1)}|$}
+		\State Parse $map^{-1}(P_{CW^{(i)}}(map(A^{(i-1)}[l]||0^{n-i+1}))) = \Delta s||\Delta t^L||\Delta t^R$. 
+		\State Parse $G(S_b^{(i-1)}[l]) = s_b^L||t_b^L||s_b^R||t_b^R$.
+		\If{$A^{(i-1)}[l]||0\in A^{(i)}$ and $A^{(i-1)}[l]||1\not\in A^{(i)}$}
+		\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^L\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+		\ElsIf{$A^{(i-1)}[l]||0\not\in A^{(i)}$ and $A^{(i-1)}[l]||0\in A^{(i)}$}
+		\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+		\Else
+		\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+		\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+		\EndIf
+		\EndFor
+		\Else
+		\If{$i = j+1$}
+		\State Sample a list $S_{1-b}^{(i-1)}$ of $|A^{(i-1)}|$ independent and random $\lambda$-bit strings.
+		\State Let $T_{1-b}^{(i-1)}$ be a list such that $T_{1-b}^{(i-1)}[l] = T_{b}^{(i-1)}[l]\oplus 1$. 
+		\EndIf
+		\State Let $V,S_0^{(i)},T_0^{(i)}, S_1^{(i)}, T_1^{(i)}$ empty lists. 
+		\For{$l = 1$ to $|A^{(i-1)}|$}
+		\State Parse $G(S_b^{(i-1)}[l]) = s_b^L||t_b^L||s_b^R||t_b^R$ for $b = 0,1$. 
+		\If{$A^{(i-1)}[l]||0\in A^{(i)}$ and $A^{(i-1)}[l]||1\not\in A^{(i)}$}
+		\State $\Delta s||\Delta t^L||\Delta t^R\gets s_0^R\oplus s_1^R||t_0^L\oplus t_1^L\oplus 1||t_0^R\oplus t_1^R$. 
+		\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^L\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+		\ElsIf{$A^{(i-1)}[l]||0\not\in A^{(i)}$ and $A^{(i-1)}[l]||0\in A^{(i)}$}
+		\State $\Delta s||\Delta t^L||\Delta t^R\gets s_0^L\oplus s_1^L||t_0^L\oplus t_1^L||t_0^R\oplus t_1^R\oplus 1$. 
+		\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+		\Else
+		\State $\Delta s||\Delta t^L||\Delta t^R\gets r||t_0^L\oplus t_1^L\oplus 1||t_0^R\oplus t_1^R\oplus 1$ where $r$ is randomly sampled from $\{0,1\}^\lambda$.
+		\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+		\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+		\EndIf
+		\State Append $\Delta s||\Delta t^L||\Delta t^R$ to $V$. 
+		\EndFor
+		\State Let $CW^{(i)}\in \mathbb{F}^t$ be the coefficients of a $\mathbb{F}[X]$ polynomial $P_{CW}$ such that $P_{CW}(map(A^{(i-1)}[l])) = map(V[l])$ for all $1\le l\le |A^{(i-1)}|$. (If $|A^{(i-1)}|<t$ then choose $P_{CW}$ to be a random polynomial that satisfies this condition.)
+		\EndIf
+		
+		\EndFor
+		\item[]
+		\Comment{Add convert layer.}
+		\State Output $[S_b^{(0)}, CW^{(1)},CW^{(2)},\cdots,CW^{(n)}]$.
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{claim}
+	Suppose $G$ is $\epsilon_G$-secure against every n.u.p.p.t. adversary, then for every $\le j\le n$, every $b\in\{0,1\}$, every $A$ containing $t$ $n$-bit strings,$B$ containing $t$ $\mathbb{G}$ elements, and every  n.u.p.p.t. adversary $Adv$, 
+	\[
+	|\Pr[key\leftarrow Hyb_{j-1}(1^\lambda, b, A,B), Adv(1^\lambda, key) = 1]-\Pr[key\leftarrow Hyb_{j}(1^\lambda, b, A,B), Adv(1^\lambda, key) = 1]|\le\epsilon_G|A^{(j-1)}|
+	\]
+\end{claim}
+\begin{proof}
+	Prove by contradiction. Assume $Adv$ is a n.u.p.p.t adversary that for some $1\le j\le n$, some $b\in\{0,1\}$, some $A$ and $B$,
+	\[
+	|\Pr[key\leftarrow Hyb_{j-1}(1^\lambda, b, A,B), Adv(1^\lambda, key) = 1]-\Pr[key\leftarrow Hyb_{j}(1^\lambda, b, A,B), Adv(1^\lambda, key) = 1]|>\epsilon_G|A^{(j-1)}|
+	\]
+	Then let's construct a n.u.p.p.t adversary $Adv'$ which distinguishes $\{G(s)\}^{\otimes |A^{(j-1)}|}_{s\leftarrow U(\{0,1\}^\lambda)}$ from uniform distribution with advantage larger than $\epsilon_G|A^{(j-1)}|$, which implies some PRG-adversary distinguishing $\{G(s)\}_{s\in U(\{0,1\}^\lambda)}$ uniform distribution with advantage larger than $\epsilon_G$. 
+	\begin{algorithm}[H]
+		\begin{algorithmic}[1]
+			\caption{PRG adversary $Adv'(1^\lambda, j, b,A,B,r)$ where $r\in\{0,1\}^{(2\lambda+2)|A^{(j-1)}|}$ is the challenge}
+			\State Parse $r = r^1_0||r^1_1||r^2_0||r^2_1||\cdots||r^{|A^{(j-1)}|}_0||r^{|A^{(j-1)}|}_1$ where $|r^l_z| = \lambda+1$.
+			\State Randomly sample $S_b^{(0)} = [s_b^{(0)}]$ from $\{0,1\}^\lambda$.
+			\State Set $T_0^{(0)} = [0]$ and $T_1^{(0)} = [1]$. 
+			\For{$i = 1$ to $n$}
+			
+			\If{$i\le j-1$}
+			\State Randomly sample $CW^{(i)}\leftarrow \mathbb{F}^t$.
+			\State Let $S_b^{(i)}$ be an empty list. 
+			\State Interpret $CW^{(i)}$ as a polynomial $P_{CW^{(i)}}$.
+			\For{$l = 1$ to $|A^{(i-1)}|$}
+			\State Parse $map^{-1}(P_{CW^{(i)}}(map(A^{(i-1)}[l]||0^{n-i+1}))) = \Delta s||\Delta t^L||\Delta t^R$. 
+			\State Parse $G(S_b^{(i-1)}[l]) = s_b^L||t_b^L||s_b^R||t_b^R$.
+			\If{$A^{(i-1)}[l]||0\in A^{(i)}$ and $A^{(i-1)}[l]||1\not\in A^{(i)}$}
+			\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^L\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+			\ElsIf{$A^{(i-1)}[l]||0\not\in A^{(i)}$ and $A^{(i-1)}[l]||0\in A^{(i)}$}
+			\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+			\Else
+			\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+			\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$.
+			\EndIf
+			\EndFor
+			\Else
+			\State Define $R_0^l||R_1^l = \begin{cases}r_0^l||r_1^l & i = j\\G(S_{1-b}^{(i-1)}[l]) & \text{else}\end{cases}$ for $1\le l\le |A^{(i-1)}|$.
+			\State Let $V,S_0^{(i)},T_0^{(i)}, S_1^{(i)}, T_1^{(i)}$ empty lists. 
+			\For{$l = 1$ to $|A^{(i-1)}|$}
+			\State Parse $G(S_b^{(i-1)}[l]) = s_b^L||t_b^L||s_b^R||t_b^R$.
+			\State Parse $R_0^l||R_1^l = s_{1-b}^L||t_{1-b}^L||s_{1-b}^R||t_{1-b}^R$.
+			\If{$A^{(i-1)}[l]||0\in A^{(i)}$ and $A^{(i-1)}[l]||1\not\in A^{(i)}$}
+			\State $\Delta s||\Delta t^L||\Delta t^R\gets s_0^R\oplus s_1^R||t_0^L\oplus t_1^L\oplus 1||t_0^R\oplus t_1^R$. 
+			\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^L\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+			\ElsIf{$A^{(i-1)}[l]||0\not\in A^{(i)}$ and $A^{(i-1)}[l]||0\in A^{(i)}$}
+			\State $\Delta s||\Delta t^L||\Delta t^R\gets s_0^L\oplus s_1^L||t_0^L\oplus t_1^L||t_0^R\oplus t_1^R\oplus 1$. 
+			\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+			\Else
+			\State $\Delta s||\Delta t^L||\Delta t^R\gets r||t_0^L\oplus t_1^L\oplus 1||t_0^R\oplus t_1^R\oplus 1$ where $r$ is randomly sampled from $\{0,1\}^\lambda$.
+			\State Append $s_b^L\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^L\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+			\State Append $s_b^R\oplus \Delta s\cdot T_b^{(i-1)}[l]$ to $S_b^{(i)}$ and $t_b^R\oplus \Delta t^R\cdot T_b^{(i-1)}[l]$ to $T_b^{(i)}[l]$ for $b = 0,1$. 
+			\EndIf
+			\State Append $\Delta s||\Delta t^L||\Delta t^R$ to $V$. 
+			\EndFor
+			\State Let $CW^{(i)}\in \mathbb{F}^t$ be the coefficients of a $\mathbb{F}[X]$ polynomial $P_{CW}$ such that $P_{CW}(map(A^{(i-1)}[l])) = map(V[l])$ for all $1\le l\le |A^{(i-1)}|$. (If $|A^{(i-1)}|<t$ then choose $P_{CW}$ to be a random polynomial that satisfies this condition.)
+			\EndIf
+			\EndFor
+			
+			\item[]
+			\Comment{Add convert layer.}
+			\State $key \gets [S_b^{(0)}, CW^{(1)},CW^{(2)},\cdots,CW^{(n)}]$
+			\State Output $Adv(1^\lambda,key)$. 
+		\end{algorithmic}
+	\end{algorithm}
+	
+	If $r$ is a sample of $\{G(s)\}^{\otimes |A^{(j-1)}|}_{s\in U(\{0,1\}^\lambda}$, then $r^l_0||r^l_1 = G(s^l)$ for some randomly sampled $s^l$, for all $1\le l\le |A^{(j-1)}|$, which generates $key$ in the same way as $Hyb_{j-1}$.  Meanwhile if $r$ is from the uniform distribution, the procedure generates $key$ in the same way as $Hyb_j$. 
+	
+	Hence,
+	\begin{align*}
+		&|\Pr[key\leftarrow Hyb_{j-1}(1^\lambda, b, A,B), Adv(1^\lambda, key) = 1]-\Pr[key\leftarrow Hyb_{j}(1^\lambda, b, A,B), Adv(1^\lambda, key) = 1]|\\
+		=&|\Pr[s\leftarrow U(\{0,1\}^{\lambda|A^{(j-1)}|}) , Adv'(1^\lambda, j, b,A,B,G^{\otimes |A^{(j-1)}|}(s) = 1] - \Pr[r\leftarrow U(\{0,1\}^{(2\lambda+2)|A^{(j-1)}|}), Adv'(1^\lambda, j, b,A,B,r) = 1]| \\
+		\le & \epsilon_G|A^{(j-1)}|
+	\end{align*} 
+\end{proof}
+Together with the following two facts: 
+\begin{enumerate}
+	\item $\{key\leftarrow Hyb_0(1^\lambda, b, A,B)\} = \{k_b | (k_0,k_1)\leftarrow Gen(1^\lambda, A,B)\}$
+	\item $\{key\leftarrow Hyb_{n}(1^\lambda, b, A,B)\}$ is truly random. 
+\end{enumerate}
+we have the following security of the DMPF scheme:
+\begin{theorem}
+	Suppose $G:\{0,1\}^\lambda\rightarrow\{0,1\}^{2\lambda+2}$ is $\epsilon_G$-secure against every n.u.p.p.t. adversary. Then the scheme is a secure distributed $t$-point function scheme for the function family $f_{A,B}:\{0,1\}^n\rightarrow \mathbb{G}$ with key size $tn(\lambda+1) +\lambda keysize_{convert}$ with secrecy $tn\epsilon_G+\epsilon_{convert}$.
+\end{theorem}

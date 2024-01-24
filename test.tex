@@ -1,0 +1,73 @@
+\begin{figure*}
+    \caption{The paradigm of our DMPF schemes. We leave the sign string length $l$, methods $\sf Initialize$, $\sf GenCW$, $\sf GenConvCW$, $\sf Correct$, $\sf ConvCorrect$ to be determined by specific constructions. }
+    \label{fig:DMPF_paradigm}
+    %\fbox{\parbox{\linewidth}{
+    \begin{breakablealgorithm}
+    \begin{algorithmic}[1]
+      \State \textbf{Public parameters: }
+      \State The $t$-point function family $\{f_{A,B}\}$ with $t$ an upperbound of the number of nonzero points, input domain $[N]=\{0,1\}^n$ and the output group $\GG$. 
+      \State Suppose there is a public PRG $G:\{0,1\}^\lambda\rightarrow \{0,1\}^{2\lambda+2l}$. Parse $G(x) = G_0(x)\|G_1(x)$ to the left half and right half of the output. Moreover, for simplicity, for $b = 0,1$ define $G_b^\seed:\{0,1\}^\lambda\rightarrow \{0,1\}^{\lambda}$ to be $G_b^\seed(x) = G_b(x)[1\dots\lambda]$, the first $\lambda$ bits. Similarly, define $G_b^\sign:\{0,1\}^\lambda\rightarrow \{0,1\}^{l}$ to be $G_b^\sign(x) = G_b(x)[(\lambda+1)\dots(\lambda+l)]$, the last $l$ bits of $G_b$. Denote $G^\sign:\{0,1\}^\lambda\rightarrow \{0,1\}^{2l}$ to be $G^\sign(x) = G_0^\sign(x)\|G_1^\sign(x)$. 
+      \State Suppose there is a public PRG $G_{\sf conv}:\{0,1\}^\lambda\rightarrow \GG$. 
+    %\end{algorithmic}%}}
+    %\fbox{\parbox{\linewidth}{
+    %\begin{algorithmic}[1]
+      \Procedure{Gen}{$1^\lambda, \hat{f}_{A,B}$}
+      \State Denote $A = (\alpha_1,\cdots,\alpha_t)$ in lexicographically order, $B = (\beta_1,\cdots,\beta_t)$. If $|A|<t$, extend $A$ to size-$t$ with arbitrary $\{0,1\}^n$ strings and $B$ with 0's. 
+      \State For $0\le i\le n-1$, let $A^{(i)}$ denote the sorted and deduplicated list of $i$-bit prefixes of strings in $A$. Specifically, $A^{(0)} = [\epsilon]$. 
+      \State For $0\le i\le n-1$ and $b=0,1$, initialize empty lists $\seed_b^{(i)}$, $\sign_b^{(i)}$ and $V^{(i)}$. 
+      \State ${\sf Initialize}(\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1})$. 
+      \For{$i=1$ to $n$}
+      \For{$k=1$ to $|A^{(i-1)}$}
+        \State For $c=0,1$, compute $\Delta\seed^c = G_\seed^c(\seed_0^{(i-1)}[k])\oplus G_\seed^c(\seed_1^{(i-1)}[k])$ and $\Delta\sign^c = G_\sign^c(\seed_0^{(i-1)}[k])\oplus G_\sign^c(\seed_1^{(i-1)}[k])$. 
+        \If{$A^{(i-1)}[k]\|0\in A^{(i)}$ and $A^{(i-1)}[k]\|1\in A^{(i)}$}
+            \State Randomly sample $r\gets \{0,1\}^\lambda$ and append $r\|\Delta\sign^0\|\Delta\sign^1$ to $V^{(i-1)}$. 
+        \Else
+            \State Suppose $A^{(i-1)}[k]\|z\in A^{(i)}$. Append $\Delta\seed^{1-z}\|\Delta\sign^0\|\Delta\sign^1$ to $V^{(i-1)}$. 
+        \EndIf
+      \EndFor
+      \State $CW^{(i)}\gets {\sf GenCW}(i,A,V^{(i-1)})$. \label{alg:paradigm_gen_cw}
+        \For{$k = 1$ to $|A^{(i-1)}|$ and $z=0,1$}
+          \State Compute $C_{\seed,b}\|C_{\sign^0,b}\|C_{\sign^1,b}\gets {\sf Correct}(A^{(i-1)}[k], \sign_b^{(i-1)}[k], CW^{(i)})$ for $b=0,1$, where $|C_{\seed,b}| = \lambda$ and $|C_{\sign^0,b}| = |C_{\sign^1,b}| = l$. 
+          \If{$A^{(i-1)}[k]\|z\in A^{(i)}$}
+          \State Append the first $\lambda$ bits of $G_z(\seed_b^{(i-1)}[k])\oplus(C_{\seed,b}\|C_{\sign^z,b})$ to $\seed_b^{(i)}$ and the rest $l$ bits to $\sign_b^{(i)}$. 
+          \EndIf
+        \EndFor
+      \EndFor
+      \State $CW^{(n+1)}\gets{\sf GenConvCW}(A,B,\left(G_\conv(\seed_0^{(n)}[k]) - G_\conv(\seed_1^{(n)}[k])\right)_{1\le k\le |A|},\sign_0^{(n)},\sign_1^{(n)})$. \label{alg:paradigm_gen_convert_cw}
+      \State Set $k_b \gets (\seed_b^{(0)},\sign_b^{(0)}, CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$.
+      \State \textbf{return} $(k_0,k_1)$.
+      \EndProcedure
+    %\end{algorithmic}%}}
+
+    %\fbox{\parbox{\linewidth}{    
+    %\begin{algorithmic}[1]
+      \Procedure{Eval\(_b\)}{$1^\lambda, k_b,x$}
+      \State Parse $k_b = ([\seed],[\sign],CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
+      \State Denote $x=x_1x_2\cdots x_n$. 
+      \For{$i = 1$ to $n$}
+        \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}(x_1\cdots x_{i-1},\sign,CW^{(i)})$, where $|C_\seed| = \lambda$ and $|C_{\sign^0}| = |C_{\sign^1}| = l$. \label{alg:paradigm_correction}
+        \State $\seed\|\sign\gets G_{x_i}(\seed)\oplus(C_{\seed}\|C_{\sign^{x_i}})$, where $|\seed|=\lambda$ and $|\sign|=l$. \label{alg:paradigm_seed_sign}
+      \EndFor
+      \State \Return $(-1)^b\cdot \big(G_{\sf conv}(\seed)+{\sf ConvCorrect}(x,\sign,CW^{(n+1)})\big)$. \label{alg:paradigm_convert_correction}
+      \EndProcedure
+      \item[]
+      \Procedure{FullEval\(_b\)}{$1^\lambda,k_b$}
+      \State Parse $k_b=(\seed^{(0)},\sign^{(0)},CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
+      \State For $1\le i\le n$, ${\sf Path}^{(i)}\gets$ the lexicographical ordered list of $\{0,1\}^i$. ${\sf Path}^{(0)}\gets[\epsilon]$. 
+      \State\Yaxin{The evaluation is BFS-style, which costs a lot of memory to store lists $\seed^{(i)}, \sign^{(i)}$. Need a DFS version for large $N$ to reduce memory use? Write in the clear or explain by words?}
+      \For{$i=1$ to $n$} 
+        \For{$k = 1$ to $2^{i-1}$}
+          \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}({\sf Path}^{(i-1)}[k],\sign^{(i-1)}[k],CW^{(i)})$, where $|C_\seed| = \lambda$ and $|C_{\sign^0}| = |C_{\sign^1}| = l$. 
+          \State $\seed^{(i)}[2k]\|\sign^{(i)}[2k]\gets G_0(\seed^{(i-1)}[k])\oplus (C_\seed\|C_{\sign^0})$, where $|\seed^{(i)}[2k]|=\lambda$ and $|\sign^{(i)}[2k]|=l$. 
+          \State $\seed^{(i)}[2k+1]\|\sign^{(i)}[2k+1]\gets G_1(\seed^{(i-1)}[k])\oplus (C_\seed\|C_{\sign^1})$, where $|\seed^{(i)}[2k+1]|=\lambda$ and $|\sign^{(i)}[2k+1]|=l$. 
+        \EndFor
+      \EndFor
+      \For{$k = 1$ to $2^n$}
+        \State ${\sf Output}[k]\gets (-1)^b\cdot \big(G_{\sf conv}(\seed^{(n)}[k])+{\sf ConvCorrect}({\sf Path}[k],\sign^{(n)}[k],CW^{(n+1)})\big)$.
+      \EndFor
+      \State\Return $\sf Output$. 
+      \EndProcedure
+      \end{algorithmic}
+    \end{breakablealgorithm}  
+    %}}
+  \end{figure*}
