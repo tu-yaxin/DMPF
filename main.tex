@@ -63,14 +63,15 @@
 
 \usepackage{amsmath,amsfonts}
 \usepackage{amsthm}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
+\usepackage{algorithm,algpseudocode,float}
+\usepackage{lipsum}
+\usepackage{multicol}
 \usepackage{cleveref}
 \usepackage{fancybox}
 \usepackage{makecell}
 \usepackage{arydshln}
-\usepackage{subfigure}
-%\usepackage{subfig}
+%\usepackage{subfigure}
+\usepackage{subfig}
 %\usepackage{subcaption}
 \usepackage{multirow}
 \usepackage{threeparttable}
@@ -78,62 +79,9 @@
 \allowdisplaybreaks
     
 %% New commands goes here
-\newcommand{\Enote}[1]{\color{purple}Enote: #1\color{black}}
-\newcommand{\Yaxin}[1]{\color{purple}Yaxin: #1\color{black}}
-
-\newcommand{\Gen}{{\sf Gen}}
-\newcommand{\Eval}{{\sf Eval}}
-\newcommand{\FullEval}{{\sf FullEval}}
-\newcommand{\Conv}{{\sf Conv}}
-\newcommand{\conv}{{\sf conv}}
-\newcommand{\CW}{{\sf CW}}
-\newcommand{\Correct}{{\sf Correct}}
-\newcommand{\Encode}{{\sf Encode}}
-\newcommand{\Decode}{{\sf Decode}}
-\newcommand{\Position}{{\sf Position}}
-\newcommand{\Schedule}{{\sf Schedule}}
-\newcommand{\row}{{\sf row}}
-\newcommand{\seed}{{\sf seed}}
-\newcommand{\sign}{{\sf sign}}
-\newcommand{\correct}{{\sf correct}}
-\newcommand{\map}{{\sf map}}
-\newcommand{\stat}{{\sf stat}}
-\newcommand{\poly}{{\sf poly}}
-\newcommand{\Adv}{{\sf Adv}}
-\newcommand{\MULT}{{\sf MULT}}
-\newcommand{\Hyb}{{\sf Hyb}}
-
-\newcommand{\DMPF}{{\sf DMPF}}
-\newcommand{\DPF}{{\sf DPF}}
-\newcommand{\OKVS}{{\sf OKVS}}
-\newcommand{\LPN}{{\sf LPN}}
-\newcommand{\CBC}{{\sf CBC}}
-\newcommand{\PBC}{{\sf PBC}}
-%rule: specific parametrized objects in \sf, other in text terminologies in \rm. 
-    
-\newcommand{\GG}{\mathbb{G}}
-\newcommand{\NN}{\mathbb{N}}
-\newcommand{\ZZ}{\mathbb{Z}}
-\newcommand{\FF}{\mathbb{F}}
-
-\newcommand{\cA}{\mathcal{A}}
-\newcommand{\cHW}{\mathcal{HW}}
-\newcommand{\cRHW}{\mathcal{RHW}}
-
-\newcommand{\red}[1]{\textcolor{red}{#1}}
-\newcommand{\ipd}[2]{\langle #1, #2 \rangle}
-
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{claim}[theorem]{Claim}
-\newtheorem{fact}[theorem]{Fact}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
-\newtheorem{remark}[theorem]{Remark}
-\newtheorem{construction}{Construction}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{proposition}[theorem]{Proposition}
+\input{macro.tex}
 %%
+
 \begin{document}
 
 %%
