@@ -1,0 +1,41 @@
+\section{Other tables}
+\begin{table*}
+    \renewcommand\arraystretch{1.5}
+    %\scalebox{1}{
+    \begin{threeparttable}
+    \caption{The relations among the number of balls $t$, the number of hash functions $w$, the expansion parameter $e = m/t$ where $m$ denotes the number of buckets and the security parameters $\lambda_\stat$ in cuckoo hashing with bucket size 1 and no stash. }
+    \label{tab:cuckoo_hashing_prm}
+      \begin{tabular}{cccccc}
+        \toprule 
+        %Header
+        &  Type&$t$ &$\lambda_\stat$ & $w$ & $e = m/t$  \\
+         
+  
+        \midrule
+        \cite[Theorem 1]{yeo_cuckoo_2023}\tnote{$\dag$}& Asymptotic & & & $O(\sqrt{\lambda_{\stat}\log t})$ & $O(1)$ \\
+       
+        \cline{1-6}
+        \cite{cryptoeprint:2021/580}& Asymptotic & & & 3 & $O(\lambda_\stat+\log t)$ \\
+  
+        \cline{1-6}
+        \cite[Appendix B]{cryptoeprint:2018/579} & Empirical & $t\ge 4$ & \makecell{$\lambda_\stat = a_t\cdot e - b_t - \log t$\\$a_t = 123.5\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.3, \sigma = 2.3)$\\$b_t = 120\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.45, \sigma = 2.18)$} & 3\tnote{$\ddag$} & $e$ \\
+  
+        \cline{1-6}
+        \makecell{\cite{cryptoeprint:2021/580}\\ simplifying the above} & Empirical & $t\ge 30$\tnote{*} & \makecell{$\lambda_\stat = 123.5 e -120 - \log t$} & 3 & $e$\\
+  
+        \cline{1-6}
+        \multirow{2}{*}{\cite{chen_fast_2017}\tnote{**}} &\multirow{2}{*}{ Empirical }& $11041$ & $40\,(\lambda_\stat = 124.4 e - 144.6)$ & 3 &$m=2^{14},\,e\approx 1.5$\\
+        \cline{3-6}
+        & & $5535$ & $40\,(\lambda_\stat = 125 e - 145)$ & 3 &$m=2^{13}, \, e\approx 1.5$\\
+        
+        \bottomrule
+      \end{tabular}	
+      \begin{tablenotes}
+        \item [$\dag$] $O(\sqrt{\lambda_\stat \log t})$ queries to the hash functions and supposes the hash functions from a $O(t\sqrt{\lambda_\stat \log t})$-wise independent hash function family. 
+        \item [$\ddag$] Parameters are only slightly different for $w>3$. 
+        \item [*] Should extend to smaller $t$ like $t = 16, 25$.
+        \item [**]It first fixes $m = 2^{13}, 2^{14}$ and then computes the correlation between $\lambda_\stat$ and $e$.   
+        \end{tablenotes}
+    \end{threeparttable}
+    %}
+  \end{table*}

@@ -8,7 +8,7 @@
  
 \subsection{Distributed Multi-Point Functions}
 
-We begin by defining the notion of distributed point functions (DPF) and distributed multi-point functions (DMPF), that additively and succinctly share point functions (multi-point functions) respectively. 
+We begin by defining the notion of distributed point functions (DPF) and distributed multi-point functions (DMPF), that additively and succinctly share (multi-)point functions respectively. 
 \begin{definition}[DPF \cite{EC:GilIsh14,CCS:BoyGilIsh16}]\label{def:dpf}
 A 
 %$t$-private $m$-server 
@@ -48,7 +48,7 @@ We require $\Pi$ to satisfy the following requirements:
 %If the security threshold $t$ is unspecified, we assume it is $t=1$.
 \end{definition}
 
-\begin{definition}[DMPF]\label{def:dmpf}
+\begin{definition}[DMPF \cite{cryptoeprint:2019/273,cryptoeprint:2021/580}]\label{def:dmpf}
   A 
   %$t$-private $m$-server 
   (2-party)
@@ -123,61 +123,27 @@ A natural way to construct PBC is to define the allocation of symbols in $x$ to 
 \end{itemize}
 If the algorithm terminates then it outputs a desired allocation of balls to buckets. To prevent it from running forever, one may set a fixed amount of running time. We call it a \emph{failure} whenver the algorithm fails to output a desired allocation where each bucket contains at most one ball. We'll next summarize known asymptotic and empirical results about the failure probability of cuckoo hashing. 
 
-\paragraph{The failure probability of cuckoo hashing.}Let's denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. In practice we usually consider the statistical security parameter $\lambda_{\stat}$ to be $40$. The relations among the number of balls $t$, the number of hash functions $w$, the number of buckets $m$ and the security parameters $\lambda_\stat$ are listed in \Cref{tab:cuckoo_hashing_prm}. 
-
-\begin{table*}
-  \renewcommand\arraystretch{1.5}
-  %\scalebox{1}{
-  \begin{threeparttable}
-  \caption{he relations among the number of balls $t$, the number of hash functions $w$, the expansion parameter $e = m/t$ where $m$ denotes the number of buckets and the security parameters $\lambda_\stat$ in cuckoo hashing with bucket size 1 and no stash. }
-  \label{tab:cuckoo_hashing_prm}
-    \begin{tabular}{cccccc}
-      \toprule 
-      %Header
-      &  Type&$t$ &$\lambda_\stat$ & $w$ & $e = m/t$  \\
-       
-
-      \midrule
-      \cite[Theorem 1]{yeo_cuckoo_2023}\tnote{$\dag$}& Asymptotic & & & $O(\sqrt{\lambda_{\stat}\log t})$ & $O(1)$ \\
-     
-      \cline{1-6}
-      \cite{cryptoeprint:2021/580}& Asymptotic & & & 3 & $O(\lambda_\stat+\log t)$ \\
-
-      \cline{1-6}
-      \cite[Appendix B]{cryptoeprint:2018/579} & Empirical & $t\ge 4$ & \makecell{$\lambda_\stat = a_t\cdot e - b_t - \log t$\\$a_t = 123.5\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.3, \sigma = 2.3)$\\$b_t = 120\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.45, \sigma = 2.18)$} & 3\tnote{$\ddag$} & $e$ \\
-
-      \cline{1-6}
-      \makecell{\cite{cryptoeprint:2021/580}\\ simplifying the above} & Empirical & $t\ge 30$\tnote{*} & \makecell{$\lambda_\stat = 123.5 e -120 - \log t$} & 3 & $e$\\
-
-      \cline{1-6}
-      \multirow{2}{*}{\cite{chen_fast_2017}\tnote{**}} &\multirow{2}{*}{ Empirical }& $11041$ & $40\,(\lambda_\stat = 124.4 e - 144.6)$ & 3 &$m=2^{14},\,e\approx 1.5$\\
-      \cline{3-6}
-      & & $5535$ & $40\,(\lambda_\stat = 125 e - 145)$ & 3 &$m=2^{13}, \, e\approx 1.5$\\
-      
-      \bottomrule
-    \end{tabular}	
-    \begin{tablenotes}
-      \item [$\dag$] $O(\sqrt{\lambda_\stat \log t})$ queries to the hash functions and supposes the hash functions from a $O(t\sqrt{\lambda_\stat \log t})$-wise independent hash function family. 
-      \item [$\ddag$] Parameters are only slightly different for $w>3$. 
-      \item [*] Should extend to smaller $t$ like $t = 16, 25$.
-      \item [**]It first fixes $m = 2^{13}, 2^{14}$ and then computes the correlation between $\lambda_\stat$ and $e$.   
-      \end{tablenotes}
-  \end{threeparttable}
-  %}
-\end{table*}
+\paragraph{The failure probability of cuckoo hashing.}Denote the failure probability of $w$-way cuckoo hashing to be $\epsilon=2^{-\lambda_{\stat}}$. The empirical result from \cite[Appendix B]{cryptoeprint:2018/579} shows that when $w=3$ and $t\ge 4$, the failure probability is computed by 
+\[\begin{split}
+  \lambda_\stat &= a_t\cdot e - b_t-\log t\\
+  a_t &= 123.5\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.3, \sigma = 2.3)\\
+  b_t =& 120\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.45, \sigma = 2.18)
+\end{split}
+\] where $e = m/t$ is the expansion parameter and ${\sf CDF_{Normal}}(x,\mu,\sigma)$ is the cumulative distribution function on input $x$ for the normal distribution with expectation $\mu$ and standard deviation $\sigma$.  %In practice we usually consider the statistical security parameter $\lambda_{\stat}=40$. The relations among the number of balls $t$, the number of hash functions $w$, the number of buckets $m$ and the security parameters $\lambda_\stat$ are listed in 
+\Yaxin{More asymptotic and empirical results are listed in \Cref{tab:cuckoo_hashing_prm}. }
 
 There are different ways to generalize cuckoo hashing algorithm in order to achieve negligible failure probability. For instance, one may allow at most $l>1$ balls to be allocated to each bucket, instead of allowing at most one. One may also add an overflow stash with size $s$ as an additional cache-like bucket \cite{KMW10}. We mostly use cuckoo hashing with $l=1$ and $s=0$ to construct PBC and DMPF, but will also point out how general cuckoo hashing may help with these constructions.
 
 Now we display the instantiation of PBC using cuckoo hashing. 
 
 %With the $t$ balls replicated and allocated to $m$ buckets, the cuckoo hashing algorithm essentially finds a perfect matching from $t$ balls to $m$ buckets, which coincides with the form of (probabilistic) CBC decoding. Therefore a PCBC follows directly from a cuckoo hashing scheme: 
-\Yaxin{Dec 31: The following construction is mentioned in \cite{yeo_cuckoo_2023}. There are several points to note: 
+%\Yaxin{Dec 31: The following construction is mentioned in \cite{yeo_cuckoo_2023}. There are several points to note: 
 
-(1) \cite{yeo_cuckoo_2023} modified the hash functions' domain in the following way: it divides the $m$ buckets evenly to $w$ blocks, and for $1\le i\le w$, $h_i:[N]\rightarrow [m/w]$ maps an element to a bucket in the $i$th block. The paper does this to claim better asymptotic provable success probability of cuckoo hashing, but using superconstant number ($w = \lambda_\stat/\log\log N$) of hash functions, which does not align with empirical results that suggests constant number (say 3) of hash functions. I think to us this means that if making $h_i$ to map to the $i$th block could be useful in implementation somehow (although I doubt this), then it also makes sense to do this modification. 
+%(1) \cite{yeo_cuckoo_2023} modified the hash functions' domain in the following way: it divides the $m$ buckets evenly to $w$ blocks, and for $1\le i\le w$, $h_i:[N]\rightarrow [m/w]$ maps an element to a bucket in the $i$th block. The paper does this to claim better asymptotic provable success probability of cuckoo hashing, but using superconstant number ($w = \lambda_\stat/\log\log N$) of hash functions, which does not align with empirical results that suggests constant number (say 3) of hash functions. I think to us this means that if making $h_i$ to map to the $i$th block could be useful in implementation somehow (although I doubt this), then it also makes sense to do this modification. 
 
-(2) (Resolved) It should be mentioned that both the capacity of cuckoo-hashing bins (which is 1 here) and the number of lookup in each $C_i$ that PCBC is allowed (also 1 here) can be simultaneously generalized to any number $l$ along with different parameters and overheads, but the paper still applied only $l=1$ case to applications like batch PIR, and I haven't seen any efficient empirical parameters and results for $l>1$ setting. However it is plausible to use general $l$ along with $O(t/l)$ buckets, each expanded to a $\DMPF_l$ truth table. It may be mentioned as a future direction in the end. }
+%(2) (Resolved) It should be mentioned that both the capacity of cuckoo-hashing bins (which is 1 here) and the number of lookup in each $C_i$ that PCBC is allowed (also 1 here) can be simultaneously generalized to any number $l$ along with different parameters and overheads, but the paper still applied only $l=1$ case to applications like batch PIR, and I haven't seen any efficient empirical parameters and results for $l>1$ setting. However it is plausible to use general $l$ along with $O(t/l)$ buckets, each expanded to a $\DMPF_l$ truth table. It may be mentioned as a future direction in the end. }
 
-\begin{construction}[PBC from cuckoo hashing]\label{con:PBC_from_cuckoo}
+\begin{construction}[PBC from cuckoo hashing\red{\cite{cryptoeprint:2017/1142}}]\label{con:PBC_from_cuckoo}
   Given $w$-way cuckoo hashing as a sub-procedure allocating $t$ balls to $m$ buckets with failure probability $\epsilon$, an $(N,wN,t,m,1,\epsilon)$-$\PBC$ is as follows: 
   \begin{itemize}
     \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,\cdots,C_m)$: Use $r$ to determine $w$ independent random hash functions $h_1,h_2,\cdots h_w$ that maps from $[N]$ to $[m]$. For all $k\in[N]$, replicate $x[k]$ in the positions indicated by $\Position_r(k)$. Each output bucket $C_j$ will be $\{x[k]:h_i(k) = j$ for some $i\in [w]\}$, in ascending order of $k$. 
@@ -193,10 +159,10 @@ Note that the incorrectness of the above PBC scheme is equal to the failure prob
 
 Computing $\Position_r$ and $\Schedule_r$ requires computing the order of some index $k\in[N]$ in a bucket $C_j$ it is mapped to, which may be inefficient when $N$ is large. \cite{cryptoeprint:2021/580} address this issue by implementing $w$ hash functions by a single \emph{(pseudo-)random permutation} $P$ mapping from $[w]\times [N]$ to $[m]\times [B]$, where $B = wN/m$. Invocation of $h_i(j)$ is done by computing $P(i,j)$, which outputs the bucket number in $[m]$ and the index in $[B]$. Note that in this case $h_1,\dots,h_w$ are not independent random hash functions, but it is empirically verified that the cuckoo hashing algorithm still succeeds with sufficient probability. 
 
-\subsection{DMPF Construction from CBC}
+\subsection{DMPF Construction from PBC}
 Next we display the construction of DMPF from black-box usage of DPF basing on PBC with appropriate parameters, which has been discussed in previous literature\red{\cite{cryptoeprint:2019/273,cryptoeprint:2019/1084,cryptoeprint:2021/580}}. 
-\begin{construction}[DMPF from DPF basing on PBC]\label{con:DMPF_batch_code}
-  Given $\DPF$ for any domain of size no larger than $N$ and output group $\GG$, and an $(N,M,t,m,1,\epsilon)$-$\PBC$ (which is systematic and combinatorial) with alphabet $\Sigma=\GG$, we can construct a $\DMPF$ for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
+\begin{construction}[PBC-based DMPF]\label{con:DMPF_batch_code}
+  Given $\DPF$ for any domain of size $\le N$ and output group $\GG$, and an $(N,M,t,m,1,\epsilon)$-$\PBC$ (which is systematic and combinatorial) with alphabet $\Sigma=\GG$, we can construct a $\DMPF$ for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
   \begin{itemize}
     \item $\Gen(1^\lambda, \hat{f}_{A,B})\rightarrow (k_0,k_1)$: Suppose $A=\{\alpha_1,\cdots,\alpha_t\}$ and $B=\{\beta_1,\cdots,\beta_t\}$. Suppose the $\PBC$ encodes to buckets $C_1,\dots,C_m$. Compute $\PBC.\Schedule(\alpha_k)\rightarrow C_{i_k}[j_k]$, allocating elements in $A$ to positions in the $m$ buckets.     
     %If $\PBC.\Schedule$ fails then run it again with a fresh public randomness. 
@@ -210,7 +176,7 @@ Next we display the construction of DMPF from black-box usage of DPF basing on P
     \item $\Eval_b(k_b,x)\rightarrow y_b$: Invoke $\PBC.\Position(x)$ to obtain the positions $C_{i_1}[j_1],\dots,C_{i_s}[j_s]$ to which $x$ is sent. Compute $y_b=\sum_{l=1}^s\DPF.\Eval_b(k_b^{i_l},j_l)$. 
     \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b^i = \DPF.\FullEval_b(k_b^i)$ for $1\le i\le m$. For all $x\in [N]$, invoke $\PBC.\Position(x)\rightarrow C_{i_1}[j_1],\dots,C_{i_s}[j_s]$, and set $Y_b[x]\gets \sum_{l=1}^sY_b^{i_l}[j_l]$. 
   \end{itemize}
-The scheme is correct with at least $1-\epsilon$ probability and has distinguish advantage $O(\epsilon)$. 
+The scheme is correct with at least $1-\epsilon$ probability and has distinguishing advantage $O(\epsilon)$. 
 \end{construction}
 
 When instantiating PBC using $w$-way cuckoo hashing as in \Cref{con:PBC_from_cuckoo}, the \emph{evaluation time} is the sum of the time for $\PBC.\Position(x)$ plus the time for $w$ invocations of $\DPF.\Eval$. Similarly, the \emph{full-domain evaluation time} is roughly the time for $N$ invocations of $\PBC.\Position$ plus $w$ invocations of $\DPF.\FullEval$. Therefore, one may expect the evaluation time for the above construction of DMPF to be dependent to $w$ instead of $t$. We will discuss about its efficiency in later sections. 
@@ -220,8 +186,8 @@ When instantiating PBC using $w$-way cuckoo hashing as in \Cref{con:PBC_from_cuc
 \end{remark}
 
 \subsection{Oblivious Key-Value Stores}\label{sec:prelim_okvs}
-We introduce the notion of Oblivious key-value stores (OKVS) which can be used to construct DMPF. OKVS was originally proposed as a primitive for private set intersection (PSI) protocols (see \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}). 
-\begin{definition}[Oblivious Key-Value Stores (OKVS)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{def:OKVS}
+We introduce the notion of Oblivious key-value stores (OKVS) which can be used to construct DMPF. OKVS was proposed as a primitive for private set intersection (PSI) protocols \cite{cryptoeprint:2021/883}, and improved by a series of works \cite{cryptoeprint:2022/320,cryptoeprint:2023/903}. 
+\begin{definition}[Oblivious Key-Value Stores (OKVS)\cite{cryptoeprint:2021/883,cryptoeprint:2022/320,cryptoeprint:2023/903}]\label{def:OKVS}
   An Oblivious Key-Value Stores scheme is a pair of randomized algorithms $(\Encode_r,\Decode_r)$ with respect to a statistical security parameter $\lambda_{\sf stat}$ and a computational security parameter $\lambda$, a randomness space $\{0,1\}^\kappa$, a key space $\mathcal{K}$, a value space $\mathcal{V}$, input length $t$ and output length $m$. The algorithms are of the following syntax: 
   \begin{itemize}
     \item $\Encode_r(\{(k_1,v_1),(k_2,v_2),\cdots,(k_t,v_t)\})\rightarrow P$: On input $t$ key-value pairs with distinct keys, the encode algorithm with randomness $r$ in the randomness space outputs an encoding $P\in\mathcal{V}^m\cup\bot$.
@@ -257,38 +223,9 @@ A well-known, optimal-rate OKVS construction is encoding $t$ key-value pairs usi
     \item $\Decode(P,k)\rightarrow g_P(k)$. 
   \end{itemize}
 \end{construction}
-The polynomial OKVS possesses an optimal encoding size $m=n$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(t\log^2t)$. The time for a single decoding is $O(t)$ and that for batched decodings is (amortized) $O(\log^2 t)$. 
+The polynomial OKVS possesses an optimal rate $\frac{t}{m}=1$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(t\log^2t)$. The time for a single decoding is $O(t)$ and that for batched decodings is (amortized) $O(\log^2 t)$. 
 
-In the sequel we stress two alternative (linear) OKVS constructions that has near optimal encoding size but much better running time. 
-
-\begin{construction}[RR22\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{con:OKVS_sparse_matrix}
-  Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}(k)$ outputs a uniformly random weight-$w$ vector in $\{0,1\}^{m_1}$, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
-  \begin{itemize}
-    \item $\Encode_r(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is randomly chosen from the solutions of the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$, solved by the triangulation algorithm in \cite{cryptoeprint:2022/320}. If the system has no solution then output $\bot$. 
-    \item $\Decode_r(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
-  \end{itemize}
-  We denote $m_1=et$, where $e$ is an expansion parameter indicating the rough blowup to store $t$ pairs. In practice the number of dense columns $m_2$ is usually set to a small constant. 
-\end{construction}
-This OKVS construction features an efficient encoding process, constant decoding time ($(w+m_2)$ additions and $m_2$ multiplications in $\FF$) while having a linear encoding size. 
-
-$\Encode$ may output $\bot$ if the matrix formed by $\{\row_r(k_i)\}_{1\le i\le t}$ is not full-rank. Therefore we need to adjust the parameters $m_1=et$ and $m_2$ to ensure negligible error probability (represented by the statistical security parameter $\lambda_\stat$). The expansion parameter $e$ and the number of dense columns $m_2:=\hat{g}$ (where $\hat{g}$ is a parameter relating to the equation system solving process) are given by the analysis in \cite{cryptoeprint:2022/320}, with the range of $N$ from $2^6$ to $2^{18}$: Given $w$, $t$ and $\lambda_\stat$, the choices of the $e$ and $\hat{g}$ are fixed through the following steps: 
-\begin{itemize}
-  \item Set $e^* = \begin{cases}
-    1.223 & w=3\\
-    1.293 & w=4\\
-    0.1485w+0.6845 & w\ge 5
-  \end{cases}$.
-  \item Compute $\alpha:=0.55 \log_2 t + 0.093w^3-1.01w^2 + 2.92w-0.13$.
-  \item $e:=e^*+ 2^{-\alpha}(\lambda_\stat+9.2)$. 
-  \item $\hat{g}:=\frac{\lambda_\stat}{(w-2)\log_2(et)}$. 
-\end{itemize}
-
-
-\Yaxin{Fix $t$ and $\lambda_\stat$, we want to find the best choice of $w$. The adavantageous choices of $w$ in \cite{cryptoeprint:2022/320} are $w=3$ and $w=5$. From the first sight when $w$ is smaller $e$ can be smaller but $\hat{g}$ will be larger. Since $w+\hat{g}$ stands for number of $\FF$-ADD's and $\hat{g}$ stands for number of $\FF$-MULT's in decoding, previously I thought $\hat{g}$ is the dominating factor of $\Decode$ running time. However table 1 in \cite{cryptoeprint:2022/320} suggests that $w=3$ outruns nearly all of other choices of $w$ while $w=5$ is almost 3 times slower in decoding time. This may suggest there are some other heavy computations other than $\FF$-MULT that need to be considered when evaluating running time. 
-
-The range of $t$ previous literature \cite{cryptoeprint:2021/883,cryptoeprint:2022/320} have considered in their empirical results are also limited, which will be one of our problems. We want to cover small $t$, say $t<100$, while previous literature aiming for constructing PSI protocols usually consider very large $t$. }
-
-One may let $row_r^{\sf dense}$ output a short dense vector in $\{0,1\}^{m_2}$ to avoid multiplication of large field elements in the encoding and decoding processes. To achieve same level of security one could simply set $m_2=\hat{g}+\lambda_\stat$, as proposed in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}. As indicated by the empirical results in \cite{cryptoeprint:2022/320}, this binary scheme is usually not as efficient as the original design. Therefore we mostly refer to \cref{con:OKVS_sparse_matrix}. 
+The work of \cite{cryptoeprint:2023/903} gives a (linear) OKVS construction that has near optimal rate but much better running time. 
 
 \begin{construction}[RB-OKVS\cite{cryptoeprint:2023/903}]\label{con:OKVS_ribbon}
   Suppose $\mathcal{V} = \GG$ is a group. Let $\row_r(k)$ output a $\{0,1\}^m$ vector consisting of a width-$w$ random band. Formally speaking, $\row_r(k)$ first determine a starting point $1\le i\le m-w+1$ for the band, and then determine random $w$-bit string to fill in the positions $[i,i+w-1]$ of $\row_r(k)$ and leave the rest as 0 entries. 
@@ -296,17 +233,11 @@ One may let $row_r^{\sf dense}$ output a short dense vector in $\{0,1\}^{m_2}$ t
     \item $\Encode_r(\{(k_i,v_i)\}_{1\le i\le t})\rightarrow P$ where $P$ is randomly chosen from the random band matrix system $\{\ipd{\row_r(k_i)}{P}=v_i\}_{1\le i\le t}$. If the system has no solution then output $\bot$. 
     \item $\Decode_r(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
   \end{itemize}
-  Denote $m=et$ where $e>1$ is an expansion parameter indicating the blowup to store $t$ pairs. 
+  
 \end{construction}
 
-The encoding time is equivalent to solving a random band matrix system, which can be efficiently done in $O(Nw+n\log n)$ time \cite{cryptoeprint:2023/903}. The decoding time is $w$ additions in $\FF$ and the rate can be very close to 1. 
+Denote $m=et$ where $e>1$ is an expansion parameter (the inverse of rate) indicating the blowup to store $t$ pairs. The encoding time is equivalent to solving a linear system whose coefficient matrix is a random band matrix, which can be efficiently done in $O(tw+t\log t)$ time. The decoding time is $w$ additions in $\FF$ and the rate $1/e$ can be very close to 1. 
 
-Again, to guarantee the success of $\Encode$, the random band matrix must be full-rank with overwhelming probability. According to \cite{cryptoeprint:2023/903}, fixing $e>1$ and taking $w = O(\lambda_\stat/(e-1)+\log N)$ ensures the correctness and obliviousness with probability $2^{-\lambda_\stat}$ and $2^{-w}$, respectively. Practically, $e=1.03,1.05,1.07,1.1$ are taken while $w$ being several hundred to reach the security $\lambda_\stat=40$, with the choice of $N$ varying from $2^{10}$ to $2^{20}$. 
+To guarantee the success of $\Encode$, the random band matrix must be full-rank with overwhelming probability. According to \cite{cryptoeprint:2023/903}, fixing $e>1$ and taking $w = O(\lambda_\stat/(e-1)+\log t)$ ensures the correctness and obliviousness with probability $2^{-\lambda_\stat}$ and $2^{-w}$, respectively. The empirical results take $e=1.03,1.05,1.07,1.1$ while $w$ being several hundred to reach the security $\lambda_\stat=40$, with the choice of $t$ varying from $2^{10}$ to $2^{20}$. We will apply this OKVS on a different range of $t$, such that $t$ can be as small as 1 or 2, which differs with the original application scenarios in \cite{cryptoeprint:2023/903}. However, since the set of parameters that ensures the successful encoding of $t'$ key-value pairs will also ensure the successful encoding of $t<t'$ key-value pairs, this issue can be natually resolved. %by using the same parameters for small set of key-value pairs as for larger set of key-value pairs.  
 
-According to the comparison in \cite{cryptoeprint:2023/903} of the RR22-OKVS (\cref{con:OKVS_sparse_matrix}) and the RB-OKVS (\cref{con:OKVS_ribbon}) with the choices of $N = 2^{16}, 2^{20}, 2^{24}$, the RB-OKVS has a better rate and features a tradeoff between rate and encoding/decoding time (one can choose to have better rate with longer encoding/decoding time). The RB-OVS has better encoding time while the RR22-OKVS has better decoding time. 
-
-\Yaxin{Maybe (and how to) put a (quantitative) summarizing table of OKVS efficiency here?}
-
-\medskip
-
-In our later sections, we will give the decoding efficiency of the OKVS the most priority. To this end, we refer to the RR22-OKVS (\cref{con:OKVS_sparse_matrix}) when instantiating OKVS. One may switch to other OKVS constructions depending on different needs in practice. 
+In our later sections, we refer to the RB-OKVS (\cref{con:OKVS_ribbon}) by default when instantiating OKVS. One may switch to other OKVS constructions such as ones in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}, depending on different needs in practice. 

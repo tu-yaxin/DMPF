@@ -42,39 +42,5 @@
     %\addtocounter{figure}{-1}
   \end{figure*}
 
-  \begin{figure*}
-    \renewcommand{\caption}[1]{
-    {\raggedright\textbf{\figurename~\thefigure~cont'd:~#1} \par}
-  }
-    \caption{The paradigm of our DMPF schemes, continued.}
-    \fbox{\parbox{\linewidth}{    
-    \begin{algorithmic}[1]
-      \Procedure{Eval\(_b\)}{$1^\lambda, k_b,x$}
-      \State Parse $k_b = ([\seed],[\sign],CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
-      \State Denote $x=x_1x_2\cdots x_n$. 
-      \For{$i = 1$ to $n$}
-        \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}(x_1\cdots x_{i-1},\sign,CW^{(i)})$, where $|C_\seed| = \lambda$ and $|C_{\sign^0}| = |C_{\sign^1}| = l$. \label{alg:paradigm_correction}
-        \State $\seed\|\sign\gets G_{x_i}(\seed)\oplus(C_{\seed}\|C_{\sign^{x_i}})$, where $|\seed|=\lambda$ and $|\sign|=l$. \label{alg:paradigm_seed_sign}
-      \EndFor
-      \State \Return $(-1)^b\cdot \big(G_{\sf conv}(\seed)+{\sf ConvCorrect}(x,\sign,CW^{(n+1)})\big)$. \label{alg:paradigm_convert_correction}
-      \EndProcedure
-      \item[]
-      \Procedure{FullEval\(_b\)}{$1^\lambda,k_b$}
-      \State Parse $k_b=(\seed^{(0)},\sign^{(0)},CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
-      \State For $1\le i\le n$, ${\sf Path}^{(i)}\gets$ the lexicographical ordered list of $\{0,1\}^i$. ${\sf Path}^{(0)}\gets[\epsilon]$. 
-      \State\Yaxin{The evaluation is BFS-style, which costs a lot of memory to store lists $\seed^{(i)}, \sign^{(i)}$. Need a DFS version for large $N$ to reduce memory use? Write in the clear or explain by words?}
-      \For{$i=1$ to $n$} 
-        \For{$k = 1$ to $2^{i-1}$}
-          \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}({\sf Path}^{(i-1)}[k],\sign^{(i-1)}[k],CW^{(i)})$, where $|C_\seed| = \lambda$ and $|C_{\sign^0}| = |C_{\sign^1}| = l$. 
-          \State $\seed^{(i)}[2k]\|\sign^{(i)}[2k]\gets G_0(\seed^{(i-1)}[k])\oplus (C_\seed\|C_{\sign^0})$, where $|\seed^{(i)}[2k]|=\lambda$ and $|\sign^{(i)}[2k]|=l$. 
-          \State $\seed^{(i)}[2k+1]\|\sign^{(i)}[2k+1]\gets G_1(\seed^{(i-1)}[k])\oplus (C_\seed\|C_{\sign^1})$, where $|\seed^{(i)}[2k+1]|=\lambda$ and $|\sign^{(i)}[2k+1]|=l$. 
-        \EndFor
-      \EndFor
-      \For{$k = 1$ to $2^n$}
-        \State ${\sf Output}[k]\gets (-1)^b\cdot \big(G_{\sf conv}(\seed^{(n)}[k])+{\sf ConvCorrect}({\sf Path}[k],\sign^{(n)}[k],CW^{(n+1)})\big)$.
-      \EndFor
-      \State\Return $\sf Output$. 
-      \EndProcedure
-      \end{algorithmic}}}
-    \end{figure*}  
+ 
     

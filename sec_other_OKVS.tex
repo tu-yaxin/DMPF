@@ -1,0 +1,32 @@
+\begin{construction}[RR22\cite{cryptoeprint:2021/883,cryptoeprint:2022/320}]\label{con:OKVS_sparse_matrix}
+    Suppose $\mathcal{V}=\FF$ is a field. Set $\row_r(k):=\row_r^{\sf sparse}(k)||\row_r^{\sf dense}(k)$ where $\row_r^{\sf sparse}(k)$ outputs a uniformly random weight-$w$ vector in $\{0,1\}^{m_1}$, and $\row_r^{\sf dense}(k)$ outputs a short dense vector in $\FF^{m_2}$. 
+    \begin{itemize}
+      \item $\Encode_r(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is randomly chosen from the solutions of the system $\{\ipd{\row_r(k_i)}{P} = v_i\}_{1\le i\le t}$, solved by the triangulation algorithm in \cite{cryptoeprint:2022/320}. If the system has no solution then output $\bot$. 
+      \item $\Decode_r(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
+    \end{itemize}
+    We denote $m_1=et$, where $e$ is an expansion parameter indicating the rough blowup to store $t$ pairs. Practically the number of dense columns $m_2$ is set to a small constant. 
+  \end{construction}
+  This OKVS construction features an efficient encoding process, constant decoding time ($(w+m_2)$ additions and $m_2$ multiplications in $\FF$) while having a linear encoding size. 
+  
+  $\Encode$ may output $\bot$ if the matrix formed by $\{\row_r(k_i)\}_{1\le i\le t}$ is not full-rank. Therefore we need to adjust the parameters $m_1=et$ and $m_2$ to ensure negligible error probability (represented by the statistical security parameter $\lambda_\stat$). The expansion parameter $e$ and the number of dense columns $m_2:=\hat{g}$ (where $\hat{g}$ is a parameter relating to the equation system solving process) are given by the analysis in \cite{cryptoeprint:2022/320}, with the range of $N$ from $2^6$ to $2^{18}$: Given $w$, $t$ and $\lambda_\stat$, the choices of the $e$ and $\hat{g}$ are fixed through the following steps: 
+  \begin{itemize}
+    \item Set $e^* = \begin{cases}
+      1.223 & w=3\\
+      1.293 & w=4\\
+      0.1485w+0.6845 & w\ge 5
+    \end{cases}$.
+    \item Compute $\alpha:=0.55 \log_2 t + 0.093w^3-1.01w^2 + 2.92w-0.13$.
+    \item $e:=e^*+ 2^{-\alpha}(\lambda_\stat+9.2)$. 
+    \item $\hat{g}:=\frac{\lambda_\stat}{(w-2)\log_2(et)}$. 
+  \end{itemize}
+  
+  
+  \Yaxin{Fix $t$ and $\lambda_\stat$, we want to find the best choice of $w$. The adavantageous choices of $w$ in \cite{cryptoeprint:2022/320} are $w=3$ and $w=5$. From the first sight when $w$ is smaller $e$ can be smaller but $\hat{g}$ will be larger. Since $w+\hat{g}$ stands for number of $\FF$-ADD's and $\hat{g}$ stands for number of $\FF$-MULT's in decoding, previously I thought $\hat{g}$ is the dominating factor of $\Decode$ running time. However table 1 in \cite{cryptoeprint:2022/320} suggests that $w=3$ outruns nearly all of other choices of $w$ while $w=5$ is almost 3 times slower in decoding time. This may suggest there are some other heavy computations other than $\FF$-MULT that need to be considered when evaluating running time. 
+  
+  The range of $t$ previous literature \cite{cryptoeprint:2021/883,cryptoeprint:2022/320} have considered in their empirical results are also limited, which will be one of our problems. We want to cover small $t$, say $t<100$, while previous literature aiming for constructing PSI protocols usually consider very large $t$. }
+
+  One may let $row_r^{\sf dense}$ output a short dense vector in $\{0,1\}^{m_2}$ to avoid multiplication of large field elements in the encoding and decoding processes. To achieve same level of security one could simply set $m_2=\hat{g}+\lambda_\stat$, as proposed in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}. As indicated by the empirical results in \cite{cryptoeprint:2022/320}, this binary scheme is usually not as efficient as the original design. Therefore we mostly refer to \cref{con:OKVS_sparse_matrix}. 
+  
+  According to the comparison in \cite{cryptoeprint:2023/903} of the RR22-OKVS (\cref{con:OKVS_sparse_matrix}) and the RB-OKVS (\cref{con:OKVS_ribbon}) with the choices of $N = 2^{16}, 2^{20}, 2^{24}$, the RB-OKVS has a better rate and features a tradeoff between rate and encoding/decoding time (one can choose to have better rate with longer encoding/decoding time). The RB-OVS has better encoding time while the RR22-OKVS has better decoding time. 
+
+\Yaxin{Maybe (and how to) put a (quantitative) summarizing table of OKVS efficiency here?}
