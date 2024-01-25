@@ -73,7 +73,7 @@ The OKVS-based DMPF is computationally secure when the PRGs $G$ and $G_\conv$ ar
 
 The efficiency of OKVS-based DMPF highly relies on the efficiency of the OKVS scheme it uses. Setting the na\"ive solution as a benchmark, the ratio of keysize of the na\"ive solution over the OKVS-based DMPF is roughly the rate of the OKVS scheme. Similar to the advantage of the big-state DMPF, the OKVS-based DMPF also only traverse one evaluation tree (as opposed to traversing $t$ evaluation trees in the na\"ive solution). However $\Gen$ consumes an OKVS encoding time per layer, and $\Eval$ and $\FullEval$ consume an OKVS decoding/batch decodings per layer. Therefore with an OKVS scheme that has high rate, fast encoding and decoding will result in an OKVS-based DMPF scheme that has small keysize, fast $\Gen$ and $\Eval$/$\FullEval$, respectively. 
 
-\subsection{Comparison}
+\subsection{Comparison}\label{sec:DMPF_comparison}
 In this section we summarize the efficiency of the DMPF instantiations we've mentioned and constructed so far. We display the keysize and running time of $\Gen$,$\Eval$ and $\FullEval$ of different DMPF schemes, computed in terms of costs of abstract tools such as PRG, batch code and OKVS. The concrete efficiency will be discussed later in application scenarios in \cref{sec:applications}. 
 	\begin{table*}
     \renewcommand\arraystretch{1.5}
@@ -117,15 +117,14 @@ Take PCG as a potential application. We care about $\FullEval$ time which is rel
 \red{Discussion to be added. }
 
 \subsection{Distributed Multi-Interval Function}
-\red{Introduction to be added. }
+The distributed comparison function (DCF) proposed in \red{\cite{10.1007/978-3-662-46803-6_12,CCS:BoyGilIsh16}} generates shares for any comparison function $f_{<\alpha, \beta}:[N]\rightarrow \GG$ that evaluates to $\beta$ on any input $x<\alpha$ and 0 elsewhere, for a secret threshold $\alpha\in[N]$ and a secret payload $\beta\in \GG$. Previous literatures give efficient and secure construction of DCF that has keysize $\log N(\lambda+2\log |\GG|+2)$ and evaluation time roughly the same as the evaluation time for DPF in the same domain and output group. A DCF for $f_{<\alpha, \beta}$ can be easily converted to a DCF for other comparisons $f_{\le \alpha, \beta}$, $f_{>\alpha,\beta}$ and $f_{\ge \alpha,\beta}$. 
 
-\begin{definition}[Comparison Function]
-  Given a domain size $N$ and Abelian group $\GG$, a comparison function $f_{<\alpha,\beta}:[N]\rightarrow \GG$ for $\alpha\in[N]$ and $\beta\in \GG$ evaluates to $\beta$ on any input $x<\alpha$ and 0 elsewhere. Similarly define $f_{\le \alpha, \beta}$, $f_{>\alpha,\beta}$, and $f_{\ge \alpha,\beta}$. functions. 
-\end{definition}
+The application of DCF includes distributed public interval containments and spline functions \cite{cryptoeprint:2020/1392,cryptoeprint:2019/1095}, and constructing pseudorandom correlation functions \cite{cryptoeprint:2022/1014}. \Yaxin{Haven't got a complete application list. And does the latter one actually ask for a distributed multi-interval function? }
 
-Similarly to the conversion of the PRG-based DPF scheme to a distributed comparison function (DCF) in \cite{10.1007/978-3-662-46803-6_12} by extending the $\sign$ string at each node with an additional indicator bit, we argue in this section that any DMPF scheme following the DMPF paradigm in \Cref{fig:DMPF_paradigm} can be converted to a distributed multi-interval function, where a multi-interval function is defined as follows: 
+
+The previous construction of DCF is done by extending the PRG-based DPF scheme in the following way: it adds an additional string at each node that can be corrected to be used to compute the shared output of the comparison function. Similarly to this conversion, we argue in this section that any DMPF scheme following the DMPF paradigm in \Cref{fig:DMPF_paradigm} can be converted to a distributed multi-interval function, where a multi-interval function is defined as follows: 
 \begin{definition}[Multi-Interval Function]
-  Given a domain size $N$ and Abelian group $\GG$, a $k$-interval function $f_{I,B}:[N]\rightarrow \GG$ for $I = \left([a_1,b_1], [a_2,b_2], \dots, [a_k,b_k]\right)$ such that $1\le a_1<b_1<a_2<b_2<\dots<a_k<b_k\le N$ and $B = (\beta_1,\beta_2,\dots,\beta_k)\in \GG^k$ evaluates to $\beta_i$ on any input $x$ in the interval $[a_i,b_i]$ for $1\le i\le k$ and to $0$ on all other inputs. Call the collection of all $k$-interval functions for all $k$ the multi-interval functions. 
+  Given a domain size $N=2^n$ and Abelian group $\GG$, a $k$-interval function $f_{I,B}:[N]\rightarrow \GG$ for $I = \left([a_1,b_1], [a_2,b_2], \dots, [a_k,b_k]\right)$ such that $1\le a_1<b_1<a_2<b_2<\dots<a_k<b_k\le N$ and $B = (\beta_1,\beta_2,\dots,\beta_k)\in \GG^k$ evaluates to $\beta_i$ on any input $x$ in the interval $[a_i,b_i]$ for $1\le i\le k$ and to $0$ on all other inputs. Call the collection of all $k$-interval functions for all $k$ the multi-interval functions. 
 \end{definition}
 We define a distributed multi-interval function to be in the similar form as DMPF, while its security requires that each key leaks no information about the intervals $I$ and the payloads $B$. 
 
@@ -135,7 +134,7 @@ Note that a distributed multi-interval function can be constructed by summing up
 \]
 Hence the full-domain evaluation of a multi-interval function can be directly computed from the full-domain evaluation of a DMPF, with the same keysize and approximately the same $\FullEval$ time. 
 
-Next we make additional modifications to convert a DMPF scheme to a distributed multi-interval function, when aiming for the single-input evaluation. For simplicity, in the sequel, we assume $\GG$ is the group of $g$-bit binary strings with the group addition being $\oplus$. In this setting $\beta = -\beta$. One can put a little more effort to generalize the conversion to any group. 
+Next we make additional modifications to convert a DMPF scheme to a distributed multi-interval function, when aiming for the single-input evaluation. For simplicity, in the sequel, we assume the domain is $\{0,1\}^n$ and the output group $\GG$ is the group of $g$-bit binary strings with the group addition being $\oplus$. In this setting $\beta = -\beta$. One can put a little more effort to generalize the conversion to any group. 
 
 For a DMPF scheme for $f_{A',B'}$ following the paradigm in \Cref{fig:DMPF_paradigm}, let each node contains an additional $g$-bit string $\res$, satisfying the following conditions: (1) for each node $v$ on an accepting path of $f_{A',B'}$, let $\res_0$ and $\res_1$ denote its $\res$ strings in the evaluation trees $T_0$ and $T_1$ respectively, then 
 \[
@@ -178,4 +177,8 @@ where $\res_{v,b}$ denotes the $\res$ string on node $v$ in tree $T_b$.
 
 The distributed multi-interval function is secure as long as the DMPF for $f_{A',B'}$ is secure, since the ends of the intervals and the payloads are hidden. 
 
-For distributing a $k$-interval function, there's a time-space tradeoff between our construction and the na\"ive construction that adds up $2k$ DCFs. Note that the conversion extends each entry of $V^{(i-1)}$ (the input of $\Gen\CW$) from $(\lambda +2l)$-bit to $(\lambda + 2l +2\log |\GG|)$-bit. When the DMPF paradigm is realized by the big-state (where $l=2k$) or the OKVS-based (where $l=1$) DMPF scheme, the keysize of the distributed $k$-interval function is $2k n(\lambda +2l +2\log|\GG|)$, which is $\times (1+\frac{l+\log|\GG|}{\lambda})$ the keysize of the na\"ive construction. Hence with a sacrifice on the keysize, our construction has the $\Eval$ function only traversing the depth-$n$ evaluation tree once with a little more computation at each layer, while the $\Eval$ function in the na\"ive traverses the depth-$n$ tree for $2k$ times. 
+For distributing a $k$-interval function, we can compare our construction with the na\"ive construction that adds up $2k$ DCFs, which has the similar evaluation time of $2k$ DPFs and $\times (1+\frac{\log |\GG|}{\lambda/2+1})$ the keysize of $2k$ DPFs. Note our conversion from DMPF extends each entry of $V^{(i-1)}$ (the input of $\Gen\CW$) from $(\lambda +2l)$-bit to $(\lambda + 2l +2\log |\GG|)$-bit. When the DMPF paradigm is realized by the big-state (where $l=2k$) or the OKVS-based (where $l=1$) DMPF scheme, the keysize of the distributed $k$-interval function is increased to $\times (1+\frac{\log|\GG|}{\lambda/2+l})$ the keysize of DMPF. Therefore the comparison between our construction and the na\"ive construction of distributed $k$-interval function, should be `proportional to' the comparison between our construction and the na\"ive construction of DMPF for $2k$-point functions, which is discussed in \Cref{sec:DMPF_comparison} and \Cref{sec:applications}.
+
+\begin{remark}
+  Since the PBC-based DMPF does not follow the DMPF paradigm in \Cref{fig:DMPF_paradigm}, the conversion does not apply. It is not clear to us how to convert the PBC-based DMPF to a distributed multi-interval function. 
+\end{remark}
