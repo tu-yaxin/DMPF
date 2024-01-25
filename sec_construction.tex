@@ -114,10 +114,10 @@ In this section we summarize the efficiency of the DMPF instantiations we've men
 Take PCG as a potential application. We care about $\FullEval$ time which is related to PCG seed expanding time. In this aspect, the CBC-based DMPF consumes $w$ times the number of PRGs than big-state DMPF and OKVS-based DMPF, while big-state DMPF's $\FullEval$ time scales with $t^2$ (since the large-bit-XOR time scales with $t^2$) and OKVS-based DMPF in addition consumes large field operations (in OKVS decoding, and maybe more than this). Therefore we expect different DMPF schemes to be the top choice in different choices of $t$ and depending on the computing time of PRG and large field multiplication, and it is likely that the big-state construction performs the best when $t$ is small, while the CBC-based and OKVS-based constructions performs well when $t$ is large. 
 
 \subsection{Distributed Key Generation}
-Discussion to be added. 
+\red{Discussion to be added. }
 
 \subsection{Distributed Multi-Interval Function}
-Introduction to be added. 
+\red{Introduction to be added. }
 
 \begin{definition}[Comparison Function]
   Given a domain size $N$ and Abelian group $\GG$, a comparison function $f_{<\alpha,\beta}:[N]\rightarrow \GG$ for $\alpha\in[N]$ and $\beta\in \GG$ evaluates to $\beta$ on any input $x<\alpha$ and 0 elsewhere. Similarly define $f_{\le \alpha, \beta}$, $f_{>\alpha,\beta}$, and $f_{\ge \alpha,\beta}$. functions. 
@@ -129,17 +129,53 @@ Similarly to the conversion of the PRG-based DPF scheme to a distributed compari
 \end{definition}
 We define a distributed multi-interval function to be in the similar form as DMPF, while its security requires that each key leaks no information about the intervals $I$ and the payloads $B$. 
 
-Note that a distributed multi-interval function can be constructed by summing up $2k$ DCFs, since $f_{I,B} = \sum_{i=1}^k f_{\ge a_i,\beta_i} + \sum_{i=1}^k f_{\ge b_i+1, -\beta_i}$. A crucial observation relating to this na\"ive construction is that the truth table of the multi-interval function $f_{I,B}$ is the partial sum of the truth table of the multi-point function $f_{A',B'}$ where $A' = (a_1,b_1,\dots,a_k,b_k)$ and $B' = (\beta_1,-\beta_1,\dots,\beta_k,-\beta_k)$. More formally, for any $x\in[N]$, 
+Note that a distributed multi-interval function can be constructed by summing up $2k$ DCFs, since $f_{I,B} = \sum_{i=1}^k f_{\ge a_i,\beta_i} + \sum_{i=1}^k f_{\ge b_i+1, -\beta_i}$. Therefore we can relate the shares of $f_{I,B}$ (denoted as $[f_{I,B}]$) with the shares of the multi-point function $f_{A',B'}$ where $A' = (a_1,b_1+1,\dots,a_k,b_k+1)$ and $B' = (\beta_1,-\beta_1,\dots,\beta_k,-\beta_k)$: 
 \[
-  f_{I,B}(x) = \sum_{y\le x}f_{A',B'}(y)
+  f_{I,B}(x)  = \sum_{a_i\le x}\beta_i - \sum_{b_j<x}\beta_j = \sum_{y\le x}f_{A',B'}(y)
 \]
-Therefore the full-domain evaluation of a multi-interval function can be directly computed from the full-domain evaluation of a DMPF, with the same keysize and approximately the same $\FullEval$ time. 
+Hence the full-domain evaluation of a multi-interval function can be directly computed from the full-domain evaluation of a DMPF, with the same keysize and approximately the same $\FullEval$ time. 
 
-When the single-input evaluation of the distributed multi-interval function is needed, we can modify a DMPF scheme for $f_{A',B'}$ such that each node exiting an accepting path of $f_{A',B'}$ indicates the \Yaxin{bookmark Jan 24}
+Next we make additional modifications to convert a DMPF scheme to a distributed multi-interval function, when aiming for the single-input evaluation. For simplicity, in the sequel, we assume $\GG$ is the group of $g$-bit binary strings with the group addition being $\oplus$. In this setting $\beta = -\beta$. One can put a little more effort to generalize the conversion to any group. 
 
+For a DMPF scheme for $f_{A',B'}$ following the paradigm in \Cref{fig:DMPF_paradigm}, let each node contains an additional $g$-bit string $\res$, satisfying the following conditions: (1) for each node $v$ on an accepting path of $f_{A',B'}$, let $\res_0$ and $\res_1$ denote its $\res$ strings in the evaluation trees $T_0$ and $T_1$ respectively, then 
+\[
+  \res_0\oplus \res_1 = \sum_{a_i\text{ is }v\text{ or a descendant of }v}\beta_i + \sum_{b_j\text{ is }v\text{ or a descendant of }v}\beta_j 
+\]
+(2) for each node $v$ exiting an accepting path, $\res_0\oplus \res_1 = 0^g$. This, combined with the original invariance \ref{enu:tree_invariance_1} for the evaluation tree, indicates that for each node $v$ not on any accepting path, $\res_0\oplus \res_1 = 0^g$. 
 
+Note that the DMPF paradigm in \Cref{fig:DMPF_paradigm} provides the mechanism to control the difference of strings in any node on or exiting an accepting path, by recording the target strings in the list $V^{(i-1)}$ (see lines \ref{alg:paradigm_append_V_case1} and \ref{alg:paradigm_append_V_case2}), generating the correction word $CW$ (line \ref{alg:big_state_gen_cw}), and correcting the target strings by adding corrections generated by $CW$ (line \ref{alg:paradigm_correction_in_gen}). Therefore, one can enforce the above two conditions by additionally recording $\Delta\res^0$ (for the left child) and $\Delta \res^1$ (for the right child) in $V^{(i-1)}$ (corresponds to modifying lines \ref{alg:paradigm_append_V_case1} and \ref{alg:paradigm_append_V_case2}), then generating the proper correction word for $\res$ strings using  modified $\Gen\CW$ and $\Correct$ in order to get the desired (XOR-)correlation. 
 
-For simplicity, in the sequel, we assume $\GG$ is the group of $g$-bit binary strings with operation $\oplus$. In this setting $\beta = -\beta$. One can put a little more effort to generalize the conversion below to any group. 
+The evaluation on an input $x = x[1\dots n]$ sums up all the $\res$ strings on the nodes that takes a left step to exit the path represented by $x$. The formal description is in \Cref{fig:multi-interval_eval}. 
+\begin{figure}
+  \caption{Modifying the $\Eval$ method in \Cref{fig:DMPF_paradigm} to the $\Eval$ for a distributed multi-interval function. }
+  \label{fig:multi-interval_eval}
+  \fbox{\parbox{\linewidth}{    
+  \begin{algorithmic}[1]
+    \Procedure{Eval\(_b\)}{$1^\lambda, k_b,x$}
+    \State Parse $k_b = (\seed,\sign,CW^{(1)},CW^{(2)},\cdots,CW^{(n)})$. 
+    \State Denote $x=x[1\dots n]$. 
+    \State $S = 0^g$. 
+    \For{$i = 1$ to $n$}
+      \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\|C_{\res^0}\|C_{\res^1}\gets {\sf Correct}(x[1\dots(i-1)],\sign,CW^{(i)})$. 
+      \State Parse $G(\seed) = \seed^0\|\sign^0\|\res^0\|\seed^1\|\sign^1\|\res^1$. 
+      \State $\seed\|\sign\gets \seed^{x_i}\oplus C_{\seed}\|\sign^{x_i}\oplus C_{\sign^{x_i}}$. 
+      \State $S\gets S \oplus (\res^{1-x_i}\oplus C_{\res^{1-x_i}})$. 
+    \EndFor
+    \State \Return $S$. 
+    \EndProcedure
+  \end{algorithmic}
+  }}
+\end{figure}
+We argue that the summation $S$ is a share of $f_{I,B}(x)$. Denote the output of party b as $S_b$. Suppose $J_1 = \{j\in[n]:x[j]=1\}$. Then for any $a\in \{0,1\}^n$, $a\le x$ if and only if there exists $j\in J_1$ such that $a[1\dots(j-1)] = x[1\dots (j-1)]$ and $a[j] = 0$. Therefore $a$ is or is a descendant of the node $v_j = x[1\dots (j-1)]\|0$ in the tree. Hence, 
+\[
+  \begin{split}
+    S_0 + S_1 =& \sum_{j\in J_1} (\res_{v_j, 0}\oplus\res_{v_j,1})\\
+    =& \sum_{j\in J_1} \left(\sum_{\substack{a_i\text{ is }v_j\\\text{or is a descendant of }v_j}}\beta_i +\sum_{\substack{b_i\text{ is }v_j\\\text{or is a descendant of }v_j}}\beta_i\right)\\
+    =&\sum_{a_i\le x}\beta_i + \sum_{b_i\le x}\beta_i
+  \end{split}
+\]
+where $\res_{v,b}$ denotes the $\res$ string on node $v$ in tree $T_b$. 
 
+The distributed multi-interval function is secure as long as the DMPF for $f_{A',B'}$ is secure, since the ends of the intervals and the payloads are hidden. 
 
-%Mention tradeoff comparing to sum of 2k DCFs. 
+For distributing a $k$-interval function, there's a time-space tradeoff between our construction and the na\"ive construction that adds up $2k$ DCFs. Note that the conversion extends each entry of $V^{(i-1)}$ (the input of $\Gen\CW$) from $(\lambda +2l)$-bit to $(\lambda + 2l +2\log |\GG|)$-bit. When the DMPF paradigm is realized by the big-state (where $l=2k$) or the OKVS-based (where $l=1$) DMPF scheme, the keysize of the distributed $k$-interval function is $2k n(\lambda +2l +2\log|\GG|)$, which is $\times (1+\frac{l+\log|\GG|}{\lambda})$ the keysize of the na\"ive construction. Hence with a sacrifice on the keysize, our construction has the $\Eval$ function only traversing the depth-$n$ evaluation tree once with a little more computation at each layer, while the $\Eval$ function in the na\"ive traverses the depth-$n$ tree for $2k$ times. 

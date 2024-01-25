@@ -15,6 +15,7 @@
 \newcommand{\row}{{\sf row}}
 \newcommand{\seed}{{\sf seed}}
 \newcommand{\sign}{{\sf sign}}
+\newcommand{\res}{{\sf res}}
 \newcommand{\correct}{{\sf correct}}
 \newcommand{\map}{{\sf map}}
 \newcommand{\stat}{{\sf stat}}
@@ -53,24 +54,3 @@
 \newtheorem{construction}{Construction}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{proposition}[theorem]{Proposition}
-
-\makeatletter
-\newenvironment{breakablefigure}
-  {
-   \begin{center}
-     \refstepcounter{figure}% New algorithm
-     %\hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
-     \renewcommand{\caption}[2][\relax]{% Make a new \caption
-       {\raggedright\textbf{\figurename~\thefigure} ##2\par}%
-       \ifx\relax##1\relax % #1 is \relax
-         \addcontentsline{loa}{figure}{\protect\numberline{\thefigure}##2}%
-       \else % #1 is not \relax
-         \addcontentsline{loa}{figure}{\protect\numberline{\thefigure}##1}%
-       \fi
-       %\kern2pt\hrule\kern2pt
-     }
-  }{
-     %\kern2pt\hrule\relax% \@fs@post for \@fs@ruled
-    \end{center}
-  }
-\makeatother
