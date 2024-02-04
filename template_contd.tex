@@ -2,17 +2,17 @@
     \renewcommand{\caption}[1]{
     {\raggedright\textbf{\figurename~\thefigure~cont'd:~#1} \par}
   }
-    \caption{The paradigm of our DMPF schemes, continued.}
+    \caption{The template of our DMPF schemes, continued.}
     \fbox{\parbox{\linewidth}{    
     \begin{algorithmic}[1]
       \Procedure{Eval\(_b\)}{$1^\lambda, k_b,x$}
       \State Parse $k_b = ([\seed],[\sign],CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$. 
       \State Denote $x=x_1x_2\cdots x_n$. 
       \For{$i = 1$ to $n$}
-        \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}(x_1\cdots x_{i-1},\sign,CW^{(i)})$, where $|C_\seed| = \lambda$ and $|C_{\sign^0}| = |C_{\sign^1}| = l$. \label{alg:paradigm_correction}
-        \State $\seed\|\sign\gets G_{x_i}(\seed)\oplus(C_{\seed}\|C_{\sign^{x_i}})$, where $|\seed|=\lambda$ and $|\sign|=l$. \label{alg:paradigm_seed_sign}
+        \State $C_\seed\|C_{\sign^0}\|C_{\sign^1}\gets {\sf Correct}(x_1\cdots x_{i-1},\sign,CW^{(i)})$, where $|C_\seed| = \lambda$ and $|C_{\sign^0}| = |C_{\sign^1}| = l$. \label{alg:template_correction}
+        \State $\seed\|\sign\gets G_{x_i}(\seed)\oplus(C_{\seed}\|C_{\sign^{x_i}})$, where $|\seed|=\lambda$ and $|\sign|=l$. \label{alg:template_seed_sign}
       \EndFor
-      \State \Return $(-1)^b\cdot \big(G_{\sf conv}(\seed)+{\sf ConvCorrect}(x,\sign,CW^{(n+1)})\big)$. \label{alg:paradigm_convert_correction}
+      \State \Return $(-1)^b\cdot \big(G_{\sf conv}(\seed)+{\sf ConvCorrect}(x,\sign,CW^{(n+1)})\big)$. \label{alg:template_convert_correction}
       \EndProcedure
       \item[]
       \Procedure{FullEval\(_b\)}{$1^\lambda,k_b$}

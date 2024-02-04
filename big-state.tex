@@ -1,5 +1,5 @@
 \begin{figure}
-    \caption{The parameter $l$ and methods' setting that turns the paradigm of DMPF in~\cref{fig:DMPF_paradigm} into the big-state DMPF. }
+    \caption{The parameter $l$ and methods' setting that turns the template of DMPF in~\cref{fig:DMPF_template} into the big-state DMPF. }
     \label{fig:DMPF_big-state}
     \fbox{\parbox{\linewidth}{
     \begin{algorithmic}[1]
@@ -10,7 +10,7 @@
       \EndProcedure
       \item[]
       \Procedure{GenCW}{$i,A,V^{(i-1)}$}
-      \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_paradigm}. 
+      \State Let $\{A^{(i)}\}_{0\le i\le n}$ be defined as in~\cref{fig:DMPF_template}. 
       \State Sample a list $CW$ of $t$ random strings from $\{0,1\}^{\lambda+2t}$.  
       \For{$k = 1$ to $|A^{(i-1)}|$}
         \State Parse $V^{(i-1)}[k] = \Delta\seed\|\Delta\sign^0\|\Delta\sign^1$.

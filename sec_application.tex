@@ -18,34 +18,10 @@ To give a rough impression, we list the number of accepting points $t$, the doma
 \end{table*}
 
 \subsection{PCG for OLE from Ring-$\LPN$}
+the efficiency of different DMPF schemes in the PCG application.
 
-In this section we discuss the efficiency of different DMPF schemes in the PCG application. We begin by briefly introducing the protocol of PCG for OLE from Ring-$\LPN$ assumption, proposed in \cite{cryptoeprint:2022/1035}. 
 
-\paragraph{The PCG protocol for OLE correlation.}The hardness assumption we will make use of is a variant of Ring-$\LPN$, called module-$\LPN$ assumption. 
-\begin{definition}[Module-$\LPN$]\label{def:module-LPN}
-    Let $c\ge 2$ be an integer, $R = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg-$N$ polynomial $F(X)\in \ZZ_p[X]$, and $\mathcal{HW}_{R,t}$ be the uniform distribution over \`weight-$t$\' polynomials in $R$ whose degree is less than $N$ and has at most $t$ nonzero coefficients. 
-    %(We write $\mathcal{HW}_t$ when $R$ is clear from the context. )
-     For $R=R(\lambda)$, $t=t(\lambda)$ and $m=m(\lambda)$, we say that the module-$\LPN$ problem $R^c$-$\LPN$ is hard if for every nonuniform polynomial-time probabilistic distinguisher $\cA$, it holds that 
-    \begin{align*}
-        |&\Pr[\cA(\{\vec{a}^{(i)}, \ipd{\vec{a}^{(i)}}{\vec{s}}+\vec{e}^{(i)}\}_{i\in [m]})] \\
-        -&\Pr[\cA(\{\vec{a}^{(i)},\vec{u}^{(i)}\}_{i\in [m]})]| \le \mathsf{negl}(\lambda)
-    \end{align*}
-    where the probabilities are taken over the randomness of $\cA$, random samples $\vec{a}^{(1)},\cdots, \vec{a}^{(m)}\leftarrow R^{c-1}$, $\vec{u}^{(1)},\cdots, \vec{u}^{(m)}\leftarrow R$, $\vec{s}\leftarrow \cHW_{R,t}^{c-1}$, and $\vec{e}^{(1)},\cdots, \vec{e}^{(m)}\leftarrow \cHW_{R,t}$. 
 
-    When we only consider $m=1$, each $R^c$-$\LPN$ instance $ \ipd{\vec{a}}{\vec{s}}+\vec{e}$ can be restated as $\ipd{\vec{a'}}{\vec{e'}}$ where $\vec{a'}=1||\vec{a}$ and $\vec{e'}\leftarrow \cHW_{R,t}^c$. 
-\end{definition}
-
-The PCG protocol in \cite{cryptoeprint:2022/1035} generates seed for the OLE correlation $(x_0,x_1,z_0,z_1)\in R^4$ such that $x_0+x_1 = z_0\cdot z_1$, where $R = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg-$N$ polynomial $F(X)\in \ZZ_p[X]$. The idea is to first set $z_b = \ipd{\vec{a}}{\vec{e_b}}$ (an $R^c$-$\LPN$ instance with public $\vec{a}$ and $\vec{e_b}\leftarrow \cHW_{R,t}^c$). Basing on the fact that $\ipd{\vec{a}}{ \vec{e_0}}\cdot \ipd{\vec{a}}{\vec{e_1}} = \ipd{\vec{a}\otimes \vec{a}}{\vec{e_0}\otimes \vec{e_1}}$, the next step is to additively share the tensor product $\vec{e_0}\otimes \vec{e_1}$ and each party can compute an additive share of $z_0\cdot z_1$. Note that the tensor product $\vec{e_0}\otimes\vec{e_1}$ consists of $c^2$ entries, each being an deg-$2N$ polynomial with at most ${t}^2$ nonzero coefficients. Therefore it can be shared by invoking $\DMPF_{{t}^2, 2N, \mathbb{Z}_p}$ for $c^2$ times.
-
-One can compute the seed size and expanding time of this PCG protocol as follows: 
-\begin{itemize}
-    \item The seed size is $ct(\log N+\log p)$ bits for specifying $\vec{e_b}$ plus the $c^2\times $keysize of $\DMPF$. 
-    \item The expanding time is $c^2$ multiplications in the deg-$2N$ polynomial ring \Yaxin{or $2c^2$ multiplications since $\vec a\otimes\vec a$ need also be computed? } plus $c^2\times$full-domain evaluation time of $\DMPF$. 
-\end{itemize}
-
-\begin{remark}[From OLE over polynomial ring $R$ to OLE over $\ZZ_p$]\label{rem:use_reducible_ring}
-    Note that the above PCG protocol generates seed for OLE correlation over deg-$N$ polynomial ring $R$. One can immediately convert an OLE correlation over ring $R$ to \textbf{$N$ OLE correlations over $\ZZ_p$} if the polynomial $F(X)$ splits into $N$ distinct linear factors modulo $p$\cite{cryptoeprint:2022/1035}. Therefore we mostly consider reducible $F$ and more concretely $F$ a two-power cyclotomic due to its useful properties. 
-\end{remark}
 
 \paragraph{Amortized expanding time for each OLE correlation over $\ZZ_p$}The amortized expanding time for each OLE correlation over $\ZZ_p$ is computed by 
 \[
@@ -70,19 +46,6 @@ is the amortized cost for computing a share of an entry of $\vec{e_0}\otimes\vec
 
 
 
-\paragraph{Using the regular noise distribution to split $\DMPF_{t^2, 2N, \ZZ_p}$}
-
-A previous optimization in \cite{cryptoeprint:2022/1035}, aiming to share the entries of $\vec{e_0}\otimes \vec{e_1}$ through $\DPF$s but with less overhead (in contrast to the $2t^2\times T_G$ cost before), is to substitute $\cHW_{R,t}$ with the distribution of random regular weight-$t$ polynomials denoted as $\cRHW_{R,t}$. Each regular weight-$t$ polynomial $e$ contains exactly one nonzero coefficient $e_j$ in the range of degree $[j\cdot N/t, (j+1)\cdot N/t-1]$ for $j=0,\cdots t-1$. When multiplying two regular weight-$t$ polynomials $e$ and $f$, $e_i\cdot f_j$ contributes to a coefficient in the range of degree $[(i+j)\cdot N/t, (i+j+2)\cdot N/t-2]$. Therefore the deg-$2N$ polynomial $e\cdot f$ can be shared by invoking $\{\DMPF^{(k)} = \DMPF_{\min(k,2t-k), 2N/t, \ZZ_p}\}_{1\le k\le 2t-1}$, where $\DMPF^{(k)}$'s domain corresponds to the coefficients in the range of degree $[(k-1)N/t, (k+1)N/t-2]$ in the resulting polynomial $e\cdot f$. Then each $\DMPF^{(k)}$ in the set $\{\DMPF^{(k)}\}_{1\le k\le 2t-1}$ can be instantiated by one of the mentioned schemes: sum of $\DPF$s (used in \cite{cryptoeprint:2022/1035}), CBC-based, big-state, or $\OKVS$-based $\DMPF$. We note that the efficiency (in terms of $\FullEval$ time) of all these instantiations are more or less related to the number of nonzero inputs in the targeted $\DMPF$, therefore using $\cRHW_{R,t}$ instead to $\cHW_{R,t}$ reduces the number of nonzero inputs from $t^2$ to at most $t$ may be benefitial in some occasions.
-
-An alternative way to split $\DMPF_{t^2, 2N, \ZZ_p}$, basing on the previous observation, is to share the coefficients of $e\cdot f$ by invoking $\{\DMPF'^{(k)} = \DMPF_{2\min(k+1, 2t-k)-1, N/t, \ZZ_p}\}_{0\le k\le 2t-1}$, where $\DMPF'^{(k)}$'s domain corresponds to the coefficients in the range of degree $[kN/t, (k+1)N/t -1]$. Since the number of nonzero coefficients in $[kN/t, (k+1)N/t -1]$ is upperbounded by the sum of number of nonzero coefficients in $[(k-1)N/t, (k+1)N/t -2]$ and in $[kN/t, (k+2)N/t -2]$, $\DMPF'^{(k)}$ has at most $2\min(k+1, 2t-k)-1$ nonzero inputs. The advantage of using $\{\DMPF'^{(k)}\}_{0\le k\le 2t-1}$ is that the previous concatenation through $\{\DMPF^{(k)}\}_{1\le k\le 2t-1}$ creates overlapping ranges, which doubles the number of PRG invocations when realizing by CBC-based, big-state, and $\OKVS$-based $\DMPF$. By using $\{\DMPF'^{(k)}\}_{0\le k\le 2t-1}$, the ranges are not overlapping and therefore maintains the minimal PRG invocations, while also preserving a relatively small number of nonzero inputs (at most $2t-1$) in each $\DMPF'^{(k)}$. 
-
-Previously, \cite{cryptoeprint:2022/1035} uses sum of DPFs to instantiate $\{\DMPF^{(k)}\}_{1\le k\le 2t-1}$ in the first optimized design with regular noise distribution. It indicates using batch code to achieve DMPF as another optimization but not in the clear. We'll analyze the cost of this PCG protocol under the following settings:
-\begin{itemize}
-    \item[(1)]with noise distribution $\cHW_{R,t}$ and each multiplication of sparse polynomials is shared by $\DMPF_{t^2, 2N, \mathbb{Z}_p}$
-    \item[(2)]ith noise distribution $\cRHW_{R,t}$ and each multiplication of regular sparse polynomials is shared by $$\{\DMPF^{(k)} = \DMPF_{\min(k,2t-k), 2N/t, \ZZ_p}\}_{1\le k\le 2t-1}$$
-    \item[(3)]ith noise distribution $\cRHW_{R,t}$ and each multiplication of sparse polynomials is shared by $$\{\DMPF'^{(k)} = \DMPF_{2\min(k+1, 2t-k)-1, N/t, \ZZ_p}\}_{0\le k\le 2t-1}$$
-\end{itemize}
-\Yaxin{Dec 27: It is also mentioned using more advanced noise distributions to avoid overlapping ranges. For now it remains to give the concrete costs for (1) $\DMPF_{t^2, 2N, \mathbb{Z}_p}$; (2)$\DMPF_{1/2/\dots/t, 2N/t, \ZZ_p}$; (3)$\DMPF_{1/2/\dots/(2t-1), N/t, \ZZ_p}$ under sum of DPFs/CBC-based/big-state/OKVS-based instantiations. }
 
 We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF_comparison}. The costs of PCG protocols under different settings are listed in \cref{tab:PCG_plug_in_formula}. 
 \begin{table*}
@@ -143,21 +106,6 @@ To force $E_n = E_r$, let's consider fixing two varibles and change one:
 All of these three changes of variables don't seem to lead to noticeable changes in the amortized expanding time for each OLE correlation. 
 \fi
 
-\paragraph{Setting parameters $(N,c,t)$ against best attacks}Next we plug in concrete parameters and evaluate the performance of different $\DMPF$ schemes under different PCG parameter settings. 
-
-The parameters $(N, c, t)$ should be set in a way that the corresponding $R^c$-$\LPN$ problem is secure with computational security parameter $\lambda$. In \cite{cryptoeprint:2022/1035} the parameters are taken to be $(\lambda, N, c, t) \in\{ (128, 2^{20}, 8, 5), (128, 2^{20}, 4, 16), (128, 2^{20}, 2, 76)\}$ against several attacks, with the best among which predicted to be the SD or ISD family. \Yaxin{Dec 28: Using the new lowerbound in \cite{cryptoeprint:2022/712} (if I understood it correctly), the setting of parameters (fixing $\lambda=128$ and $N = 2^{20}$) becomes $(\lambda, N, c, t) \in\{ (128, 2^{20}, 8, 5), (128, 2^{20}, 4, 14), (128, 2^{20}, 2, 70)\}$. In fact, $N$ is independent to other parameters because $R$ is a reducible polynomial ring. }The three parameters are comparable in efficiency in \cite{cryptoeprint:2022/1035} because they used the second $\DMPF$ instantiation (concatenation of DPFs under $\cRHW_t$ distribution) whose cost scales with $c^2t$. By using the new $\DMPF$ instantiations we may see significant difference among the three tuples of parameters. 
-
-\textbf{How to compute $(N,c,t)$: }We set the parameters $(\lambda, c, N, t)$ such that the best attack requires at least $2^\lambda$ arithmetic operations over field $\FF_p$ of size approximately $2^{128}$. 
-
-An $R^c$-$\LPN$ instance $a\cdot e$ can be viewed as a (dual-)$\LPN_{cN,N,\cHW_{N,t}^{\otimes c}}$ instance $\{H, H\cdot \vec{e}\}$, where $H\in\ZZ_p^{N\times cN}$ is a concatenation of $c$ circular matrices representing multiplication with ${a}$, and $\vec{e}\in \ZZ_p^{cN}$ with distribution $\cHW_{N,t}^{\otimes c}$ represents the concatenation of coefficients of $e$. The bit security of the $R^c$-$\LPN$ problem is equivalent to the bit security of the described (dual-)$\LPN$ problem. As in \cite{cryptoeprint:2022/1035}, we consider the bit security of the described (dual-)$\LPN$ problem to be the same as the bit security of the standard (dual-)$\LPN$ problem, whose error distribution is $\cHW_{cN, ct}$, the random weight-$ct$ noises. 
-
-According \cite{cryptoeprint:2022/1035}, for $R$ from an irreducible $F$, we lowerbound the number of arithmetic operations by $N\cdot (c\cdot \frac{N}{N-1})^{ct}\approx N\cdot c^{ct}$. \Yaxin{Dec 28: \cite{cryptoeprint:2022/712} seems to indicate a better lowerbound of $N^{2.8}\cdot c^{ct}$. } For $R$ from a reducible $F$, the number of arithmetic operations is lowerbounded by $2^i\cdot c^{w_i}$ \Yaxin{Dec 28: or $2^{2.8 i}\cdot c^{w_i}$ by \cite{cryptoeprint:2022/712}}, where $w_i$ is the expected number of noisy coordinates modulo an 1-sparse deg-$2^i$ polynomial and $i:=\text{ the smallest integer such that }w_i<2^i$. Then $t$ is computed by the equation 
-\[w_i = c\cdot 2^i\left(1-(1-2^{-i})^t\right)\]
-\Yaxin{Dec 29: In \cite{cryptoeprint:2022/1035} there are two formulas calculating $w_i$. One is as above, and the other is $$w_i=ct-2^ic+((2^i-1)c+ct)\cdot \left(1-2^{-i}\right)^{t-1}$$The second one does not make sense to me but is used to compute the concrete results. Nevertheless the two formulas computes similar results so I used the first one which makes more sense to me. }
-  %\begin{split}
-    %i:=&\text{ the smallest integer such that }\lambda - i<2^i\\ 
-    %\mathop{\arg\min}\limits_{1\le j\le \log N}\left(2^j\cdot c^{W_j}\right)\\ 
-  %\end{split}
 
 
 

@@ -1,8 +1,8 @@
 \section{Security Proofs of DMPF Schemes}\label{sec:security_proof}
-In this section we show that the big-state and OKVS-based DMPF schemes are computationally secure. We prove by first showing that the DMPF paradigm is computationally secure when the methods $\sf  GenCW$ and $\sf GenConvCW$ satisfy some security requirements called hiding, and then arguing that the realizations of methods in both the big-state DMPF and the OKVS-based DMPF satisfy hiding. 
+In this section we show that the big-state and OKVS-based DMPF schemes are computationally secure. We prove by first showing that the DMPF template is computationally secure when the methods $\sf  GenCW$ and $\sf GenConvCW$ satisfy some security requirements called hiding, and then arguing that the realizations of methods in both the big-state DMPF and the OKVS-based DMPF satisfy hiding. 
 
-\subsection{The DMPF paradigm is secure under special conditions}\label{sec:paradigm_security_proof}
-We first define the security notion called hiding for $\Gen\CW$ and $\Gen\Conv\CW$, and show that the DMPF paradigm in \Cref{fig:DMPF_paradigm} is secure when $\Gen\CW$ and $\Gen\Conv\CW$ are hiding. For simplicity, assume we're working with multi-point functions with exactly $t$ accepting inputs. If there are less than $t$ accepting inputs, simply pad arbitrary distinct inputs to $A$ and pad $B$ with $0$. Denote a the list obtained by applying a function $f$ to a list $L$ of strings in the domain of $f$ as $f(L) = (f(x))_{x\in L}$. 
+\subsection{The DMPF template is secure under special conditions}\label{sec:template_security_proof}
+We first define the security notion called hiding for $\Gen\CW$ and $\Gen\Conv\CW$, and show that the DMPF template in \Cref{fig:DMPF_template} is secure when $\Gen\CW$ and $\Gen\Conv\CW$ are hiding. For simplicity, assume we're working with multi-point functions with exactly $t$ accepting inputs. If there are less than $t$ accepting inputs, simply pad arbitrary distinct inputs to $A$ and pad $B$ with $0$. Denote a the list obtained by applying a function $f$ to a list $L$ of strings in the domain of $f$ as $f(L) = (f(x))_{x\in L}$. 
 
 We say that a realization of $\Gen\CW$ is hiding if it gives no information about the multi-point function $f_{A,B}$. It is defined using an indistinguishability-based definition as follows: 
 \begin{definition}[Computationally hiding of $\Gen\CW$]\label{def:GenCW_hiding}
@@ -25,9 +25,9 @@ Similarly we define a realization of $\Gen\Conv\CW$ to be hiding if it gives no 
         \end{split}
     \]
 \end{definition}
-Next we show that if $\Gen\CW$ and $\Gen\Conv\CW$ in the DMPF paradigm \Cref*{fig:DMPF_paradigm} are computationally hiding, then the DMPF is computationally secure. 
-\begin{lemma}\label{lem:paradigm_secure}
-    Suppose ${\sf Initialize}$ set $\seed_b^{(0)}$ to be random strings for $b=0,1$. Suppose  $\Gen\CW$ and $\Gen\Conv\CW$ in \Cref{fig:DMPF_paradigm} are computationally hiding with distinguishing advantage $\epsilon_{\Gen\CW}$ and $\epsilon_{\Gen\Conv\CW}$ respectively. Let $\epsilon_G$ and $\epsilon_{G_\conv}$ denote the distinguishing advantage of the PRG $G$ and $G_\conv$. Then the DMPF scheme is $\epsilon$-secure against any n.u.p.p.t. adversary, where $\epsilon = 2tn\epsilon_{G}+2t \epsilon_{G_\conv}+n\epsilon_{\Gen\CW} +\epsilon_{\Gen\Conv\CW}$. 
+Next we show that if $\Gen\CW$ and $\Gen\Conv\CW$ in the DMPF template \Cref*{fig:DMPF_template} are computationally hiding, then the DMPF is computationally secure. 
+\begin{lemma}\label{lem:template_secure}
+    Suppose ${\sf Initialize}$ set $\seed_b^{(0)}$ to be random strings for $b=0,1$. Suppose  $\Gen\CW$ and $\Gen\Conv\CW$ in \Cref{fig:DMPF_template} are computationally hiding with distinguishing advantage $\epsilon_{\Gen\CW}$ and $\epsilon_{\Gen\Conv\CW}$ respectively. Let $\epsilon_G$ and $\epsilon_{G_\conv}$ denote the distinguishing advantage of the PRG $G$ and $G_\conv$. Then the DMPF scheme is $\epsilon$-secure against any n.u.p.p.t. adversary, where $\epsilon = 2tn\epsilon_{G}+2t \epsilon_{G_\conv}+n\epsilon_{\Gen\CW} +\epsilon_{\Gen\Conv\CW}$. 
 \end{lemma}
 \begin{proof}
     Formally, we show that $\forall b\in\{0,1\}$, $\forall (A,B)\not=(A',B')$, 
@@ -36,9 +36,10 @@ Next we show that if $\Gen\CW$ and $\Gen\Conv\CW$ in the DMPF paradigm \Cref*{fi
             \{k_b\gets \Gen(1^\lambda, \hat{f}_{A,B})\}\approx_c\{k_b'\gets\Gen(1^\lambda, \hat{f}_{A',B'})\}
         \end{split}
     \]
-    with distinguishing advantage at most $\epsilon = 2tn\epsilon_{G}+2t \epsilon_{G_\conv}+n\epsilon_{\Gen\CW} +\epsilon_{\Gen\Conv\CW}$.     
+    with distinguishing advantage at most $\epsilon = 2tn\epsilon_{G}+2t \epsilon_{G_\conv}+n\epsilon_{\Gen\CW} +\epsilon_{\Gen\Conv\CW}$. This suffices to prove the simulation-based security of DMPF, as one can simply let ${\sf Sim}(1^\lambda, N,\hat{\GG},t)$ for corrupted party $b$ output $k_b$ output by $\Gen(1^\lambda, \hat{f}_{[t],0^t}$. 
+    
     Fix an arbitrary $b$ and $(A,B), (A',B')$ such that $(A,B)\not=(A',B')$. By symmetry we may assume $b=0$. 
-    Parse $k_0 = (\seed_0^{(0)}, \sign_0^{(0)}, CW^{(1)},\dots,CW^{(n+1)})$ and $k_b' = (\seed_0'^{(0)},$\linebreak$ \sign_0'^{(0)}, CW'^{(1)},\dots,CW'^{(n+1)})$. We prove the distributions of $k_0$ and $k_0'$ are indistinguishable by a sequence of standard hybrid arguments. 
+    Parse $k_0 = (\seed_0^{(0)}, \sign_0^{(0)}, $\linebreak$CW^{(1)},\dots,CW^{(n+1)})$ and $k_b' = (\seed_0'^{(0)}, \sign_0'^{(0)}, CW'^{(1)},\dots,$\linebreak$CW'^{(n+1)})$. We prove the distributions of $k_0$ and $k_0'$ are indistinguishable by a sequence of standard hybrid arguments. 
 
 
     Note that $\{\seed_0^{(0)}, \sign_0^{(0)}\} = \{\seed_0'^{(0)}, \sign_0'^{(0)}\}$ since the \linebreak$\sf Initialize$ processes are the same. For $i\in[n]$, $\Gen\CW(1^\lambda, \hat{f}_{A,B})$ having the $\seed_b^{(i-1)}$ and $\sign_b^{(i-1)}$ strings of the previous layer for $b=0,1$, computes as the following: 
@@ -85,7 +86,7 @@ Next we show that if $\Gen\CW$ and $\Gen\Conv\CW$ in the DMPF paradigm \Cref*{fi
 \end{proof}
 
 \subsection{The big-state DMPF scheme is secure}\label{sec:big-state_security_proof}
-In this section we show that the big-state realization of DMPF in \Cref{fig:DMPF_big-state} satisfies the conditions: (1) $\sf Initialize$ set $\seed_0^{(0)}$ and $\seed_1^{(1)}$ to random strings. (2) $\Gen\CW$ is computationally hiding. (3) $\Gen\Conv\CW$ is computationally hiding. Combined with \Cref{lem:paradigm_secure}, it can be concluded that the big-state DMPF scheme is computationally secure. 
+In this section we show that the big-state realization of DMPF in \Cref{fig:DMPF_big-state} satisfies the conditions: (1) $\sf Initialize$ set $\seed_0^{(0)}$ and $\seed_1^{(1)}$ to random strings. (2) $\Gen\CW$ is computationally hiding. (3) $\Gen\Conv\CW$ is computationally hiding. Combined with \Cref{lem:template_secure}, it can be concluded that the big-state DMPF scheme is computationally secure. 
 
 Condition (1) is direct from the construction. 
 
@@ -94,14 +95,14 @@ For condition (2), note that when $V$ is a truly random list, \linebreak$\Gen\CW
 For condition (3), when $\Delta_g$ is a truly random list, $\Gen\Conv\CW(A,$\linebreak$B,\Delta g,\sign_0^{(n)},\sign_1^{(n)})$ computes $CW[k] = (-1)^{\sign_0^{(n)}[k][k]}(\Delta g[k] $\linebreak
 $- B[k])$, which is a random group element. Therefore the resulting $CW$ is a length-$t$ list of random group elements, independent of $A,B$. Hence $\epsilon_{\Gen\Conv\CW} = 0$. 
 
-The above arguments, combined with \Cref{lem:paradigm_secure}, concludes that the big-state DMPF is computationally secure. 
+The above arguments, combined with \Cref{lem:template_secure}, concludes that the big-state DMPF is computationally secure. 
 
 \begin{theorem}[Big-state DMPF is secure]\label{thm:big-state_secure}
     Let $\epsilon_G$ and $\epsilon_{G_\conv}$ denote the distinguishing advantage of the PRG $G$ and $G_\conv$ respectively. Then the big-state DMPF scheme in \Cref{fig:DMPF_big-state} is $\epsilon$-secure against any n.u.p.p.t. adversary, where $\epsilon = 2tn\epsilon_G+2t\epsilon_{G_\conv}$. 
 \end{theorem}
 
 \subsection{The OKVS-based DMPF scheme is secure}\label{sec:OKVS_DMPF_security_proof}
-In this section we argue that the OKVS-based realization of DMPF in \Cref{fig:DMPF_OKVS} satisfies the conditions: (1) $\sf Initialize$ set $\seed_0^{(0)}$ and $\seed_1^{(1)}$ to random strings. (2) $\Gen\CW$ is computationally hiding. (3) $\Gen\Conv\CW$ is computationally hiding. Combined with \Cref{lem:paradigm_secure}, it can be concluded that the OKVS-based DMPF scheme is computationally secure. 
+In this section we argue that the OKVS-based realization of DMPF in \Cref{fig:DMPF_OKVS} satisfies the conditions: (1) $\sf Initialize$ set $\seed_0^{(0)}$ and $\seed_1^{(1)}$ to random strings. (2) $\Gen\CW$ is computationally hiding. (3) $\Gen\Conv\CW$ is computationally hiding. Combined with \Cref{lem:template_secure}, it can be concluded that the OKVS-based DMPF scheme is computationally secure. 
 
 Condition (1) is direct from the construction. 
 
@@ -109,7 +110,7 @@ For condition (2), note that when $V$ is a truly random list, \linebreak$\Gen\CW
 
 For condition (3), when $\Delta_g$ is a truly random list, $\Gen\Conv\CW(A,$\linebreak$B,\Delta g,\sign_0^{(n)},\sign_1^{(n)})$ computes a value list $V$ of group elements by $V[k] = (-1)^{\sign_0^{(n)}[k][k]}(\Delta g[k] - B[k])$, which is a random group element. Therefore $V$ is a length-$t$ list of random group elements independent of $A,B$. Hence $\epsilon_{\Gen\Conv\CW} = \epsilon_{\OKVS_\conv}$, the security of the corresponding $\OKVS_\conv$ scheme. 
 
-The above arguments, combined with \Cref{lem:paradigm_secure}, concludes that the OKVS-based DMPF is computationally secure. 
+The above arguments, combined with \Cref{lem:template_secure}, concludes that the OKVS-based DMPF is computationally secure. 
 
 \begin{theorem}[OKVS-based DMPF is secure]\label{thm:OKVS_DMPF_secure}
     Let $\epsilon_G$ and $\epsilon_{G_\conv}$ denote the distinguishing advantage of the PRG $G$ and $G_\conv$ respectively. Suppose in the OKVS-based DMPF scheme in \Cref{fig:DMPF_OKVS}, for $1\le i\le n$ the $\OKVS_i$ scheme is $\epsilon_{\OKVS_i}$-oblivious, and the $\OKVS_{\conv}$ scheme is $\epsilon_{\OKVS_\conv}$-oblivious. Then the big-state DMPF scheme in \Cref{fig:DMPF_big-state} is $\epsilon$-secure against any n.u.p.p.t. adversary, where $\epsilon = 2tn\epsilon_G+2t\epsilon_{G_\conv} +\sum_{i=1}^n\epsilon_{\OKVS_i}+\epsilon_{\OKVS_\conv}$. 

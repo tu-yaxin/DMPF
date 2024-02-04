@@ -1,14 +1,15 @@
 \section{Preliminary}
-
+\Yaxin{PSI is missing. }
 \subsection{Basic Notations}
-
-
-
- \paragraph{Point and multi-point functions.} Given a domain size $N$ and Abelian group $\GG$, a \emph{point function} $f_{\alpha,\beta}:[N]\rightarrow\GG$ for $\alpha\in[N]$ and $\beta\in\GG$ evaluates to $\beta$ on input $\alpha$ and to $0\in\GG$ on all other inputs. We denote by $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ the representation of such a point function, where $\hat{\GG}$ denotes the description of the group $\GG$. A \emph{$t$-point function} $f_{A,B}:[N]\rightarrow \GG$ for $A=\{\alpha_1,\cdots\alpha_t\}\subset N$ listed in ascending order and $B=(\beta_1,\cdots,\beta_t)\in \GG^t$ evaluates to $\beta_i$ on input $\alpha_i$ for $1\le i\le t$ and to $0$ on all other inputs. Denote $\hat{f}_{A,B}(N,\hat{\GG},t,A,B)$ the representation of such a $t$-point function. Call the collection of all $t$-point functions for all $t$ \emph{multi-point functions}. 
+\paragraph{Point and multi-point functions.} Given a domain size $N$ and Abelian group $\GG$, a \emph{point function} $f_{\alpha,\beta}:[N]\rightarrow\GG$ for $\alpha\in[N]$ and $\beta\in\GG$ evaluates to $\beta$ on input $\alpha$ and to $0\in\GG$ on all other inputs. We denote by $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ the representation of such a point function, where $\hat{\GG}$ denotes the description of the group $\GG$. A \emph{$t$-point function} $f_{A,B}:[N]\rightarrow \GG$ for $A=\{\alpha_1,\cdots\alpha_t\}\subset N$ listed in ascending order and $B=(\beta_1,\cdots,\beta_t)\in \GG^t$ evaluates to $\beta_i$ on input $\alpha_i$ for $1\le i\le t$ and to $0$ on all other inputs. Let $\hat{f}_{A,B}(N,\hat{\GG},t,A,B)$ denote the representation of such a $t$-point function. Call the collection of all $t$-point functions for all $t$ \emph{multi-point functions}. 
  
 \subsection{Distributed Multi-Point Functions}
 
-We begin by defining the notion of distributed point functions (DPF) and distributed multi-point functions (DMPF), that additively and succinctly share (multi-)point functions respectively. 
+We begin by defining the notion of distributed multi-point functions (DMPF), which is a generalization of distributed point function (DPF \cite{10.1007/978-3-662-46803-6_12,CCS:BoyGilIsh16}). %secret-share multi-point functions respectively. 
+
+\Niv{We could drop the definition of DPF, define DMPF, and say that DPF is (essentially) the special case that $t=1$.}\Yaxin{Resolved. }
+
+\iffalse
 \begin{definition}[DPF \cite{EC:GilIsh14,CCS:BoyGilIsh16}]\label{def:dpf}
 A 
 %$t$-private $m$-server 
@@ -21,15 +22,15 @@ with the following syntax:
 \begin{itemize}
     \item $\Gen(1^\lambda,\hat{f}_{\alpha,\beta})\rightarrow (k_0,k_1)$: On input security parameter $\lambda\in\NN$ and point function description $\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$, the (randomized) key generation algorithm $\Gen$ returns a pair of keys $k_0,k_1\in\{0,1\}^*$. 
     We assume that $N$ and $\GG$ are determined by each key.
-    \item $\Eval_b(k_b,x)\rightarrow y_b$: On input key $k_b\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $b$, $\Eval_b$ returns 
+    \item $\Eval_b(k_b,x)\rightarrow y_b$: On input key $k_b\in\{0,1\}^*$ and input $x\in[N]$ the (deterministic) evaluation algorithm of server $b$, $\Eval_b$, returns 
     %a group element 
     $y_b\in\GG$.
 \end{itemize}
 %The algorithms $\Pi=(\Gen,\Eval_0,\ldots,\Eval_{m-1})$ should 
-We require $\Pi$ to satisfy the following requirements:
+We require that $\Pi$ satisfies the following requirements:
 \begin{itemize}
-    \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$, for $b=0,1$,  
-    $$\Pr\left[(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}), \sum_{i=0}^{1}\Eval_b(k_b,x)=f_{\alpha,\beta}(x)\right]=1$$
+    \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{\alpha,\beta}=(N,\hat{\GG},\alpha,\beta)$ such that $\beta\in\GG$, and $x\in[N]$,   
+    $$\Pr\left[(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}), \sum_{b=0}^{1}\Eval_b(k_b,x)=f_{\alpha,\beta}(x)\right]=1$$
     \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $b\in\{0,1\}$:
     \begin{enumerate}
         \item The adversary produces two point function descriptions $(\hat{f}^0=(N,\hat\GG,\alpha_0,\beta_0),\hat{f}^1=(N,\hat\GG,\alpha_1,\beta_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_b\in[N]$ and $\beta_b\in\GG$.
@@ -46,9 +47,9 @@ We require $\Pi$ to satisfy the following requirements:
 %    \end{itemize}
 \end{itemize}
 %If the security threshold $t$ is unspecified, we assume it is $t=1$.
-\end{definition}
+\end{definition}\fi
 
-\begin{definition}[DMPF \cite{cryptoeprint:2019/273,cryptoeprint:2021/580}]\label{def:dmpf}
+\begin{definition}[DMPF \cite{cryptoeprint:2019/273,cryptoeprint:2021/580,CCS:BoyGilIsh16}]\label{def:dmpf}
   A 
   %$t$-private $m$-server 
   (2-party)
@@ -65,25 +66,31 @@ We require $\Pi$ to satisfy the following requirements:
   \begin{itemize}
       \item \textbf{Correctness:} For every $\lambda$, $\hat{f}=\hat{f}_{A,B}=(N,\hat{\GG},t,A,B)$ such that $B\in\GG^t$, and $x\in[N]$, for $b=0,1$,
       $$\Pr\left[(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}), \sum_{i=0}^{1}\Eval_b(k_b,x)=f_{A,B}(x)\right]=1$$
-      \item \textbf{Security:} Consider the following semantic security challenge experiment for corrupted server $b\in\{0,1\}$:
+      \item \textbf{Security: }For any corrupted party $b = 0,1$, there exists a p.p.t. simulator $\sf Sim$ such that for every $\hat{f} = \hat{f}_{A,B} = (N,\hat{\GG},t,A,B)$, the outputs of the following experiments $\sf Real$ and $\sf Ideal$ are computationally indistinguishable: 
+      \begin{itemize}
+          \item[-]${\sf Real}:\,(k_0,k_1)\gets \Gen(1^\lambda, \hat{f})$, output $k_b$. 
+          \item[-]$\sf Ideal:$ Output ${\sf Sim}(1^\lambda, N,\hat{\GG},t)$. 
+      \end{itemize}
+      \iffalse
+      Consider the following semantic security challenge experiment for corrupted server $b\in\{0,1\}$:
       \begin{enumerate}
           \item The adversary produces two $t$-point function descriptions $(\hat{f}^0=(N,\hat\GG,t,A_0,B_0),\hat{f}^1=(N,\hat\GG,t,A_1,B_1))\leftarrow\mathcal{A}(1^\lambda)$, where $\alpha_b\in[N]$ and $\beta_b\in\GG$.
           \item The challenger samples $b\gets\{0,1\}$ and $(k_0,k_1)\leftarrow\Gen(1^\lambda,\hat{f}^b)$.
           \item The adversary outputs a guess $b'\leftarrow\mathcal{A}(k_b)$.
       \end{enumerate}
-      Denote by $\Adv(1^\lambda,\mathcal{A},i)=\Pr[b=b']-1/2$ the advantage of $\mathcal{A}$ in guessing $b$ in the above experiment. For every non-uniform polynomial time adversary $\mathcal{A}$ there exists a negligible function $\nu$ such that $\Adv(1^\lambda,\mathcal{A},i) \le \nu(\lambda)$ for all $\lambda \in \NN$.
+      Denote by $\Adv(1^\lambda,\mathcal{A},i)=\Pr[b=b']-1/2$ the advantage of $\mathcal{A}$ in guessing $b$ in the above experiment. For every non-uniform polynomial time adversary $\mathcal{A}$ there exists a negligible function $\nu$ such that $\Adv(1^\lambda,\mathcal{A},i) \le \nu(\lambda)$ for all $\lambda \in \NN$.\fi
   \end{itemize}
   \end{definition}
- 
  We will also be interested in applying the evaluation algorithm on \emph{all} inputs. Given a DMPF $(\Gen,\Eval_0,\Eval_1)$, we denote by $\FullEval_b$ an algorithm which computes $\Eval_b$ on every input $x$. Hence, $\FullEval_b$ receives only a key $k_b$ as input.
 
- One can construct a DMPF scheme for $t$-point functions by simply summing $t$ DPFs. We denote this DMPF scheme as the na\"ive construction. 
+The distributed point function (DPF) is a special case of DMPF where $t=1$. 
+One can construct a DMPF scheme for $t$-point functions by simply summing $t$ DPFs. We denote this DMPF scheme as the na\"ive construction. 
 \begin{construction}[Na\"ive construction of DMPF]\label{con:naive_DMPF}
-  Given DPF for domain of size $N$ and output group $\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
+  Given a DPF scheme $\DPF$ for domain of size $N$ and output group $\GG$, we can construct a DMPF scheme for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
   \begin{itemize}
-    \item $\Gen(1^\lambda, \hat{f}_{A, B})\rightarrow (k_0, k_1)$: Suppose $A = \{\alpha_1,\dots, \alpha_t\}$ and $B = \{\beta_1,\dots, \beta_t\}$. For $1\le i\le t$, invoke DPF$.\Gen(1^\lambda, \hat{f}_{\alpha_i, \beta_i})\rightarrow (k_0^i, k_1^i)$. Set $(k_0, k_1) = (\{k_0^i\}_{i\in [t]}, \{k_1^i\}_{i\in [t]})$. 
-    \item $\Eval_b(k_b, x)\rightarrow y_b$: Compute $y_b = \sum_{i\in [t]}$DPF$.\Eval_b(k_b^i, x)$. 
-    \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b = \sum_{i\in [t]}$DPF$.\FullEval_b(k_b^i, x)$. 
+    \item $\Gen(1^\lambda, \hat{f}_{A, B})\rightarrow (k_0, k_1)$: Suppose $A = \{\alpha_1,\dots, \alpha_t\}$ and $B = \{\beta_1,\dots, \beta_t\}$. For $1\le i\le t$, invoke $\DPF.\Gen(1^\lambda, \hat{f}_{\alpha_i, \beta_i})\rightarrow (k_0^i, k_1^i)$. Set $(k_0, k_1) = (\{k_0^i\}_{i\in [t]}, \{k_1^i\}_{i\in [t]})$. 
+    \item $\Eval_b(k_b, x)\rightarrow y_b$: Compute $y_b = \sum_{i\in [t]}\DPF.\Eval_b(k_b^i, x)$. 
+    \item $\FullEval_b(k_b)\rightarrow Y_b$: Compute $Y_b = \sum_{i\in [t]}\DPF.\FullEval_b(k_b^i, x)$. 
   \end{itemize}
 \end{construction}
 When the DPF scheme is correct and secure, the na\"ive construction of DMPF is also correct and secure. We note that the keysize and running time of $\Gen$, $\Eval$ and $\FullEval$ of the na\"ive construction of DMPF equals $t\times $ the keysize and $t\times$ the running time of $\Gen$, $\Eval$ and $\FullEval$ of DPF, respectively. In the remainder of this paper, we'll provide DMPF schemes that has $\Eval$ and $\FullEval$ time almost independent to $t$. 
@@ -112,7 +119,7 @@ We introduce probabilistic batch code, a batch code permitting small decoding er
   \end{itemize}
 \end{definition}
 
-We will focus on the case $b=1$ and a special class of batch code called combinatorial batch code (CBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$. In this case, $\Encode_r$ sends $x[k]$ to the positions defined by $\Position_r(k)$, and $\Decode_r$ recovers $x[I]$ by rearranging the symbols it reads, whose positions are defined by $\Schedule$. Note that when $b=1$, $\Schedule$ algorithm implies finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, in an $(N,m)$-bipartite graph where $k\in[N]$ is connected to $j\in[m]$ if and only if $x[k]$ is contained in $C_j$. 
+We will focus on the case $l=1$ and a special class of batch code called combinatorial batch code (CBC)\cite{cryptoeprint:2017/1142,10.1145/1007352.1007396,cryptoeprint:2008/306}, where each codeword $C_i$ is a subset of $x$. In this case, $\Encode_r$ simply sends $x[k]$ to the positions defined by $\Position_r(k)$, and $\Decode_r$ recovers $x[I]$ by reading the symbols in positions $\bigcup_{k\in I}\Schedule_r(k)$ and rearranging the symbols it reads. Note that when $l=1$, $\Schedule$ algorithm implies finding a prefect matching from the size-$t$ subset $I\subseteq[N]$ to the $m$ buckets, in an $(N,m)$-bipartite graph where $k\in[N]$ is connected to $j\in[m]$ if and only if $x[k]$ is contained in $C_j$. 
 
 A natural way to construct PBC is to define the allocation of symbols in $x$ to the buckets by a random $(N,m)$-bipartite graph where each left node has degree $w$ for a fixed parameter $w$. To implement $\Encode$ and $\Decode$ (or more specifically $\Position$ and $\Schedule$), we use the $w$-way cuckoo hashing algorithm\cite{10.1007/3-540-44676-1_10} as a concrete and efficient instantiation of PBC as in \cite{cryptoeprint:2017/1142,cryptoeprint:2018/579,yeo_cuckoo_2023}. 
 
@@ -129,12 +136,16 @@ If the algorithm terminates then it outputs a desired allocation of balls to buc
   a_t &= 123.5\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.3, \sigma = 2.3)\\
   b_t =& 120\cdot {\sf CDF_{Normal}}(x=t, \mu = 6.45, \sigma = 2.18)
 \end{split}
-\] where $e = m/t$ is the expansion parameter and ${\sf CDF_{Normal}}(x,\mu,\sigma)$ is the cumulative distribution function on input $x$ for the normal distribution with expectation $\mu$ and standard deviation $\sigma$.  %In practice we usually consider the statistical security parameter $\lambda_{\stat}=40$. The relations among the number of balls $t$, the number of hash functions $w$, the number of buckets $m$ and the security parameters $\lambda_\stat$ are listed in 
-\Yaxin{More asymptotic and empirical results are listed in \Cref{tab:cuckoo_hashing_prm}. }
+\] where $e = m/t$ is the expansion parameter and ${\sf CDF_{Normal}}(x,\mu,\sigma)$ is the cumulative distribution function on input $x$ for the normal distribution with expectation $\mu$ and standard deviation $\sigma$. The number of buckets $m$ that ensures at least $1-\epsilon$ success probability can be computed according to $\lambda_\stat$ and $t$. As an example, we set the statistical security parameter $\lambda_{\stat}=40$. When $t\ge 12$, the $\sf CDF_{Normal}$ values are $\ge 0.99$ and we can compute $e = 1.3+\frac{\log t}{123.5}$ and $m = e\cdot t$ according to the concrete value of $t$. 
+\Yaxin{In our PCG application we may want $t=5, 14, 70$, and I list the corresponding $e$ here for convenience: The latter two are captured by $e = 1.3+\frac{\log t}{123.5}$,  and $e = 2.058$ when $t=5$. 
 
-There are different ways to generalize cuckoo hashing algorithm in order to achieve negligible failure probability. For instance, one may allow at most $l>1$ balls to be allocated to each bucket, instead of allowing at most one. One may also add an overflow stash with size $s$ as an additional cache-like bucket \cite{KMW10}. We mostly use cuckoo hashing with $l=1$ and $s=0$ to construct PBC and DMPF, but will also point out how general cuckoo hashing may help with these constructions.
+More asymptotic and empirical results are listed in \Cref{tab:cuckoo_hashing_prm}. }
 
-Now we display the instantiation of PBC using cuckoo hashing. 
+\begin{remark}
+    There are different ways to generalize cuckoo hashing algorithm in order to achieve negligible failure probability. For instance, one may allow at most $l>1$ balls to be allocated to each bucket, instead of allowing at most one. One may also add an overflow stash with size $s$ as an additional cache-like bucket \cite{KMW10}. We mostly use cuckoo hashing with $l=1$ and $s=0$ to construct PBC and DMPF, but will also point out how general cuckoo hashing may help with these constructions.
+\end{remark}
+
+Next we present the instantiation of PBC using cuckoo hashing. 
 
 %With the $t$ balls replicated and allocated to $m$ buckets, the cuckoo hashing algorithm essentially finds a perfect matching from $t$ balls to $m$ buckets, which coincides with the form of (probabilistic) CBC decoding. Therefore a PCBC follows directly from a cuckoo hashing scheme: 
 %\Yaxin{Dec 31: The following construction is mentioned in \cite{yeo_cuckoo_2023}. There are several points to note: 
@@ -143,24 +154,27 @@ Now we display the instantiation of PBC using cuckoo hashing.
 
 %(2) (Resolved) It should be mentioned that both the capacity of cuckoo-hashing bins (which is 1 here) and the number of lookup in each $C_i$ that PCBC is allowed (also 1 here) can be simultaneously generalized to any number $l$ along with different parameters and overheads, but the paper still applied only $l=1$ case to applications like batch PIR, and I haven't seen any efficient empirical parameters and results for $l>1$ setting. However it is plausible to use general $l$ along with $O(t/l)$ buckets, each expanded to a $\DMPF_l$ truth table. It may be mentioned as a future direction in the end. }
 
-\begin{construction}[PBC from cuckoo hashing\red{\cite{cryptoeprint:2017/1142}}]\label{con:PBC_from_cuckoo}
+\begin{construction}[PBC from cuckoo hashing\red{\cite{cryptoeprint:2017/1142,cryptoeprint:2021/580}}]\label{con:PBC_from_cuckoo}
   Given $w$-way cuckoo hashing as a sub-procedure allocating $t$ balls to $m$ buckets with failure probability $\epsilon$, an $(N,wN,t,m,1,\epsilon)$-$\PBC$ is as follows: 
   \begin{itemize}
-    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,\cdots,C_m)$: Use $r$ to determine $w$ independent random hash functions $h_1,h_2,\cdots h_w$ that maps from $[N]$ to $[m]$. For all $k\in[N]$, replicate $x[k]$ in the positions indicated by $\Position_r(k)$. Each output bucket $C_j$ will be $\{x[k]:h_i(k) = j$ for some $i\in [w]\}$, in ascending order of $k$. 
-    \item $\Decode_r(I, C_1,\cdots, C_m)\rightarrow \{x[i]\}_{i\in I}$: Determine $h_1,\cdots, h_w$ by $r$ as in $\Encode$. For each $k\in I$, recover $x[k]$ from the position indicated by $\Schedule_r(i)$. 
+    \item $\Encode_r(x\in\Sigma^N)\rightarrow (C_1,\cdots,C_m)$: For all $k\in[N]$, replicate $x[k]$ in the positions indicated by $\Position_r(k)$. %Each output bucket $C_j$ will be $\{x[k]:h_i(k) = j$ for some $i\in [w]\}$, in ascending order of $k$. 
+    \item $\Decode_r(I, C_1,\cdots, C_m)\rightarrow \{x[i]\}_{i\in I}$: For each $k\in I$, obtain $x[k]$ from the position indicated by $\Schedule_r(i)$. 
   \end{itemize}
   with the following sub-processes: 
   \begin{itemize}
-    \item $\Position_r(k\in[N])\rightarrow C_{h_1(k)}[j_1],\dots,C_{h_w(k)}[j_w]$: For $1\le l\le w$, $j_l$ is the order of $k$ in the set $\{k':\exists t\in[w], h_t(k') = h_l(k)\}$ of all indices mapped to bucket $C_{h_l(k)}$. 
-    \item $\Schedule_r$: For $I$ of size at most $t$, run the $w$-way cuckooo hashing algorithm to allocate the indices in $I$ to the $m$ buckets, such that each bucket contains at most one index in $I$. For $k\in I$, $\Schedule_r(k)$ outputs the position $C_i[j]$ such that $k$ is allocated to bucket $C_i$, and $j$ is the order of $k$ in bucket $C_i$ (i.e., $x[k]$ will be sent to $C_i[j]$ in the encoding process). 
+    \item $\Position_r(k\in[N])\rightarrow C_{h_1(k)}[j_1],\dots,C_{h_w(k)}[j_w]$: Interpret $r$ as a (pseudo-)random permutation $P:[w]\times [N]\rightarrow [m]\times [B]$ where $B = wN/m$, such that for each $l\in[w]$ and $k\in[N]$, $P(l,k) = (i,j)$ indicating the position $C_i[j]$. Then $\Position_r(k)$ outputs $\{C_i[j]: (i,j)\gets P(l,k)\}_{l\in w}$
+    \item $\Schedule_r$: Interpret $r$ as the (pseudo-)random permutation $P:(l,k)\mapsto (i,j)$ for $l\in[w]$ and $k\in[N]$. For $l\in[w]$, let $h_l:[N]\rightarrow [m]$ be $h_l(k) = i$ where $P(l,k) = (i,j)$. Then we have $w$ random hash functions $h_1,h_2,\cdots h_w$ that maps from $[N]$ to $[m]$.
+    For $I$ of size at most $t$, run the $w$-way cuckoo hashing algorithm to allocate the indices in $I$ to $m$ buckets, such that $k\in I$ is allocated to the bucket $h_{l_k}(k)$, and each bucket contains at most one index in $I$. In the end, for $k\in I$, $\Schedule_r(k)$ outputs the position $C_i[j]$ such that $P(l_k,k) = (i,j)$. 
   \end{itemize}
 \end{construction}
-Note that the incorrectness of the above PBC scheme is equal to the failure probability of $\Schedule_r$ on set $I$, which equals $\epsilon$. 
-
-Computing $\Position_r$ and $\Schedule_r$ requires computing the order of some index $k\in[N]$ in a bucket $C_j$ it is mapped to, which may be inefficient when $N$ is large. \cite{cryptoeprint:2021/580} address this issue by implementing $w$ hash functions by a single \emph{(pseudo-)random permutation} $P$ mapping from $[w]\times [N]$ to $[m]\times [B]$, where $B = wN/m$. Invocation of $h_i(j)$ is done by computing $P(i,j)$, which outputs the bucket number in $[m]$ and the index in $[B]$. Note that in this case $h_1,\dots,h_w$ are not independent random hash functions, but it is empirically verified that the cuckoo hashing algorithm still succeeds with sufficient probability. 
+\begin{remark}
+    By using the pseudorandom permutation $P:[w]\times [N]\rightarrow [m]\times [B]$, it is direct to obtain the positions in buckets where any $k\in[N]$ is encoded to, however the hash functions $h_1,\dots,h_w$ are not completely independent. Nevertheless, it is empirically verified in \cite{cryptoeprint:2021/580} that the cuckoo hashing algorithm still succeeds with sufficient probability. 
+    %Computing $\Position_r$ and $\Schedule_r$ requires computing the order of some index $k\in[N]$ in a bucket $C_j$ it is mapped to, which may be inefficient when $N$ is large. address this issue by implementing $w$ hash functions by a single \emph{(pseudo-)random permutation} $P$ mapping from $[w]\times [N]$ to $[m]\times [B]$, where $B = wN/m$. Invocation of $h_i(j)$ is done by computing $P(i,j)$, which outputs the bucket number in $[m]$ and the index in $[B]$. Note that in this case $h_1,\dots,h_w$ are not independent random hash functions, but it is empirically verified 
+\end{remark}
+The probability of the above PBC scheme being incorrect is equal to the failure probability of $\Schedule_r$ on set $I$, which equals the cuckoo hashing failure probability $\epsilon$. 
 
 \subsection{DMPF Construction from PBC}
-Next we display the construction of DMPF from black-box usage of DPF basing on PBC with appropriate parameters, which has been discussed in previous literature\red{\cite{cryptoeprint:2019/273,cryptoeprint:2019/1084,cryptoeprint:2021/580}}. 
+Next we present the construction of DMPF from black-box usage of DPF basing on PBC with appropriate parameters, which has been discussed in previous literature\red{\cite{cryptoeprint:2019/273,cryptoeprint:2019/1084,cryptoeprint:2021/580}}. 
 \begin{construction}[PBC-based DMPF]\label{con:DMPF_batch_code}
   Given $\DPF$ for any domain of size $\le N$ and output group $\GG$, and an $(N,M,t,m,1,\epsilon)$-$\PBC$ (which is systematic and combinatorial) with alphabet $\Sigma=\GG$, we can construct a $\DMPF$ for $t$-point functions with domain size $N$ and output group $\GG$ as follows: 
   \begin{itemize}
@@ -241,3 +255,111 @@ Denote $m=et$ where $e>1$ is an expansion parameter (the inverse of rate) indica
 To guarantee the success of $\Encode$, the random band matrix must be full-rank with overwhelming probability. According to \cite{cryptoeprint:2023/903}, fixing $e>1$ and taking $w = O(\lambda_\stat/(e-1)+\log t)$ ensures the correctness and obliviousness with probability $2^{-\lambda_\stat}$ and $2^{-w}$, respectively. The empirical results take $e=1.03,1.05,1.07,1.1$ while $w$ being several hundred to reach the security $\lambda_\stat=40$, with the choice of $t$ varying from $2^{10}$ to $2^{20}$. We will apply this OKVS on a different range of $t$, such that $t$ can be as small as 1 or 2, which differs with the original application scenarios in \cite{cryptoeprint:2023/903}. However, since the set of parameters that ensures the successful encoding of $t'$ key-value pairs will also ensure the successful encoding of $t<t'$ key-value pairs, this issue can be natually resolved. %by using the same parameters for small set of key-value pairs as for larger set of key-value pairs.  
 
 In our later sections, we refer to the RB-OKVS (\cref{con:OKVS_ribbon}) by default when instantiating OKVS. One may switch to other OKVS constructions such as ones in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}, depending on different needs in practice. 
+
+\subsection{Pseudorandom Correlation Generator}
+In this section we introduce pseudorandom correlation generator (PCG) as well as the protocol of PCG for OLE correlation from Ring-$\LPN$ assumption proposed in \cite{cryptoeprint:2022/1035}. The PCG protocol utilizes DPF to secret share the coefficients of a sparse polynomial (who has a small number of nonzero coefficients), which can alternatively be done by DMPF. 
+
+A pseudorandom correlation generator (PCG, \cite{cryptoeprint:2019/273,cryptoeprint:2019/448}) is a primitive that generates and distributes a pair of short seeds, which can then be locally expanded to produce correlated pseudorandomness. The security of PCG is defined using the notions of correlation generators, and reverse-sampleable correlation generators, from \cite{cryptoeprint:2019/448}. 
+
+\begin{definition}[Correlation generator]\label{def:correlation_generator}A p.p.t. algorithm $\cC$ is called a \emph{correlation generator}, if $\cC$ on input $1^\lambda$ outputs a pair of elements in $\{0, 1\}^n \times \{0, 1\}^n$ for $n \in \poly(\lambda)$. 
+\end{definition} 
+
+\begin{definition}[Reverse-sampleable correlation generator]\label{def:reverse-sampleable_correlation_generator)}
+    Let $\cC$ be a correlation generator. We say $\cC$ is \emph{reverse sampleable} if there exists a p.p.t. algorithm $\sf RSample$ such that for $\sigma \in \{0, 1\}$ the correlation obtained via: \[
+    \{(R'_0, R'_1) :(R_0, R_1)\gets \cC(1^\lambda), R'_\sigma := R_\sigma, R'_{1-\sigma}\gets {\sf RSample}(\sigma, R_\sigma)\}
+    \]
+    is computationally indistinguishable from $\cC(1^\lambda)$.
+\end{definition}
+ The following definition of pseudorandom correlation generators can be viewed as a generalization of the definition of the pseudorandom VOLE generator in [BCGI18]. 
+ \begin{definition}[Pseudorandom Correlation Generator (PCG)]
+     Let $\cC$ be a reverse-sampleable correlation generator. A pseudorandom correlation generator (PCG) for $\cC$ is a pair of algorithms $(\PCG.\Gen, $\linebreak$\PCG.\Expand)$ with the following syntax: 
+     \begin{itemize}
+         \item $\PCG.\Gen(1^\lambda)$ is a p.p.t. algorithm that given a security parameter $\lambda$, outputs a pair of seeds $(k_0,k_1)$.
+         \item $\PCG.\Expand(\sigma, k_\sigma)$ is a polynomial-time algorithm that given a party index $\sigma\in\{0,1\}$ and a seed $k_\sigma$, outputs a bit string $R_\sigma\in\{0,1\}^n$.
+     \end{itemize} 
+     The algorithms $(\PCG.\Gen, \PCG.\Expand)$ should satisfy the following:
+     \begin{itemize}
+         \item \textbf{Correctness: }The correlation obtained via: \[
+         \begin{split}
+             \{(R_0, R_1):\,(k_0, k_1) &\gets \PCG.\Gen(1^\lambda), \\R_\sigma&\gets \PCG.\Expand(\sigma, k_\sigma) \text{ for } \sigma\in\{0,1\}\}
+         \end{split}\] is computationally indistinguishable from $C(1^\lambda)$.
+         \item \textbf{Security: }For any $\sigma\in\{0,1\}$, the following two distributions are computationally indistinguishable:
+         \[\{(k_{1-\sigma}, R_\sigma): (k_0, k_1) \gets \PCG.\Gen(1^\lambda),R_\sigma\gets \PCG.\Expand(\sigma, k_\sigma)\}\]
+         and
+         \[
+         \begin{split}
+            \{(k_{1-\sigma}, R_\sigma): (k_0, k_1)&\gets \PCG.\Gen(1^\lambda),\\R_{1-\sigma}&\gets \PCG.\Expand(\sigma, k_{1-\sigma}),\\R_\sigma&\gets{\sf RSample}(\sigma, R_{1-\sigma})\}
+         \end{split}
+         \]
+         where $\sf RSample$ is the reverse sampling algorithm for correlation $\cC$.
+     \end{itemize}
+ \end{definition} 
+To avoid the trivial solution where $\PCG.\Gen$ simply outputs a sample from $\cC$, we are only interested in constructions where the seed size is significantly shorter than the output size.
+
+\subsubsection{PCG for OLE correlation from Ring-$\LPN$ assumption \cite{cryptoeprint:2022/1035}}
+Next we introduce the construction of PCG for the OLE relation basing on Ring-$\LPN$ assumption, proposed in \cite{cryptoeprint:2022/1035}. The OLE relation over any ring $R$ is the following: 
+\[
+\{\left((x_0, z_0),(x_1,z_1)\right): x_0,x_1,z_0\gets R, z_1 = x_0\cdot x_1 - z_0\}
+\]
+
+The hardness assumption made use of is a variant of Ring-$\LPN$ assumption, called module-$\LPN$: 
+\begin{definition}[Module-$\LPN$]\label{def:module-LPN}
+    Let $c\ge 2$ be an integer, $R = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg-$N$ polynomial $F(X)\in \ZZ_p[X]$, and $\mathcal{HW}_{R,t}$ be the uniform distribution over `weight-$t$' polynomials (who has $t$ nonzero coefficients) in $R$ whose degree is less than $N$ and has at most $t$ nonzero coefficients. 
+     For $R=R(\lambda)$, $t=t(\lambda)$ and $m=m(\lambda)$, we say that the module-$\LPN$ problem $R^c$-$\LPN$ is hard if for every nonuniform polynomial-time probabilistic distinguisher $\cA$, it holds that 
+    \begin{align*}
+        |&\Pr[\cA(\{\vec{a}^{(i)}, \ipd{\vec{a}^{(i)}}{\vec{s}}+\vec{e}^{(i)}\}_{i\in [m]})] \\
+        -&\Pr[\cA(\{\vec{a}^{(i)},\vec{u}^{(i)}\}_{i\in [m]})]| \le \mathsf{negl}(\lambda)
+    \end{align*}
+    where the probabilities are taken over the randomness of $\cA$, random samples $\vec{a}^{(1)},\cdots, \vec{a}^{(m)}\leftarrow R^{c-1}$, $\vec{u}^{(1)},\cdots, \vec{u}^{(m)}\leftarrow R$, $\vec{s}\leftarrow \cHW_{R,t}^{c-1}$, and $\vec{e}^{(1)},\cdots, \vec{e}^{(m)}\leftarrow \cHW_{R,t}$. 
+
+    When we only consider $m=1$, each $R^c$-$\LPN$ instance $ \ipd{\vec{a}}{\vec{s}}+\vec{e}$ can be restated as $\ipd{\vec{a'}}{\vec{e'}}$ where $\vec{a'}=1||\vec{a}$ and $\vec{e'}\leftarrow \cHW_{R,t}^c$. 
+\end{definition}
+
+For a polynomial ring $R = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg-$N$ polynomial $F(X)\in \ZZ_p[X]$, the PCG protocol in \cite{cryptoeprint:2022/1035} generates and expands seeds for the OLE correlation $(x_0,z_1),(x_0,z_1)$ over $R$ in the following way: 
+\begin{itemize}
+    \item Fix public random inputs $\vec{a} = (1, a_1,a_2,\dots,a_{c-1})$ where $a_1,\dots,a_{c-1}$ are random polynomials from $R$. 
+    \item $\Gen(1^\lambda)\rightarrow (k_0,k_1)$: For $\sigma = 0,1$, sample $\vec{e_\sigma}\gets \cHW^c_{R,t}$. Then $\vec{e_0}\otimes \vec{e_1}$ is a vector of $c^2$ entries, each of which is a weight-$t^2$ deg-$(2N-2)$ polynomial who is the multiplication of two weight-$t$ deg-$(N-1)$ polynomials. Invoke $\DMPF.\Gen$ to get the secret sharing keys $k_0^{i},k_1^i$ for the $i$th entry ($1\le i\le c^2)$ that shares the $t^2$ nonzero coefficients among $2N$ coefficients. For $\sigma = 0,1$, set $k_\sigma$ to be the description of $\vec{e_\sigma}$ and the set of $\DMPF$ keys $(k_\sigma^i)_{i\in[c^2]}$. 
+    \item $\Expand(\sigma, k_\sigma)$: Obtain $\vec{e_\sigma}$ and $(k_\sigma^i)_{i\in[c^2]}$ from $k_\sigma$. Compute a length-$c^2$ vector $\vec{u_\sigma}$, where the $i$th entry is a deg-$(2N-2)$ polynomial whose coefficients are from $\DMPF.\FullEval(\sigma, k_\sigma^i)$. Set $x_\sigma = \ipd{\vec{a}}{\vec{e_\sigma}}$, and $z_\sigma = \ipd{\vec{a}\otimes\vec{a}}{\vec{u_\sigma}}$. 
+\end{itemize}
+Note that since $\ipd{\vec{a}}{ \vec{e_0}}\cdot \ipd{\vec{a}}{\vec{e_1}} = \ipd{\vec{a}\otimes \vec{a}}{\vec{e_0}\otimes \vec{e_1}} = \ipd{\vec{a}\otimes\vec{a}}{\vec{u_0}} + \ipd{\vec{a}\otimes\vec{a}}{\vec{u_1}}$, the pairs $(x_0,z_0)$ and $(x_1,z_1)$ computed by $\Expand$ satisfy OLE correlation over $R$. 
+
+\begin{remark}[From OLE over $R$ to OLE over $\ZZ_p$]\label{rem:use_reducible_ring}
+    One can convert an OLE correlation over ring $R$ to \textbf{$N$ OLE correlations over $\ZZ_p$} if the polynomial $F(X)$ splits into $N$ distinct linear factors modulo $p$\cite{cryptoeprint:2022/1035}. The security analysis also applies to this choice of $F$.  
+\end{remark}
+
+One can compute the seed size and expanding time of this PCG protocol as follows: 
+\begin{itemize}
+    \item The seed size is $ct(\log N+\log p)$ bits for specifying $\vec{e_b}$ plus the $c^2\times $keysize of $\DMPF$. 
+    \item The expanding time is $c^2$ multiplications in the deg-$2N$ polynomial ring plus $c^2\times$full-domain evaluation time of $\DMPF$. 
+\end{itemize}
+
+For the sake of computational efficiency, in the sequel we will consider $F$ being a cyclotomic polynomial $F(X) = X^N+1$ where $N$ is a power of two. In this case each entry of $\vec{e_0}\otimes \vec{e_1}$ can be reduced to a deg-$(N-1)$ polynomial with weight at most $t^2$, and can be shared using $\DMPF$ with domain size $N$. 
+
+ \paragraph{Using the regular noise distribution to split the $\DMPF$ domain}
+A previous optimization in \cite{cryptoeprint:2022/1035}, aiming to share the entries of $\vec{e_0}\otimes \vec{e_1}$ more efficiently through $\DPF$, is to substitute $\cHW_{R,t}$ with the distribution of random regular weight-$t$ deg-$(N-1)$ polynomials denoted as $\cRHW_{R,t}$. Each regular weight-$t$ polynomial $e$ contains exactly one nonzero coefficient $e_j$ in the range of degree $[j\cdot N/t, (j+1)\cdot N/t-1]$ for $j=0,\cdots t-1$. When multiplying two regular weight-$t$ polynomials $e$ and $f$, $e_i\cdot f_j$ contributes to a coefficient in the range of degree $[(i+j)\cdot N/t, (i+j+2)\cdot N/t-2]$. When $F(X) = X^N+1$ is cyclotomic, for $i+j\ge t$ this range is reduced to the range of degree $[(i+j-t)N/t, (i+j+2-t)N/t-2]$. Therefore the deg-$(2N-2)$ polynomial $e\cdot f$ can be shared by invoking $t$ $\DMPF$'s corresponding to the ranges of degree $\{[k\cdot N/t, (k+2)\cdot N/t-2]\}_{0\le k<t}$ in $e\cdot f$, such that each $\DMPF$ has $t$ accepting inputs, domain size $N$ and output group $\ZZ_p$. In \cite{cryptoeprint:2022/1035}, these $\DMPF$'s are realized by summing up $t$ DPF's. In \Cref{sec:applications} we'll discuss how realizing $\DMPF$ in different ways can accelerate the PCG seed expansion. 
+
+%Then each $\DMPF^{(k)}$ in the set $\{\DMPF^{(k)}\}_{1\le k\le 2t-1}$ can be instantiated by one of the mentioned schemes: sum of $\DPF$s (used in \cite{cryptoeprint:2022/1035}), CBC-based, big-state, or $\OKVS$-based $\DMPF$. We note that the efficiency (in terms of $\FullEval$ time) of all these instantiations are more or less related to the number of nonzero inputs in the targeted $\DMPF$, therefore using $\cRHW_{R,t}$ instead to $\cHW_{R,t}$ reduces the number of nonzero inputs from $t^2$ to at most $t$ may be beneficial in some occasions.
+
+%An alternative way to split $\DMPF_{t^2, 2N, \ZZ_p}$, basing on the previous observation, is to share the coefficients of $e\cdot f$ by invoking $\{\DMPF'^{(k)} = \DMPF_{2\min(k+1, 2t-k)-1, N/t, \ZZ_p}\}_{0\le k\le 2t-1}$, where $\DMPF'^{(k)}$'s domain corresponds to the coefficients in the range of degree $[kN/t, (k+1)N/t -1]$. Since the number of nonzero coefficients in $[kN/t, (k+1)N/t -1]$ is upperbounded by the sum of number of nonzero coefficients in $[(k-1)N/t, (k+1)N/t -2]$ and in $[kN/t, (k+2)N/t -2]$, $\DMPF'^{(k)}$ has at most $2\min(k+1, 2t-k)-1$ nonzero inputs. The advantage of using $\{\DMPF'^{(k)}\}_{0\le k\le 2t-1}$ is that the previous concatenation through $\{\DMPF^{(k)}\}_{1\le k\le 2t-1}$ creates overlapping ranges, which doubles the number of PRG invocations when realizing by CBC-based, big-state, and $\OKVS$-based $\DMPF$. By using $\{\DMPF'^{(k)}\}_{0\le k\le 2t-1}$, the ranges are not overlapping and therefore maintains the minimal PRG invocations, while also preserving a relatively small number of nonzero inputs (at most $2t-1$) in each $\DMPF'^{(k)}$. 
+
+%Previously, \cite{cryptoeprint:2022/1035} uses sum of DPFs to instantiate $\{\DMPF^{(k)}\}_{1\le k\le 2t-1}$ in the first optimized design with regular noise distribution. It indicates using batch code to achieve DMPF as another optimization but not in the clear. We'll analyze the cost of this PCG protocol under the following settings:
+%\begin{itemize}
+   % \item[(1)]with noise distribution $\cHW_{R,t}$ and each multiplication of sparse polynomials is shared by $\DMPF_{t^2, 2N, \mathbb{Z}_p}$
+    %\item[(2)]ith noise distribution $\cRHW_{R,t}$ and each multiplication of regular sparse polynomials is shared by $$\{\DMPF^{(k)} = \DMPF_{\min(k,2t-k), 2N/t, \ZZ_p}\}_{1\le k\le 2t-1}$$
+    %\item[(3)]ith noise distribution $\cRHW_{R,t}$ and each multiplication of sparse polynomials is shared by $$\{\DMPF'^{(k)} = \DMPF_{2\min(k+1, 2t-k)-1, N/t, \ZZ_p}\}_{0\le k\le 2t-1}$$
+%\end{itemize}
+%\Yaxin{Dec 27: It is also mentioned using more advanced noise distributions to avoid overlapping ranges. For now it remains to give the concrete costs for (1) $\DMPF_{t^2, 2N, \mathbb{Z}_p}$; (2)$\DMPF_{1/2/\dots/t, 2N/t, \ZZ_p}$; (3)$\DMPF_{1/2/\dots/(2t-1), N/t, \ZZ_p}$ under sum of DPFs/CBC-based/big-state/OKVS-based instantiations. }
+
+
+\paragraph{Security analysis}The tuple of parameters $(N,c,t)$ are set such that the corresponding $R^c$-$\LPN$ problem is secure with computational security parameter $\lambda$, i.e., any attack should have cost $O(2^\lambda)$. Note that to gain computational efficiency, $F(X) = X^N+1$ is set to be a cyclotomic polynomial with $N$ being a power of two, and the noise distribution is set to be $\cRHW_{R,t}$ that is regular. \cite{cryptoeprint:2022/1035} analyzed generic attacks for the $\LPN$ problem as well as attacks just for the ring-$\LPN$ problem, which can both take advantage of the cyclotomic $F$ and the regular noise, and then estimated the lowerbound of number of algebraic field operations used in the best attacks (SD or ISD family) to be $2^i\cdot c^{w_i}$, where \[
+w_i=ct-2^ic+((2^i-1)c+ct)\cdot \left(1-2^{-i}\right)^{t-1}
+\] is the expected number of total noisy coordinates after taking modulo of the $2^i$th cyclotomic polynomial, and
+\[
+i:={\arg\min}_{1\le i\le \log N}\left\{i:w_i<2^i\right\}
+\]
+One can then determine $(N,c,t)$ by following the restriction $2^ic^{w_i} \ge 2^\lambda$. In our application we adjust the lowerbound $2^i c^{w_i}$ to $2^{2.8i}c^{w_i}$ by a tighter estimation in \cite{cryptoeprint:2022/712}, and determine $(N,c,t)$ by the restriction $2^{2.8i}c^{w_i}\ge 2^\lambda$. 
+\Yaxin{In \cite{cryptoeprint:2022/1035} the parameters are taken to be $(\lambda, N, c, t) \in\{ (128, 2^{20}, 8, 5), (128, 2^{20}, 4, 16), (128, 2^{20}, 2, 76)\}$. Using the new lowerbound the setting of parameters becomes $(\lambda, N, c, t) \in\{ (128, 2^{20}, 8, 5), (128, 2^{20}, 4, 14), (128, 2^{20}, 2, 70)\}$. In fact, $N$ is independent to other parameters because the attack only works with the ring $R_i = \ZZ_p[X]/f_i[X]$ where $f_i$ is a factor of $F$. }
+
+%The three parameters are comparable in efficiency in \cite{cryptoeprint:2022/1035} because they used the second $\DMPF$ instantiation (concatenation of DPFs under $\cRHW_t$ distribution) whose cost scales with $c^2t$. By using the new $\DMPF$ instantiations we may see significant difference among the three tuples of parameters. 
+
+%An $R^c$-$\LPN$ instance $a\cdot e$ can be viewed as a (dual-)$\LPN_{cN,N,\cHW_{N,t}^{\otimes c}}$ instance $\{H, H\cdot \vec{e}\}$, where $H\in\ZZ_p^{N\times cN}$ is a concatenation of $c$ circular matrices representing multiplication with ${a}$, and $\vec{e}\in \ZZ_p^{cN}$ with distribution $\cHW_{N,t}^{\otimes c}$ represents the concatenation of coefficients of $e$. The bit security of the $R^c$-$\LPN$ problem is equivalent to the bit security of the described (dual-)$\LPN$ problem. As in \cite{cryptoeprint:2022/1035}, we consider the bit security of the described (dual-)$\LPN$ problem to be the same as the bit security of the standard (dual-)$\LPN$ problem, whose error distribution is $\cHW_{cN, ct}$, the random weight-$ct$ noises. 
