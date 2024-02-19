@@ -1,0 +1,77 @@
+To give a rough impression, we list the number of accepting points $t$, the domain size $N$ and the output group $\GG$ of DMPF usually used in generating the PCG or unbalanced PSI protocol in \cref{tab:app_parameters}. 
+
+\begin{table*}
+  \caption{Parameters of DMPF in concrete applications. }
+  \label{tab:app_parameters}
+	\begin{tabular}{ccc}
+    \toprule
+		Concrete application &\makecell{Cost in terms of DMPF\\per correlation/execution}& Typical DMPF parameters \\
+    \midrule
+		PCG for OLE from Ring-LPN &\makecell{seedsize $\propto$ DMPF.$keysize$\\expand time $\propto$ DMPF.$FullEval()$} & \makecell{Number of accepting points: $5^2, 16^2, 76^2$\\Domain size: $2^{20}$\\Output group: $\ZZ_p$ where $\log p =128$}  \\
+    \cline{1-3}
+		PSI-WCA & \makecell{communication $\propto$ DMPF.$keysize$\\client computation $\propto$ DMPF.$Gen()$\\server computation $\propto$ DMPF.$Eval()$} & \makecell{Number of accepting points: any\\Domain size: $2^{128}$\\Output group: any}\\
+    \bottomrule
+	\end{tabular}
+\end{table*}
+
+\iffalse
+\paragraph{Amortized expanding time for each OLE correlation over $\ZZ_p$}The amortized expanding time for each OLE correlation over $\ZZ_p$ is computed by 
+\[
+  T_\text{Amortized} = c^2\cdot(2\bar{T}^\MULT_{N} + \bar{T}^\FullEval_{t,N})
+\]
+where 
+\[
+  \bar{T}^\MULT_{N} := \frac{\text{deg}<N\text{ polynomial multiplication}}{N}
+\]
+is the amortized cost for computing one deg$<N$ polynomial multiplication, and 
+\[
+  \bar{T}^\FullEval_{t,N}:=\frac{\DMPF_{t^2, 2N, \ZZ_p}.\FullEval}{N}
+\]
+is the amortized cost for computing a share of an entry of $\vec{e_0}\otimes\vec{e_1}$. This cost differs under different $\DMPF_{t^2, 2N, \ZZ_p}$ instantiations: \Yaxin{$T_{G_{\sf conv}}$ is ignored for now. }
+\begin{itemize}
+  \item Sum of $\DPF$s: $2t^2\times T_G$.
+  %\item Sum of DPFs ($\cRHW_t$): $2t\times T_G$.
+  \item CBC-based $\DMPF$ ($\cHW_t$): $2w\times T_G$ + $2w\times T_{\rm hash}$\footnote{The hash function's domain and range are related to $t$. }.
+  \item Big-state $\DMPF$: $2T_{G^*}$, where $G^*$ maps $\lambda$-bit to $(2\lambda+2t)$-bit. 
+  \item $\OKVS$-based $\DMPF$: $2\left(T_G + \OKVS.\Decode\right)$\footnote{The $\OKVS$ scheme encodes at most $t$ key-value pairs. $\OKVS.\Decode$ usually takes a small number of field addition or field multiplication in $\FF_{2^\lambda}$, depending on the implementation. }.
+\end{itemize}
+
+
+
+
+We'll instantiate $\DMPF$ in different ways as listed in \cref{tab:formulas_DMPF_comparison}. The costs of PCG protocols under different settings are listed in \cref{tab:PCG_plug_in_formula}. 
+\begin{table*}
+    \renewcommand\arraystretch{1.5}
+    \begin{threeparttable}
+    \caption{Seed size and expanding time of PCG protocols for the same $(\lambda,N, c, t)$ with different choices of noise distributions in module-LPN assumption, and with different DMPF instantiations. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The seed size is represented by total DMPF share size and the expanding time is represented by total $\DMPF.\FullEval$ time. The PRG evaluations in the first $\log (2N)$ layers and in the convert layer are both regarded as the same PRG. $e = m/t$ in the second row represents the expansion parameter for PBC where $m$ is the number of buckets, and $e'$ in the last row represents the expansion parameter (the inverse of rate) for OKVS. }
+	\label{tab:PCG_plug_in_formula}
+		\begin{tabular}{cccc}
+            \toprule
+			$\DMPF$ instantiation & Noise type & Total share size & Total $\FullEval$ time \textcolor{red}{(only listed PRG and $\OKVS$)} \\
+            \midrule
+
+            \multirow{2}{*}{Sum of DPFs} & regular & $c^2t^2\lambda\log(2N/t)+c^2t^2\log p$ & $4c^2tN\times$PRG \\
+            %\cline{2-4}
+             & nonregular & $c^2t^2\lambda\log(2N)+c^2t^2\log p$ & $4c^2t^2N\times$PRG\\
+             \cline{1-4}
+            \multirow{2}{*}{Batch-code DMPF} & regular & $ec^2t^2\lambda\log(\frac{wN}{et})+ec^2t^2\log p$ & $8c^2wN\times$PRG \\
+            %\cline{2-4}
+            & nonregular & $ec^2t^2\lambda\log(\frac{2wN}{et^2})+ec^2t^2\log p$ & $4c^2wN\times$PRG\\
+            \cline{1-4}
+
+            \multirow{2}{*}{Big-state DMPF} & regular & $c^2t^2(\lambda+\frac{4}{3}t)\log (2N)+c^2t^2\log p$ & $8c^2N\times$PRG$^*$\tnote{1} \\
+            %\cline{2-4}
+            & nonregular & $c^2t^2(\lambda+2t)\log (2N)+c^2t^2\log p$ & $4c^2N\times$PRG$^*$ \\
+            \cline{1-4}
+
+            \multirow{2}{*}{OKVS-based DMPF} & regular & $e'c^2t^2\lambda\log(2N/t)+e'c^2t^2\log p$ & $8c^2N\times$PRG+$8c^2N\times\OKVS.\Decode$  \\
+            %\cline{2-4}
+            & nonregular & $e'c^2t^2\lambda\log(2N)+e'c^2t^2\log p$ & $4c^2N\times$PRG+$4c^2N\times\OKVS.\Decode$\\
+            \bottomrule
+		\end{tabular}
+    \begin{tablenotes}
+      \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2t^2}$ whose computation time should grow with $t^2$. 
+    \end{tablenotes}
+  \end{threeparttable}
+\end{table*}
+ \fi

@@ -18,7 +18,7 @@
       \State For $0\le i\le n-1$ and $b=0,1$, initialize empty lists $\seed_b^{(i)}$, $\sign_b^{(i)}$ and $V^{(i)}$. 
       \State ${\sf Initialize}(\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1})$. 
       \For{$i=1$ to $n$}
-      \For{$k=1$ to $|A^{(i-1)}$}
+      \For{$k=1$ to $|A^{(i-1)}|$}
         \State For $c=0,1$, compute $\Delta\seed^c = G_\seed^c(\seed_0^{(i-1)}[k])\oplus G_\seed^c(\seed_1^{(i-1)}[k])$ and $\Delta\sign^c = G_\sign^c(\seed_0^{(i-1)}[k])\oplus G_\sign^c(\seed_1^{(i-1)}[k])$. 
         \If{$A^{(i-1)}[k]\|0\in A^{(i)}$ and $A^{(i-1)}[k]\|1\in A^{(i)}$}
             \State Randomly sample $r\gets \{0,1\}^\lambda$ and append $r\|\Delta\sign^0\|\Delta\sign^1$ to $V^{(i-1)}$. \label{alg:template_append_V_case1}

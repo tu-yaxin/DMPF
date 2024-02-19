@@ -2,7 +2,7 @@
 In this section we show that the big-state and OKVS-based DMPF schemes are computationally secure. We prove by first showing that the DMPF template is computationally secure when the methods $\sf  GenCW$ and $\sf GenConvCW$ satisfy some security requirements called hiding, and then arguing that the realizations of methods in both the big-state DMPF and the OKVS-based DMPF satisfy hiding. 
 
 \subsection{The DMPF template is secure under special conditions}\label{sec:template_security_proof}
-We first define the security notion called hiding for $\Gen\CW$ and $\Gen\Conv\CW$, and show that the DMPF template in \Cref{fig:DMPF_template} is secure when $\Gen\CW$ and $\Gen\Conv\CW$ are hiding. For simplicity, assume we're working with multi-point functions with exactly $t$ accepting inputs. If there are less than $t$ accepting inputs, simply pad arbitrary distinct inputs to $A$ and pad $B$ with $0$. Denote a the list obtained by applying a function $f$ to a list $L$ of strings in the domain of $f$ as $f(L) = (f(x))_{x\in L}$. 
+We first define the security notion called hiding for $\Gen\CW$ and $\Gen\Conv\CW$, and show that the DMPF template in \Cref{fig:DMPF_template} is secure when $\Gen\CW$ and $\Gen\Conv\CW$ are hiding. For simplicity, assume we're working with multi-point functions with exactly $t$ accepting inputs. If there are less than $t$ accepting inputs, simply pad arbitrary distinct inputs to $A$ and pad $B$ with $0$. 
 
 We say that a realization of $\Gen\CW$ is hiding if it gives no information about the multi-point function $f_{A,B}$. It is defined using an indistinguishability-based definition as follows: 
 \begin{definition}[Computationally hiding of $\Gen\CW$]\label{def:GenCW_hiding}
