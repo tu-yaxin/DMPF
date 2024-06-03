@@ -1,0 +1,25 @@
+\begin{table*}
+  \renewcommand\arraystretch{1.5}
+  \begin{threeparttable}
+  \caption{Communication cost, client and server computation time of the PSI-WCA protocol for domain size $N = 2^{128}$, weight group $\GG$, and  different choices of client's set size $|Y|$. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The PRG evaluations in the first $\log N$ layers and in the convert layer are both regarded as the same PRG. $e$ in the second row represents the expansion parameter for PBC, and $e'$ in the last row represents the expansion parameter for OKVS. }
+\label{tab:PSI_plug_in_formula}
+  \begin{tabular}{cccc}
+          \toprule
+    $\DMPF$ instantiation & Communication cost & Client computation time & Server computation time \\
+          \midrule
+
+          Sum of DPFs & $|Y|\lambda\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG & $|X|\cdot |Y|\log N\times $PRG\\
+
+          Batch-code DMPF & $e|Y|\lambda\log(\frac{wN}{e|Y|})+e|Y|\log|\GG|$ & $2e|Y|\log(\frac{wN}{e|Y|})\times$PRG & $w|X|\log(\frac{wN}{e|Y|})\times$PRG\\
+
+          Big-state DMPF & $|Y|(\lambda+2|Y|)\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG$^*$\tnote{1} & $|X|\log N \times$PRG$^*$\\
+
+          OKVS-based DMPF& $e'|Y|\lambda\log N +e'|Y|\log|\GG|$ & $2|Y|\log N\times$PRG+$\log N\times \OKVS.\Encode$ & $|X|(\log N\times$PRG+$\log N\times \OKVS.\Decode)$\\
+          \bottomrule
+  \end{tabular}
+  \begin{tablenotes}
+    \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2|Y|}$ whose computation time should grow with $|Y|$.
+  \end{tablenotes}
+\end{threeparttable}
+\end{table*}
+%\subsection{Heavy-hitters}private heavy-hitter or parallel ORAM?

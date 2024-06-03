@@ -1,0 +1,25 @@
+
+   \begin{figure}
+      \caption{The ideal functionality $\mathcal{F}_\CW$ in $\Pi_{\sf big\hyp state\hyp DKG}.$}
+    \label{fig:CW}
+    \fbox{\parbox{\linewidth}{
+    \begin{algorithmic}[1]
+    \State Party $b$ has input a number $i\in[n]$, a share $\llbracket A\rrbracket_b$ of the accepting points, and a share $\llbracket L\rrbracket_b$ of a length-$t$ list $L$ of $(2\lambda+2t)$-bit strings. The functionality interacts with a party $b$ and an adversary $\Adv$.
+    \item[]
+      \State $\mathcal{F}_\CW$:
+      \Indent
+      \State Get $i$, $\llbracket A\rrbracket_b, \llbracket L\rrbracket_b$ from party $b$ and $\llbracket A\rrbracket_{\bar b}, \llbracket L\rrbracket_{\bar b}$ from $\Adv$. 
+      \State Reconstruct $A = \llbracket A\rrbracket_0+\llbracket A\rrbracket_1$ and $L = \llbracket L\rrbracket_0\oplus \llbracket L\rrbracket_1$. 
+      \State Initialize an empty list $V^{(i-1)}$
+      \For{$k=1$ to $|A^{(i-1)}|$}
+        \State Parse $L[k] = \Delta\seed^0\|\Delta\sign^0\|\Delta\seed^1\|\Delta\sign^1$ where $|\seed^0| = |\seed^1| = \lambda$ and $|\sign^0| = |\sign^1| = t$. 
+        \State Append entries to $V^{(i-1)}$ as is done in line~13 to line~17 in~\Cref{fig:DMPF_template}.
+      \EndFor
+      \State Invoke $\CW\gets \Gen\CW(i,A,V^{(i-1)})$ in~\Cref{fig:DMPF_big-state}.
+      \State Output $\CW$ to both party $b$ and $\Adv$. 
+      \EndIndent
+    \end{algorithmic}}}
+  \end{figure}
+
+ 
+    

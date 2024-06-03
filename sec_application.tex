@@ -1,121 +1,30 @@
 \section{Applications}\label{sec:applications}
-In this section we evaluate different DMPF schemes in concrete application scenarios: pseudorandom correlation generator (PCG) and unbalanced private set intersection protocol (unbalanced PSI). For convenience of discussion, we use $\DMPF_{t, N, \GG}$ to denote a DMPF scheme for $t$-point functions with domain $[N]$ and output group $\GG$. 
+In this section, we outline important applications of DMPF. In particular, we will describe prior works using different operations of DMPF to construct pseudorandom correlation generator (PCG) and unbalanced private set intersection with weighted weighted cardinality (PSI-WCA). 
+For convenience of discussion, we use $\DMPF_{t, N, \GG}$ to denote a DMPF scheme for $t$-point functions with domain $[N]$ and output group $\GG$, which can be instantiated by all of the DMPF constructions we mentioned earlier. 
 
-\subsection{PCG for OLE from Ring-$\LPN$}
-The protocol in \cite{cryptoeprint:2022/1035} for PCG for OLE correlation basing on Ring-$\LPN$ assumption uses DMPF schemes to succinctly share sparse vectors which are interpreted as coefficients of low-weight polynomials. We focus on the following setting of this protocol, mentioned in \Cref{sec:PCG_OLE_protocol}, which achieves good computational efficiency and security simultaneously: 
-\begin{enumerate}
-    \item The hardness assumption is $R^c$-$\LPN$ assumption where $R = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg-$N$ polynomial $F(X)\in\ZZ_p[X]$, while the noise distribution is the regular weight-$t$ distribution $\cRHW_{R,t}$. 
-    \item The polynomial ring $R = \ZZ_p[X]/F(X)$ where $F(X) = X^N+1$ is cyclotomic with $N$ being a power of two. 
-    \item The underlying field's order $p$ is prime such that that $F(X)$ splits completely into linear factors modulo $p$, in order to convert an OLE correlations over $R$ to $N$ OLE correlations over $\ZZ_p$. 
-\end{enumerate}
-\begin{remark}
-    In fact, using either the big-state DMPF, the PBC-based DMPF, or the OKVS-based DMPF schemes to share the low-weight polynomials does not need the restriction of the noise distribution to be regular. \red{However our experiments show that restricting to the regular noise distribution still leads to faster $\Expand$ time, so we reserve this setting. }\Yaxin{Tentatively. Double check with final implementation. }
-\end{remark}
+\paragraph{PCG for OLE from QA-SD.}
 
-Leveraging the regular noise distribution and the cyclotomic polynomial $F$, the secret sharing task for generating one OLE correlation can be achieved using $c^2t\times \DMPF_{t,2N/t, \ZZ_p}$. Then the seed size, $\Gen$ time and $\Expand$ time of this PCG protocol are: 
+Prior works \cite{cryptoeprint:2022/1035,foleage} introduce and construct a pseudorandom correlation generator (PCG) for OLE correlations over various fields from $\LPN$-like hardness assumptions, using DMPF as a primitive. A PCG for OLE  consists of $(\PCG.\Gen, \PCG.\Expand)$ where $\PCG.\Gen$ generates a pair of short seeds and $\PCG.\Expand$ expands both seeds to a pair of strings satisfying the OLE correlation. 
+
+We focus on the construction of \cite{foleage} which constructs PCG for $N$ random OLE correlations over $\mathbb{F}_4$ under the Quasi-Abelian Syndrome Decoding (QA-SD) assumption, parameterized by the total degree $N$, an LPN-like compression factor $c$ and a weight parameter $t$ such that $c\cdot t\approx O(\lambda)$. The ${\sf PCG.Gen}$ algorithm is comprised of $c^2 t\times \DMPF_{t, N/t, \FF_4}.\Gen$ and some additional operations.
+The ${\sf PCG.Expand}$ algorithm contains $c^2t\times \DMPF_{t, N/t, \FF_4}.\FullEval$ along with many multi-variate polynomial multiplications. 
+
+
+In~\cite{foleage} each $\DMPF_{t, N/t, \FF_4}$ is instantiated using the na\"ive DMPF, with the claim that step (1) of evaluating these na\"ive DMPF's is the bottleneck of their implementation. They also mentioned potential optimization by switching from na\"ive DMPF to PBC-based DMPF for a better asymptotic cost. 
+By plugging in our new DMPF constructions as the underlying DMPF scheme, we obtain new realizations of the PCG construction. It turns out by plugging in our big-state DMPF, we get a significantly faster $\PCG.\Expand$, with a reasonable $\PCG.\Gen$ time and succinct $\PCG$ seed size (see~\cref{sec:impl_pcg}). 
+
+\paragraph{Unbalanced PSI-WCA.}
+DMPF is also useful when constructing a non-colluding 2-server-1-client unbalanced private set intersection with weighted cardinality (PSI-WCA) protocol, as proposed in \cite{cryptoeprint:2020/1599}, which can be utilized to privacy preserving applications such as contact tracing \cite{eames2003contact}. In an unbalanced PSI-WCA protocol, there are two servers each holding the same large set of keywords $X\subseteq [N]$ of size $n_X$, and a client holding a small set of keywords $Y\subseteq[N]$ of size $n_Y$. The client leans the weighted cardinality of $X\cap Y$, without the protocol revealing any information about $Y$ to the servers (except an upperbound on $n_Y$) or any additional information about $X$ to the client. 
+
+\cite{cryptoeprint:2020/1599} designs an unbalanced PSI-WCA using DMPF in a straightforward way:
 \begin{itemize}
-    \item The seed size is $ct(\log N+\log p)$ bits for specifying $\vec{e_b}$ plus the $c^2t\times $ keysize of $\DMPF_{t,2N/t, \ZZ_p}$. 
-    \item The $\Gen$ time is $c^2$ multiplications in the ring $R$ plus $c^2t\times$ $\DMPF_{t,2N/t, \ZZ_p}.\Gen$. 
-    \item The $\Expand$ time is $c^2$ multiplications in the ring $R$ plus $c^2t\times$ $\DMPF_{t,2N/t, \ZZ_p}.\FullEval$. 
+  \item[(1)] The client invokes $\DMPF_{n_Y,N,\GG}.\Gen(1^\lambda, \hat{f}_{Y,W(Y)})$ to get a pair of keys $ (k_0,k_1)$, where $W(Y)$ is the set of weights (from group $\GG$) of elements in $Y$. Then the client send $k_0$ to server 0 and $k_1$ to server 1. 
+  \item[(2)] Server $b$ computes $\sum_{x\in X}\DMPF_{n_Y,N,\GG}.\Eval_b(1^\lambda, k_b,x)$ and sends the result ${\sf sum}_b$ to the client. 
+  \item[(3)] The client computes $W(X\cap Y)={\sf sum}_0+{\sf sum}_1$. 
 \end{itemize}
+We plug our new DMPF constructions in the above protocol, to obtain a significantly better server-respond time than the original realization in \cite{cryptoeprint:2020/1599} which instantiated $\DMPF_{n_Y,N,\GG}$ by na\"ive DMPF. 
 
-We set the parameters $(\lambda,p,N,c,t)$ where $\lambda$ is the computational security parameter following the security analysis for the protocol: 
-\[
-\lambda = 128,\,\red{\log p \approx 128},\, \red{N = 2^{20}}, \begin{array}{cc}
-    c=2, & t=66 \\
-    c=4, & t=14\\
-    c=8, & t=5
-\end{array}
-\]
-\Yaxin{These should be modified to match with the implementation. }
-
-\red{Insert experiment results. }
-\begin{table*}
-\renewcommand\arraystretch{1.25}
-%\scalebox{1}{
-\begin{threeparttable}
-\caption{TBD}
-\label{tab:application_PCG}
-    \begin{tabular}{cccccccc}
-    \toprule 
-    $\lambda$ & $N$ & $\log p$& $c$ & $t$ & DMPF scheme & Seed size & $\Expand$ time (ns)\\
-    
-    %&Sum of DPFs & PBC-based DMPF & Big-state DMPF & OKVS-based DMPF\\
-
-    \midrule
-    \multirow{4}{*}{128} & \multirow{4}{*}{$2^{20}$}&
-    \multirow{4}{*}{128}&
-    \multirow{4}{*}{2}& \multirow{4}{*}{66}&
-    Sum of DPFs & & \\\cline{6-8}
-    & & & & &Big-state DMPF & & \\\cline{6-8}
-    & & & & &PBC-based DMPF& & \\\cline{6-8}
-    & & & & &OKVS-based DMPF & & \\
-     
-     \cline{1-8}
-
-     \multirow{4}{*}{128} & \multirow{4}{*}{$2^{20}$}& 
-     \multirow{4}{*}{128}&
-     \multirow{4}{*}{4}& \multirow{4}{*}{14}
-    &Sum of DPFs & & \\\cline{6-8}
-    & & & & &Big-state DMPF & & \\\cline{6-8}
-    & & & & &PBC-based DMPF& & \\\cline{6-8}
-    & & & & &OKVS-based DMPF & & \\
-     
-     \cline{1-8}
-
-     \multirow{4}{*}{128} & \multirow{4}{*}{$2^{20}$}& 
-     \multirow{4}{*}{128}&
-     \multirow{4}{*}{8}& \multirow{4}{*}{5}
-    &Sum of DPFs & & \\\cline{6-8}
-    & & & & &Big-state DMPF & & \\\cline{6-8}
-    & & & & &PBC-based DMPF& & \\\cline{6-8}
-    & & & & &OKVS-based DMPF & & \\
-
-    \bottomrule
-\end{tabular}	
-%\begin{tablenotes}
-%\end{tablenotes}
-\end{threeparttable}
-%}
-\end{table*}
-
-%From \cref{tab:PCG_plug_in_formula} we can see that if we allow small blowup of the seed size of PCG, then we can gain much faster seed expansion by using nonregular noise distribution and either CBC-based DMPF or big-state DMPF or OKVS-based DMPF. 
-
-\subsection{Unbalanced PSI-WCA}
-\cite{cryptoeprint:2020/1599} suggests using DMPF to construct an non-colluding 2-server-1-client unbalanced PSI-WCA (weighted cardinality) protocol, as described in \Cref{sec:PSI_prelim}. Denote the size of the servers' set $X$ and the client's set $Y$ as $n_X, n_Y$ respectively. 
-The cost of our unbalanced PSI-WCA can be computed as follows: 
-\begin{itemize}
-  \item The communication cost is the keysize of $\DMPF_{n_Y,N,\GG}$. 
-  \item The client's computation time equals to the running time of $\DMPF_{n_Y,N,\GG}.\Gen$. 
-  \item The server's computation time equals to $n_X\times$ $\DMPF_{n_Y,N,\GG}.\Eval$. 
-\end{itemize}
-
-We follow the typical setting of parameters $N = 2^{128}$, \red{$n_X = 2^{20}$, $\GG\cong \ZZ_{2^{16}}$}, and let $n_Y$ vary. The performance of different DMPF schemes are listed in \cref{tab:PSI_plug_in_formula}. 
+\paragraph{Complementary perspectives of the two applications.}
+We emphasize that the two applications we discussed have complementary requirements for their underlying DMPF. The PCG application typically demands an efficient $\DMPF.\FullEval$ for fast seed expansion, whereas the unbalanced PSI-WCA application requires efficient $\DMPF.\Gen$ and $\DMPF.\Eval$, along with a short key size. Consequently, different DMPF constructions exhibit varying performance across these applications, as we will demonstrate in the next section.
 
 
-\begin{table*}
-  \renewcommand\arraystretch{1.5}
-  \begin{threeparttable}
-  \caption{Communication cost, client and server computation time of the PSI-WCA protocol for domain size $N = 2^{128}$, weight group $\GG$, and  different choices of client's set size $|Y|$. We use \cref{con:OKVS_sparse_matrix} as an instantiation of OKVS. The PRG evaluations in the first $\log N$ layers and in the convert layer are both regarded as the same PRG. $e$ in the second row represents the expansion parameter for PBC, and $e'$ in the last row represents the expansion parameter for OKVS. }
-\label{tab:PSI_plug_in_formula}
-  \begin{tabular}{cccc}
-          \toprule
-    $\DMPF$ instantiation & Communication cost & Client computation time & Server computation time \\
-          \midrule
-
-          Sum of DPFs & $|Y|\lambda\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG & $|X|\cdot |Y|\log N\times $PRG\\
-
-          Batch-code DMPF & $e|Y|\lambda\log(\frac{wN}{e|Y|})+e|Y|\log|\GG|$ & $2e|Y|\log(\frac{wN}{e|Y|})\times$PRG & $w|X|\log(\frac{wN}{e|Y|})\times$PRG\\
-
-          Big-state DMPF & $|Y|(\lambda+2|Y|)\log N+|Y|\log|\GG|$ & $2|Y|\log N\times $PRG$^*$\tnote{1} & $|X|\log N \times$PRG$^*$\\
-
-          OKVS-based DMPF& $e'|Y|\lambda\log N +e'|Y|\log|\GG|$ & $2|Y|\log N\times$PRG+$\log N\times \OKVS.\Encode$ & $|X|(\log N\times$PRG+$\log N\times \OKVS.\Decode)$\\
-          \bottomrule
-  \end{tabular}
-  \begin{tablenotes}
-    \item [1] The PRG used in big-state DMPF maps from $\{0,1\}^\lambda$ to $\{0,1\}^{2\lambda+2|Y|}$ whose computation time should grow with $|Y|$.
-  \end{tablenotes}
-\end{threeparttable}
-\end{table*}
-
-%\subsection{Heavy-hitters}private heavy-hitter or parallel ORAM?

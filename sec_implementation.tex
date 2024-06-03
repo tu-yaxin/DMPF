@@ -1,0 +1,81 @@
+\section{Implementation and Evaluation}\label{sec:implementation}
+In this section we discuss implementation, benchmarks and optimizations of all DMPF constructions presented in this paper and compare them against each other as well as to the na\"{i}ve DMPF. From the perspective of practical applications, we focus on analyzing and optimizing $\FullEval$ and $\Eval$ time, while preserving a reasonable keysize and $\Gen$ time for each DMPF construction. 
+
+We first present different parameter ranges that are optimal for each DMPF construction and point out some optimizations we employed to each construction. 
+Then, we discuss some implications of our benchmark results to the PCG construction of~\cite{foleage} 
+where our optimized big-state DMPF can achieve a speedup of up to $\times 3.14$ for the PCG seed expansion, a significant improvement to the main bottleneck of secret-sharing-based dishonest-majority MPC.
+As another use case, we discuss how the PSI-WCA construction of~\cite{cryptoeprint:2020/1599}
+can benefit from our OKVS-based DMPF.
+
+\subsection{Benchmarking DMPF Constructions}
+We implemented all DMPF constructions using Rust and benchmarked their performance on an AWS {\tt t2.large} instance across a wide range of non-zero number of points and domain sizes.
+Our code is also publicly available.\footnote{link to code}
+
+\paragraph{Benchmark and results for full-domain evaluation.}
+In ~\cref{fig:dmpf_comparison} we provide a comparison of the $\FullEval$ operation of the four DMPF constructions for varying numbers of non-zero points $t$ between $1$ and $10,240$ over domain size $N=2^{27}$ with bit-sized outputs.
+From the analysis from~\cref{tab:formulas_DMPF_comparison}, the costs of $\FullEval$ of all DMPF constructions should scale linearly with the domain size, and we note that our benchmark results confirm this analysis.
+As a step further than the analysis result, basing on our experimental results we derive the optimal DMPF construction in terms of minimal $\FullEval$ time for different ranges of $t$ as follows: (1) For $t\leq 2$ the na\"ive DMPF is performs best. (2) For $3\leq t \leq 70$ big-state DMPF dominates. (3) For $70<t\leq 10,240$ OKVS-based DMPF dominates. (4) By extrapolating our measurements we estimate that starting from $t\approx 21,000$ PBC-based DMPF is expected to have the fastest $\FullEval$ operation.
+We emphasize that while for small values of $t$ big-state DMPF is optimal, for larger values of $t$ it is becomes impractical, due to the key size and $\Gen$ time scaling quadratically with $t$.
+
+\input{plots/dmpfs_comparison}
+
+\paragraph{Benchmark and results for single evaluation.}
+In~\cref{fig:dmpf_comparison_eval} we examine a typical setting of $N = 2^{126}$ based on the PSI-WCA application, and measure the performance of the four DMPF constructions' $\Eval$ algorithm for a varying number of non-zero points ($t$).
+
+First, we stress a significant downsize of the PBC-based DMPF. The results of the PBC-based DMPF are somewhat overly optimistic, due to the fact that all cuckoo-hashing based constructions require a PRP of an appropriate domain size (\cite{cryptoeprint:2019/273,cryptoeprint:2019/1084,cryptoeprint:2021/580,foleage}). Our implementation realizes this PRP na\"ively by expanding a short seed to a pseudorandom permutation, using time linear in the domain size.
+Such a realization for PRP is practical in $\FullEval$ with a feasible domain size (e.g. $N=2^{27}$) in the previous paragraph, and it takes an insignificant fraction of the overall $\FullEval$ time. However the realization for PRP becomes impractical over exponentially-large domains (e.g. $N=2^{126}$). Moreover, even for a feasible domain size, our realization asks $\Eval$ on a single input to expand the whole PRP, which is clearly sub-optimal.  
+Therefore, we provide a lower bound for the $\Eval$ of the PBC-based DMPF by overlooking the cost relevant to PRP expansion.
+As an alternative, one may consider $\Eval$ for feasible domain size and Format Preserving Encryption (FPE)~\cite{fpe} as means to instantiate small-domain PRPs efficiently, but existing secure and standardized constructions are limited both in their byte-sized granularity and in their input domain size ($>10^6$). 
+We also mention that to the best of our knowledge, existing state-of-the-art small-domain PRP constructions are either considered impractical (\cite{sym_small_blocks}) or require setup-time that is linear in the domain size (\cite{stefanov2012fastprp}).
+The above showcases the greatest advantage of the OKVS-based DMPF over existing PBC-based DMPF: It can be easily adapted to domains of arbitrarily small and large sizes!
+
+We conclude from the results that for $t\geq 4$ the performance of OKVS-based DMPF and (the overly optimistic) PBC-based DMPF are quite similar, with a small difference of $<10\%$.
+We also report a somewhat unexpected phenomenon in the results: For a fixed domain size, both the OKVS and the PBC-based DMPF perform better when increasing the number of non-zero points.
+For the OKVS-based DMPF we explain this by the fact that the first $\log t$ layers of the evaluation tree can be given explicitly to the parties in an uncompressed way while keeping the key size linear in $t$.
+For the PBC-based construction we explain this by the fact that as the value of $t$ get bigger, the size of each codeword becomes smaller, which makes the corresponding DPF having a lower depth.
+\input{plots/dmpfs_comparison_eval}
+
+\paragraph{Benchmark and results for key generation}
+In~\cref{fig:dmpf_comparison_gen} measurement results of ${\sf DMPF.Gen}$ are given for a large domain size of $N=2^{126}$.
+Following our expectations, the naive approach is optimal for all parameter ranges, with the PBC approach closely behind. We emphasize that the results for the PBC approach serve merely as lower bounds as previously discussed. The Big-State construction shows poor performance due to the quadratic dependency on $t$, making it practical and useful only for small numbers of non-zero points.
+
+\input{plots/dmpfs_comparison_keygen} 
+
+\paragraph{}
+\paragraph{Optimizations.} Our implementation includes various optimizations. Most notable are the following:
+\begin{itemize}
+    \item {\bf Early Termination.} Mentioned in~\cite{BoyGilIsh16}, this optimization reduces the bottom $\log (\lambda / \log |\mathbb{G}|)$ levels in the DPF tree. In our implementation this reduces the tree by 7 levels, reducing the total work of EvalAll by a factor of $128\times$.
+    \item {\bf Bigger Last-Level-PRG Output.} By employing a length-quadrupling PRG in the last level's PRG we were able to skip to one-before-bottom layer and save 25\% of the overall computation at the cost of doubling the size of the last correction word. This optimization can be generalized to skip the computation of the $k$-before-bottom layers by multiplying the size of the last correction word by $2^k$ using a PRG with an expansion of $2^{k+1}$.
+    \item {\bf Preprocessing big-state and OKVS Outputs.} Zooming in to the $\Eval$ and $\FullEval$ algorithms of OKVS and big-state DMPF, at each level of the evaluation tree, a sum of a subset of the correction word is computed where the subset is determined by a binary vector generated during the evaluation process. This results in an excessive memory and computation overhead, especially for the big-state DMPF where this summation becomes the bottleneck as the number of non-zero points increases. Our optimization takes chunks of small size $B$ (say 4 or 8) and pre-computes all subset-sums of each chunk. This reduces computation by a factor of $B$ at the cost of increasing memory consumption by a factor of $2^B$. In our benchmarks we use $B=4$.
+    Notice that this optimization does not increase the keysize since these subset sums can be generated directly from the key. 
+    \item {\bf Reducing OKVS Decode Costs} We use the RB-OKVS construction of~\cite{cryptoeprint:2023/903}. The encoding of $n$ keys results in a vector of size $n\cdot (1+\epsilon)$ for some overhead parameter $\epsilon$. The OKVS decode operation is an inner product between a length $w$ binary vector and a length-$w$ sub-band of the OKVS key. This offers a trade-off between the overhead $\epsilon$ and the decoding time (proportional to) $w$. In~\cite{cryptoeprint:2023/903} a concrete analysis is presented of the parameters necessary to achieve different encoding overheads $\epsilon \in \{3\%,5\%,7\%,10\%\}$ where $w$ lies roughly between $200$ and $600$. With our goal of minimizing evaluation time, we have conducted a separate analysis for $\epsilon=100\%$ for which $w=58$ is needed to achieve $40$ bits of statistical security for the range of $t\leq 2^{18}$ and $w=49$ is needed for $t\leq 2^{10}$. This resulted in an almost $\times 4$ improvement at the cost of doubling the OKVS key size.  
+\end{itemize}
+
+\subsection{Use Case: Faster PCG for OLE}\label{sec:impl_pcg}
+In this section we present PCG for OLE as a use case for our DMPF constructions and show that one can get significant savings by applying one of our new DMPF construction. 
+
+As is explained in~\cref{sec:applications}, we aim to improve the seed expansion time of the PCG for OLE construction in~\cite{foleage} with small overhead on the seed size and seed generation time. The PCG construction from QA-SD assumption is parameterized by the total degree $N$, compression factor and weight parameter $t$ such that $ct\approx O(\lambda)$, and contains three major steps in $\PCG.\Expand$: 
+
+\begin{itemize}
+    \item[(1)]$\DMPF_{t, N/t, \FF_4}.\FullEval$ for all DMPF keys. 
+    \item[(2)]Transpose the results of $\FullEval$ and view them as $c(c+1)/2$ polynomials in the multi-variate polynomial ring $\mathcal{R} = \FF_4[X_1,\dots,X_n](X_1^3-1,\dots,X_n^3-1)$ where $N=3^n$.
+    \item[(3)]Compute $c(c+1)/2$ FFT's over $\mathcal{R}$ and sum the results.
+\end{itemize}
+Step (1) is claimed to be the bottleneck of their implementation in \cite{foleage}, even with the optimal parameters $c=5,t=14$ they have found.
+
+We modified the code of~\cite{foleage} to collect information regarding the performance of each of the three steps above and found that about $65\%$ of the running time is spent on step (1).
+Under their chosen parameters of $t=14$, our benchmarks show that by directly switching from the na\"ive DMPF to the big-state DMPF, a $\times 6.5$ improvement in step (1) can be achieved which can be translated to a $\times 2.2$ speedup of the ${\sf PCG.Expand}$ algorithm, with a sacrifice of $\times 1.2$ blowup on the seed size.
+
+We also notice that for larger values of $t$ we can achieve an even greater speedup when switching from na\"ive DMPF to big-state DMPF! 
+By decreasing $c$ and increasing $t$ we get a combined effect: By reducing $c$ the costs in step (2) and (3)  are reduced, and by increasing $t$ we achieve a significantly better speedup compared to the na\"ive DMPF baseline.
+This allows us to achieve a speedup of $\times 3.14$ of the overall ${\sf PCG.Expand}$, with a sacrifice of \red{$\times ??$} blowup on the seed size.
+
+{\bf Trusted Dealer Setting.} \cite{foleage} also mentioned using the PBC-based DMPF in the trusted dealer setting. 
+We emphasize that even in this setting the big-state approach has two advantages over the PBC approach: (1) The $\FullEval$ time of big-state DMPF is $\times 1.8$ better than the $\FullEval$ time in PBC-based DMPF, over the relevant range of parameters. (2) The ${\sf Gen}$ algorithm of big-state DMPF is perfectly correct while $\Gen$ in PBC-based DMPF \cite{foleage} used has a constant success probability resulting in poorer security. 
+
+\subsection{Use Case: Unbalanced PSI-WCA}
+In this section we present unbalanced PSI-WCA as another use case for our DMPF constructions. 
+We consider a typical setting of $N = 2^{126}$, and let the client's set size $n_Y$ vary. 
+As the server's set size $n_X$ is usually a large number, the performance of this scheme becomes closely attached to the performance of the underlying ${\sf DMPF.Eval}$ algorithm.
+\Cref{fig:dmpf_comparison_eval} compares the four DMPF constructions' ${\sf DMPF.Eval}$ time over the domain size $N$. 
+We conclude that our OKVS-based construction offers performance comparable to that of the PBC-based DMPF, while allowing for arbitrary choices of $N$. 

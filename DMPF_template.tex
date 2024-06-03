@@ -1,5 +1,4 @@
-
-   \begin{figure*}
+\begin{figure*}
       \caption{The template of our DMPF schemes. We leave the sign string length $l$, methods $\sf Initialize$, $\sf GenCW$, $\sf GenConvCW$, $\sf Correct$, $\sf ConvCorrect$ to be determined by specific constructions. }
     \label{fig:DMPF_template}
     \fbox{\parbox{\linewidth}{
@@ -19,23 +18,23 @@
       \State ${\sf Initialize}(\{\seed_b^{(0)},\sign_b^{(0)}\}_{b=0,1})$. 
       \For{$i=1$ to $n$}
       \For{$k=1$ to $|A^{(i-1)}|$}
-        \State For $c=0,1$, compute $\Delta\seed^c = G_\seed^c(\seed_0^{(i-1)}[k])\oplus G_\seed^c(\seed_1^{(i-1)}[k])$ and $\Delta\sign^c = G_\sign^c(\seed_0^{(i-1)}[k])\oplus G_\sign^c(\seed_1^{(i-1)}[k])$. 
+        \State For $c=0,1$, compute $\Delta\seed^c = G_c^\seed(\seed_0^{(i-1)}[k])\oplus G_c^\seed(\seed_1^{(i-1)}[k])$ and $\Delta\sign^c = G_c^\sign(\seed_0^{(i-1)}[k])\oplus G_c^\sign(\seed_1^{(i-1)}[k])$. 
         \If{$A^{(i-1)}[k]\|0\in A^{(i)}$ and $A^{(i-1)}[k]\|1\in A^{(i)}$}
             \State Randomly sample $r\gets \{0,1\}^\lambda$ and append $r\|\Delta\sign^0\|\Delta\sign^1$ to $V^{(i-1)}$. \label{alg:template_append_V_case1}
         \Else
             \State Suppose $A^{(i-1)}[k]\|z\in A^{(i)}$. Append $\Delta\seed^{1-z}\|\Delta\sign^0\|\Delta\sign^1$ to $V^{(i-1)}$. \label{alg:template_append_V_case2}
         \EndIf
       \EndFor
-      \State $CW^{(i)}\gets {\sf GenCW}(i,A,V^{(i-1)})$. \label{alg:template_gen_cw}
+      \State $\CW^{(i)}\gets {\sf GenCW}(i,A,V^{(i-1)})$. \label{alg:template_gen_cw}
         \For{$k = 1$ to $|A^{(i-1)}|$ and $z=0,1$}
-          \State Compute $C_{\seed,b}\|C_{\sign^0,b}\|C_{\sign^1,b}\gets {\sf Correct}(A^{(i-1)}[k], \sign_b^{(i-1)}[k], CW^{(i)})$ for $b=0,1$, where $|C_{\seed,b}| = \lambda$ and $|C_{\sign^0,b}| = |C_{\sign^1,b}| = l$. \label{alg:template_correction_in_gen}
+          \State Compute $C_{\seed,b}\|C_{\sign^0,b}\|C_{\sign^1,b}\gets {\sf Correct}(A^{(i-1)}[k], \sign_b^{(i-1)}[k], \CW^{(i)})$ for $b=0,1$, where $|C_{\seed,b}| = \lambda$ and $|C_{\sign^0,b}| = |C_{\sign^1,b}| = l$. \label{alg:template_correction_in_gen}
           \If{$A^{(i-1)}[k]\|z\in A^{(i)}$}
           \State Append the first $\lambda$ bits of $G_z(\seed_b^{(i-1)}[k])\oplus(C_{\seed,b}\|C_{\sign^z,b})$ to $\seed_b^{(i)}$ and the rest $l$ bits to $\sign_b^{(i)}$. 
           \EndIf
         \EndFor
       \EndFor
-      \State $CW^{(n+1)}\gets{\sf GenConvCW}(A,B,\left(G_\conv(\seed_0^{(n)}[k]) - G_\conv(\seed_1^{(n)}[k])\right)_{1\le k\le |A|},\sign_0^{(n)},\sign_1^{(n)})$. \label{alg:template_gen_convert_cw}
-      \State Set $k_b \gets (\seed_b^{(0)},\sign_b^{(0)}, CW^{(1)},CW^{(2)},\cdots,CW^{(n+1)})$.
+      \State $\CW^{(n+1)}\gets{\sf GenConvCW}(A,B,\left(G_\conv(\seed_0^{(n)}[k]) - G_\conv(\seed_1^{(n)}[k])\right)_{1\le k\le |A|},\sign_0^{(n)},\sign_1^{(n)})$. \label{alg:template_gen_convert_cw}
+      \State Set $k_b \gets (\seed_b^{(0)},\sign_b^{(0)}, \CW^{(1)},\CW^{(2)},\cdots,\CW^{(n+1)})$.
       \State \textbf{return} $(k_0,k_1)$.
       \EndProcedure
     \end{algorithmic}}}

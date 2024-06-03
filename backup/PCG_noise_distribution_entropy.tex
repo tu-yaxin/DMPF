@@ -16,3 +16,20 @@ To force $E_n = E_r$, let's consider fixing two varibles and change one:
 \end{enumerate}
 All of these three changes of variables don't seem to lead to noticeable changes in the amortized expanding time for each OLE correlation. 
 \fi
+
+We focus on the following setting of this protocol, mentioned in \Cref{sec:PCG_OLE_protocol}, which achieves good computational efficiency and security simultaneously: 
+\begin{enumerate}
+    \item The hardness assumption is the QA-SD assumption for the group algebra $\mathbb{F}_q\left[\mathbb{G}\right]$ where $\mathbb{G} = \ZZ_p[X]/F(X)$ for a prime $p$ and a deg-$N$ polynomial $F(X)\in\ZZ_p[X]$, while the noise distribution is the regular weight-$t$ distribution $\cRHW_{R,t}$. 
+    \item The polynomial ring $R = \ZZ_p[X]/F(X)$ where $F(X) = X^N+1$ is cyclotomic with $N$ being a power of two. 
+    \item The underlying field's order $p$ is prime such that that $F(X)$ splits completely into linear factors modulo $p$, in order to convert an OLE correlations over $R$ to $N$ OLE correlations over $\ZZ_p$. 
+\end{enumerate}
+\begin{remark}
+    In fact, using either the big-state DMPF, the PBC-based DMPF, or the OKVS-based DMPF schemes to share the low-weight polynomials does not need the restriction of the noise distribution to be regular. \red{However our experiments show that restricting to the regular noise distribution still leads to faster $\Expand$ time, so we reserve this setting. }\Yaxin{Tentatively. Double check with final implementation. }
+\end{remark}
+
+Leveraging the regular noise distribution and the cyclotomic polynomial $F$, the secret sharing task for generating one OLE correlation can be achieved using $c^2t\times \DMPF_{t,2N/t, \ZZ_p}$. Then the seed size, $\Gen$ time and $\Expand$ time of this PCG protocol are: 
+\begin{itemize}
+    \item The seed size is $ct(\log N+\log p)$ bits for specifying $\vec{e_b}$ plus the $c^2t\times $ keysize of $\DMPF_{t,2N/t, \ZZ_p}$. 
+    \item The $\Gen$ time is $c^2$ multiplications in the ring $R$ plus $c^2t\times$ $\DMPF_{t,2N/t, \ZZ_p}.\Gen$. 
+    \item The $\Expand$ time is $c^2$ multiplications in the ring $R$ plus $c^2t\times$ $\DMPF_{t,2N/t, \ZZ_p}.\FullEval$. 
+\end{itemize}

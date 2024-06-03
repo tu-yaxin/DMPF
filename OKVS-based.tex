@@ -37,12 +37,12 @@
         \State \Return $\OKVS_{\sf conv}(\{(A[k], V[k])\}_{1\le k\le t})$. 
       \EndProcedure
       \item[]
-      \Procedure{Correct}{$\bar{x}, \sign,CW$}
-        \State\Return $C_{\seed}\|C_{\sign^0}\|C_{\sign^1}\gets\sign\cdot\OKVS_i.\Decode(CW,$ $\bar{x})$, where $C_{\sign^0}$ and $C_{\sign^1}$ are bits. \label{alg:okvs_correction}
+      \Procedure{Correct}{$\bar{x}, \sign,\CW$}
+        \State\Return $C_{\seed}\|C_{\sign^0}\|C_{\sign^1}\gets\sign\cdot\OKVS_i.\Decode(\CW,$ $\bar{x})$, where $C_{\sign^0}$ and $C_{\sign^1}$ are bits. \label{alg:okvs_correction}
       \EndProcedure
       \item[]
-      \Procedure{ConvCorrect}{$x,\sign,CW$}
-        \State \Return $\sign\cdot\OKVS_{\sf conv}.\Decode(CW,x)$. \label{alg:okvs_convert_correction}
+      \Procedure{ConvCorrect}{$x,\sign,\CW$}
+        \State \Return $\sign\cdot\OKVS_{\sf conv}.\Decode(\CW,x)$. \label{alg:okvs_convert_correction}
       \EndProcedure
     \end{algorithmic}}}
   \end{figure}

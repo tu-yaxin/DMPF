@@ -25,7 +25,7 @@ Similarly we define a realization of $\Gen\Conv\CW$ to be hiding if it gives no 
         \end{split}
     \]
 \end{definition}
-Next we show that if $\Gen\CW$ and $\Gen\Conv\CW$ in the DMPF template \Cref*{fig:DMPF_template} are computationally hiding, then the DMPF is computationally secure. 
+Next we show that if $\Gen\CW$ and $\Gen\Conv\CW$ in the DMPF template \cref{fig:DMPF_template} are computationally hiding, then the DMPF is computationally secure. 
 \begin{lemma}\label{lem:template_secure}
     Suppose ${\sf Initialize}$ set $\seed_b^{(0)}$ to be random strings for $b=0,1$. Suppose  $\Gen\CW$ and $\Gen\Conv\CW$ in \Cref{fig:DMPF_template} are computationally hiding with distinguishing advantage $\epsilon_{\Gen\CW}$ and $\epsilon_{\Gen\Conv\CW}$ respectively. Let $\epsilon_G$ and $\epsilon_{G_\conv}$ denote the distinguishing advantage of the PRG $G$ and $G_\conv$. Then the DMPF scheme is $\epsilon$-secure against any n.u.p.p.t. adversary, where $\epsilon = 2tn\epsilon_{G}+2t \epsilon_{G_\conv}+n\epsilon_{\Gen\CW} +\epsilon_{\Gen\Conv\CW}$. 
 \end{lemma}
@@ -116,4 +116,6 @@ The above arguments, combined with \Cref{lem:template_secure}, concludes that th
     Let $\epsilon_G$ and $\epsilon_{G_\conv}$ denote the distinguishing advantage of the PRG $G$ and $G_\conv$ respectively. Suppose in the OKVS-based DMPF scheme in \Cref{fig:DMPF_OKVS}, for $1\le i\le n$ the $\OKVS_i$ scheme is $\epsilon_{\OKVS_i}$-oblivious, and the $\OKVS_{\conv}$ scheme is $\epsilon_{\OKVS_\conv}$-oblivious. Then the big-state DMPF scheme in \Cref{fig:DMPF_big-state} is $\epsilon$-secure against any n.u.p.p.t. adversary, where $\epsilon = 2tn\epsilon_G+2t\epsilon_{G_\conv} +\sum_{i=1}^n\epsilon_{\OKVS_i}+\epsilon_{\OKVS_\conv}$. 
 \end{theorem}
 
-%remember to refer back in text. 
+\section{Security Proofs of distributed key generation in~\Cref{fig:DMPF_distrgen}}\label{sec:security-proof-distrgen}
+\subsection{Proof of~\Cref{lem:shared—ipd-security}}\label{sec:shared-ipd-security}
+\subsection{Proof of~\Cref{thm:big-state-DKG-security}}\label{sec:big-state-DKG-security}

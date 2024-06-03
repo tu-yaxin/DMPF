@@ -1,0 +1,36 @@
+
+   \begin{figure*}
+      \caption{The distributed key generation protocol $\Pi_{\sf big\hyp state\hyp DKG}$ and its ideal functionality $\mathcal{F}_{\sf big\hyp state\hyp DKG}$ for big-state DMPF in~\Cref{fig:DMPF_big-state}.}
+    \label{fig:DMPF_distrgen}
+    \fbox{\parbox{\linewidth}{
+    \begin{algorithmic}[1]
+      \State Two parities $b\in\{0,1\}$ generate the key for the $t$-point function $f_A:\{0,1\}^n\rightarrow \{0,1\}$ such that $f_A(x) =1$ if and only if $x\in A$. Other notations are as in~\Cref{fig:DMPF_template}. Party $b$ has input $\llbracket A\rrbracket_b$ which is an additive share of $A$. The functionality interacts with a party $b$ and an adversary $\Adv$.
+      \item[]
+      \State $\mathcal{F}_{\sf big\hyp state\hyp DKG}(1^\lambda)$:
+      \Indent
+      \State Get $\llbracket A\rrbracket_b$ from party $b$ and $\llbracket A\rrbracket_{\bar{b}}$ from $\Adv$, and reconstruct $A = \llbracket A\rrbracket_0+\llbracket A\rrbracket_1$. 
+      \State Invoke $(k_0,k_1)\gets \Gen(1^\lambda,\hat{f}_A)$. 
+      \State Output $k_b$ to party $b$ and $k_{\bar{b}}$ to $\Adv$. 
+      \EndIndent
+      \item[]
+      \State $\Pi_{\sf big\text{-}state\text{-}DKG}(1^\lambda, \llbracket A\rrbracket_b)$ for party $b\in\{0,1\}$:
+      \Indent
+      \State Creates empty lists $\seed_b^{(i)}$, $\sign_b^{(i)}$ and $V^{(i)}$ for $0\le i\le n-1$. 
+      Initialize $\seed_b^{(0)} = [r_b]$ where $r_b\xleftarrow{\$}$ and $\sign_b^{(0)} = [b\|0^{t-1}]$.  
+      \For{$i=1$ to $n$}
+        \State Compute the list $\Delta_b^{(i-1)}:=G(\seed_b^{(i-1)})$. 
+        \State Initialize a length-$t$ list $L_b$ of $(2\lambda+2t)$-bit strings. 
+        \For{$r=1$ to $t$ and $l=1$ to $2\lambda+2t$}
+        \State Invoke $\Pi_{\sf SharedIPD}$ with party $\bar{b}$ to get $L_b[r][l]\gets \Pi_{\sf SharedIPD}\left((\sign_b^{(i-1)}[k][r])_{k\in\{0,1\}^{i-1}},(\Delta_b^{(i-1)}[k][l])_{k\in\{0,1\}^{i-1}}\right)$.
+        \EndFor
+        \State Invoke $\Pi_\CW$ with party $\bar{b}$ to get $\CW^{(i)}\gets \Pi_\CW\left(i,\llbracket A\rrbracket_b,L_b\right)$. 
+        \State Compute $C_{\seed,b}\|C_{\sign^0,b}\|C_{\sign^1,b}\gets {\sf Correct}(k, \sign_b^{(i-1)}[k], \CW^{(i)})$ for $k\in\{0,1\}^{i-1}$. 
+        \State For $z = 0,1$, store the first $\lambda$ bits of $G_z(\seed_b^{(i-1)}[k])\oplus (C_{\seed,b}\|C_{\sign^z,b})$ in entry $\seed_b^{(i)}[k\|z]$ and the rest $l$ bits in entry $\sign_b^{(i)}[k\|z]$.      
+      \EndFor
+      \State Output $k_b$.
+      \EndIndent
+    \end{algorithmic}}}
+  \end{figure*}
+
+ 
+    

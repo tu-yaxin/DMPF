@@ -1,0 +1,36 @@
+   \begin{figure}
+      \caption{$\Pi_{\sf SharedIPD}$ and its ideal functionality $\mathcal{F}_{\sf SharedIPD}$ in $\Pi_{\sf big\hyp state\hyp DKG}$.}
+    \label{fig:shared_ipd}
+    \fbox{\parbox{\linewidth}{
+    \begin{algorithmic}[1]
+     \State Fix two security parameters \red{$s = ?,s' = ?$}. Fix a length parameter $l$ and a weight parameter $t$, the same $t$ as in $\Pi_{\sf big\hyp state\hyp DKG}$ ($l$ might be smaller than $t$). Party $b$ has input $\llbracket e\rrbracket_b$ and $\llbracket v\rrbracket_b$, where $e$ is a unit vector and $v$ is of hamming weight at most $\omega$ in $\{0,1\}^l$. The functionality interacts with a party $b$ and an adversary $\Adv$.
+    \item[]
+    \State $\mathcal{F}_{\sf SharedIPD}$:
+    \Indent
+    \State Get $\llbracket e\rrbracket_b,\llbracket v\rrbracket_b$ from party $b$ and $\llbracket e\rrbracket_{\bar{b}},\llbracket v\rrbracket_{\bar{b}}$ from $\Adv$. 
+    \State Reconstruct $e = \llbracket e\rrbracket_0\oplus\llbracket e\rrbracket_1$ and $v = \llbracket v\rrbracket_0\oplus \llbracket v\rrbracket_1$. 
+    \State Compute additive shares of the inner-product $e\cdot v$. 
+    \If{$e\cdot v=0$}
+        \State With probability $1-\left(1-(1-1/t)^{t-1}\right)^s\left(1-2^{-s'}\right)^s$
+        output $\llbracket 0\rrbracket_b$ and $\llbracket 0\rrbracket_{\bar b}$ to party $b$ and $\Adv$, and otherwise output $\llbracket 1\rrbracket_b$ and $\llbracket1\rrbracket_{\bar b}$ to party $b$ and $\Adv$.
+    \Else
+    \State With probability $p_1 = \left(1-2^{-s'}\right)^s$ output $\llbracket 1\rrbracket_b$ and $\llbracket 1\rrbracket_{\bar b}$ to party $b$ and $\Adv$, and otherwise output $\llbracket 0\rrbracket_b$ and $\llbracket0\rrbracket_{\bar b}$ to party $b$ and $\Adv$.
+    \EndIf
+    \EndIndent
+    \item[]
+    \State $\Pi_{\sf SharedIPD}(\llbracket e\rrbracket_b,\llbracket v\rrbracket_b)$ for party $b\in\{0,1\}$:
+    \Indent
+    \If{$l\le t$} invoke a generic secure 2-party computation with party $\bar b$ to compute and output a share $\llbracket e\cdot v\rrbracket_b$ of $e\cdot v$. 
+    \Else 
+    \State Let $P_1,P_2,\dots,P_s$ be $s$ public random partitions of $[l]$ such that in $P_i$, each element in $[l]$ randomly falls into one of the $t$ blocks $P_i^1,P_i^2,\dots,P_i^t$.
+    \State For $i\in [s]$ and $j\in [t]$, let all $R_i^j\xleftarrow{\$}\{0,1\}^{s'\times |P_i^j|}$ be independently sampled public random matrices. 
+    \State For $i\in[s]$ and $j\in [t]$, compute $\llbracket\mu_i^j\rrbracket_b:= \bigoplus_{k\in P_i^j}\llbracket e\rrbracket_b[k]$ and $\llbracket\nu_i^j\rrbracket_b:=R_i^j\cdot\llbracket v\rrbracket_b|_{P_i^j}$, where $\llbracket v\rrbracket_b|_{P_i^j}$ denotes the restriction of $\llbracket v\rrbracket_b$ to the indices contained in $P_i^j$.
+    \State Invoke a generic secure 2-party computation with party $\bar{b}$ to compute a share $\llbracket \varphi\rrbracket_b$ of the Boolean formula $\varphi:=\bigvee_{\substack{i\in[s]\\j\in[t]}}\left(\mu_i^j\land \textbf{1}_{\nu_i^j = 0^{s'}}\right)$.
+    \State Output $b\oplus \llbracket \varphi\rrbracket_b$.
+    \EndIf
+    \EndIndent
+    \end{algorithmic}}}
+  \end{figure}
+
+ 
+    

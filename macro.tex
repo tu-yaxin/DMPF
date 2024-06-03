@@ -4,7 +4,7 @@
 \newcommand{\Matan}[1]{\color{green}Matan: #1\color{black}}
 \newcommand{\yuval}[1]{\color{red}Yuval: #1\color{black}}
 
-
+\newcommand{\hyp}{\text{-}}
 \newcommand{\Gen}{{\sf Gen}}
 \newcommand{\Eval}{{\sf Eval}}
 \newcommand{\FullEval}{{\sf FullEval}}
@@ -30,6 +30,8 @@
 \newcommand{\Adv}{{\sf Adv}}
 \newcommand{\MULT}{{\sf MULT}}
 \newcommand{\Hyb}{{\sf Hyb}}
+\newcommand{\AND}{{\sf AND}}
+\newcommand{\OR}{{\sf OR}}
 
 \newcommand{\DMPF}{{\sf DMPF}}
 \newcommand{\DPF}{{\sf DPF}}
@@ -75,3 +77,9 @@
   }%
 }
 \makeatother
+
+\algdef{SE}[SUBALG]{Indent}{EndIndent}{}{\algorithmicend\ }%
+\algtext*{Indent}
+\algtext*{EndIndent}
+
+%\setlength{\parindent}{0pt}

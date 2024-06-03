@@ -1,0 +1,28 @@
+The most na\"ive OKVS construction is encoding $S = \{(k_i, v_i)\}_{1\le i\le t}$ to a random truth table $TT:\mathcal{K}\rightarrow \mathcal{V}$ such that $TT(k_i) = v_i$ for all $1\le i\le t$. Note that to ensure obliviousness, for $k$ not appearing in $S$, the encoding should set $TT(k)$ to a random value. However this na\"ive construction is very inefficient since it requires the encoding size to be $m=|\mathcal{K}|$, and hence its rate $\frac{t}{|\mathcal{K}|}$ can be tiny. 
+
+A well-known, optimal-rate OKVS construction is encoding $t$ key-value pairs using a deg-$t$ polynomial: 
+\begin{construction}[Polynomial]\label{con:OKVS_polynomial}
+  Suppose $\mathcal{K} = \mathcal{V}=\FF$ is a field. Set 
+  \begin{itemize}
+    \item $\Encode(\{(k_i,v_i)\}_{1\le i\le t}) \rightarrow P$ where $P$ is the coeffients of a $(t-1)$-degree $\FF$-polynomial $g_P$ that $g_P(k_i) = v_i$ for $1\le i\le t$. 
+    \item $\Decode(P,k)\rightarrow g_P(k)$. 
+  \end{itemize}
+\end{construction}
+The polynomial OKVS possesses an optimal rate $\frac{t}{m}=1$, but the $\Encode$ process is a polynomial interpolation which is only known to be achieved in time $O(t\log^2t)$. The time for a single decoding is $O(t)$ and that for batched decodings is (amortized) $O(\log^2 t)$. 
+
+The work of \cite{cryptoeprint:2023/903} gives a (linear) OKVS construction that has near optimal rate but much better running time. 
+
+\begin{construction}[RB-OKVS\cite{cryptoeprint:2023/903}]\label{con:OKVS_ribbon}
+  Suppose $\mathcal{V} = \GG$ is a group. Let $\row_r(k)$ output a $\{0,1\}^m$ vector consisting of a width-$w$ random band. Formally speaking, $\row_r(k)$ first determine a starting point $1\le i\le m-w+1$ for the band, and then determine random $w$-bit string to fill in the positions $[i,i+w-1]$ of $\row_r(k)$ and leave the rest as 0 entries. 
+  \begin{itemize}
+    \item $\Encode_r(\{(k_i,v_i)\}_{1\le i\le t})\rightarrow P$ where $P$ is randomly chosen from the random band matrix system $\{\ipd{\row_r(k_i)}{P}=v_i\}_{1\le i\le t}$. If the system has no solution then output $\bot$. 
+    \item $\Decode_r(P,k)\rightarrow \ipd{\row_r(k)}{P}$. 
+  \end{itemize}
+  
+\end{construction}
+
+Denote $m=(1+\varepsilon)t$ where $\varepsilon>1$ is an expansion parameter indicating the blowup to store $t$ pairs. The encoding time is equivalent to solving a linear system whose coefficient matrix is a random band matrix, which can be efficiently done in $O(tw+t\log t)$ time. The decoding time is $w$ additions in $\FF$ and the rate $1/(1+\varepsilon)$ can be very close to 1. 
+
+To guarantee the success of $\Encode$, the random band matrix must be full-rank with overwhelming probability. According to \cite{cryptoeprint:2023/903}, fixing $\varepsilon>1$ and taking $w$ such that $\lambda_\stat = 2.751\varepsilon w+g(\varepsilon,n)$ (where $g(\varepsilon,n)$ is computed empirically) ensures the correctness and obliviousness with probability $2^{-\lambda_\stat}$ and $2^{-w}$, respectively. The empirical results take $e=1.03,1.05,1.07,1.1$ while $w$ being several hundred to reach the security $\lambda_\stat=40$, with the choice of $t$ varying from $2^{10}$ to $2^{20}$. We will apply this OKVS on a different range of $t$, such that $t$ can be as small as 5, which differs from the original application scenarios in \cite{cryptoeprint:2023/903}. However, since the set of parameters that ensures the successful encoding of $t'$ key-value pairs will also ensure the successful encoding of $t<t'$ key-value pairs, this issue can be natually resolved. %by using the same parameters for small set of key-value pairs as for larger set of key-value pairs.  
+
+In our later sections, we refer to the RB-OKVS (\cref{con:OKVS_ribbon}) by default when instantiating OKVS. One may switch to other OKVS constructions such as ones in \cite{cryptoeprint:2021/883,cryptoeprint:2022/320}, depending on different needs in practice. 
